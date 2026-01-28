@@ -1,0 +1,44 @@
+import { DashboardLayout } from "@/components/features/admin/dashboard-layout";
+import { Metadata } from "next";
+import { cookies } from "next/headers";
+import { getUserProfile } from "@/server/actions/user.actions";
+import { getStoreConfig } from "@/server/actions/store.actions";
+import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard | Zinc Store",
+  description: "Admin Management Panel",
+};
+
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
+  const user = await getUserProfile();
+  const storeConfig = await getStoreConfig();
+
+  // Strict Access Control
+  if (!user) {
+    redirect("/login");
+  }
+
+  if (user.role !== "ADMIN" && user.role !== "SUPERADMIN") {
+    redirect("/");
+  }
+
+  // Serialize user to avoid "Date object" warnings in Client Components
+  const serializedUser = user ? JSON.parse(JSON.stringify(user)) : null;
+
+  return (
+    <DashboardLayout
+      defaultOpen={defaultOpen}
+      user={serializedUser}
+      storeName={storeConfig?.storeName}
+    >
+      {children}
+    </DashboardLayout>
+  );
+}

@@ -1,0 +1,319 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  USER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPING
+  SUCCEEDED
+  CANCELED
+}
+
+model UserProfile {
+  id             String  @id @default(cuid())
+  supabaseUserId String  @unique
+  email          String
+  fullName       String
+  phone          String?
+  city           String?
+  address        String?
+  avatarBase64   String?
+  avatarMime     String?
+  avatarSize     Int?
+
+  role Role @default(USER)
+
+  adminPermissions AdminPermission[]
+  orders           Order[]
+  testimonials     Testimonial[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cart      Cart?
+}
+
+model AdminPermission {
+  id     String @id @default(cuid())
+  userId String
+  key    String
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+  @@index([key])
+}
+
+model Category {
+  id       String  @id @default(cuid())
+  name     String
+  slug     String  @unique
+  isActive Boolean @default(true)
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          String @id @default(cuid())
+  name        String
+  slug        String @unique
+  description String
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  isActive Boolean @default(true)
+
+  images     ProductImage[]
+  variants   ProductVariant[]
+  orderItems OrderItem[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  cartItems CartItem[]
+
+  @@index([categoryId])
+  @@index([isActive])
+}
+
+model ProductImage {
+  id        String @id @default(cuid())
+  productId String
+  sortOrder Int    @default(0)
+
+  base64   String
+  mimeType String
+  size     Int
+  name     String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([productId, sortOrder])
+}
+
+model ProductVariant {
+  id        String @id @default(cuid())
+  productId String
+
+  name String
+  sku  String? @unique
+
+  price     Int
+  stock     Int     @default(0)
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  cartItems CartItem[]
+
+  @@index([productId, isActive])
+}
+
+model Cart {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  user  UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model CartItem {
+  id        String @id @default(cuid())
+  cartId    String
+  productId String
+  variantId String
+  quantity  Int    @default(1)
+
+  cart    Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product        @relation(fields: [productId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, variantId])
+  @@index([cartId])
+}
+
+model Order {
+  id          String @id @default(cuid())
+  orderNumber String @unique
+
+  userId String
+  user   UserProfile @relation(fields: [userId], references: [id])
+
+  status OrderStatus @default(PENDING)
+
+  buyerName    String
+  buyerPhone   String
+  buyerAddress String
+  buyerNote    String?
+
+  adminNote String?
+
+  items OrderItem[]
+
+  subtotal Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  statusLogs   OrderStatusLog[]
+  testimonials Testimonial[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  variantId String
+
+  productName String
+  variantName String
+  unitPrice   Int
+  quantity    Int
+  lineTotal   Int
+
+  order   Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product        @relation(fields: [productId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@index([orderId])
+}
+
+model OrderStatusLog {
+  id        String      @id @default(cuid())
+  orderId   String
+  from      OrderStatus
+  to        OrderStatus
+  changedBy String
+  note      String?
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+}
+
+model Testimonial {
+  id      String @id @default(cuid())
+  userId  String
+  orderId String
+
+  rating  Int
+  message String
+
+  isApproved Boolean @default(false)
+  isHidden   Boolean @default(false)
+
+  user  UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, orderId])
+  @@index([isApproved, isHidden, createdAt])
+}
+
+model FAQ {
+  id        String  @id @default(cuid())
+  question  String
+  answer    String
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+model StoreConfig {
+  id String @id @default(cuid())
+
+  storeName String
+  storeCity String
+
+  heroHeadline    String
+  heroSubheadline String
+  heroCtaText     String
+  heroCtaHref     String
+
+  companyName    String
+  companyAbout   String
+  companyAddress String?
+
+  supportEmail String
+
+  logoBase64 String?
+  logoMime   String?
+  logoSize   Int?
+
+  whatsappSupport String
+  whatsappAdmin   String
+
+  whatsappTemplate String
+
+  termsTitle   String
+  termsContent String
+
+  privacyTitle   String?
+  privacyContent String?
+
+  instagramUrl  String?
+  showInstagram Boolean @default(false)
+
+  facebookUrl  String?
+  showFacebook Boolean @default(false)
+
+  twitterUrl  String?
+  showTwitter Boolean @default(false)
+
+  tiktokUrl  String?
+  showTiktok Boolean @default(false)
+
+  websiteUrl  String?
+  showWebsite Boolean @default(false)
+
+  // Footer Customization
+  footerSocialText String?
+
+  supportLinkText String?
+  supportLinkHref String?
+  faqLinkText     String?
+  faqLinkHref     String?
+
+  termsLinkText   String?
+  termsLinkHref   String?
+  privacyLinkText String?
+  privacyLinkHref String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
