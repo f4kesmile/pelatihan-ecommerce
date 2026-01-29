@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { UserProfile } from "@/types";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
   defaultOpen?: boolean;
-  user?: any;
+  user?: Partial<UserProfile>;
   storeName?: string;
 }
 

@@ -1,9 +1,10 @@
 "use client";
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { ChartData } from "@/types";
 
 interface OverviewProps {
-  data: any[];
+  data: ChartData[];
 }
 
 export function Overview({ data }: OverviewProps) {

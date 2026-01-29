@@ -130,7 +130,7 @@ export default function SupportPage() {
                   Still need help?
                 </CardTitle>
                 <CardDescription>
-                  Send us a message and we'll get back to you shortly
+                  Send us a message and we&apos;ll get back to you shortly
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col">

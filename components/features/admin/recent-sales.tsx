@@ -1,8 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Money } from "@/components/shared/money";
+import { OrderWithRelations } from "@/types";
 
 interface RecentSalesProps {
-  data: any[];
+  data: OrderWithRelations[];
 }
 
 export function RecentSales({ data }: RecentSalesProps) {

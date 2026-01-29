@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Money } from "@/components/shared/money";
 import Link from "next/link";
+import { StoreConfig } from "@/types";
 import Image from "next/image";
 
 export default function CheckoutPage() {
@@ -19,7 +20,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     getStoreConfig().then((data) => {
-      if (data) setConfig(data as any);
+      if (data) setConfig(data as StoreConfig);
     });
   }, []);
 
@@ -87,9 +88,9 @@ export default function CheckoutPage() {
             </div>
 
             <p className="text-xs text-muted-foreground mt-6 leading-relaxed">
-              * By clicking "Place Order", you will be redirected to WhatsApp to
-              send your order details directly to our admin. Payment and
-              delivery will be coordinated there.
+              * By clicking &quot;Place Order&quot;, you will be redirected to
+              WhatsApp to send your order details directly to our admin. Payment
+              and delivery will be coordinated there.
             </p>
           </div>
         </div>

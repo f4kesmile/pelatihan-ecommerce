@@ -71,9 +71,9 @@ export async function changePassword(data: { currentPassword: string; newPasswor
 
     if (error) throw error;
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error changing password:", error);
-    return { error: error.message || "Failed to change password" };
+    return { error: (error as Error).message || "Failed to change password" };
   }
 }
 

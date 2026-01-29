@@ -79,8 +79,10 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
       if (res.error) throw new Error(res.error);
       toast.success("Settings updated successfully");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update settings");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update settings";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

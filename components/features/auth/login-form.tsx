@@ -9,10 +9,19 @@ import { Label } from "@/components/ui/label";
 import { login } from "@/server/actions/auth.actions";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import { AuthFormState } from "@/types";
 
 const initialState = {
   error: "",
 };
+
+// Background effects component for visual consistency
+const BackgroundEffects = () => (
+  <>
+    <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-primary/20 blur-[120px]" />
+    <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-500/20 blur-[120px]" />
+  </>
+);
 
 interface LoginFormProps {
   storeName: string;
@@ -22,7 +31,7 @@ export function LoginForm({ storeName }: LoginFormProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   const [state, formAction, isPending] = useActionState(
-    async (prevState: any, formData: FormData) => {
+    async (_prevState: AuthFormState, formData: FormData) => {
       try {
         const result = await login(formData);
         if (result?.error) {
@@ -41,14 +50,6 @@ export function LoginForm({ storeName }: LoginFormProps) {
       toast.error(state.error);
     }
   }, [state]);
-
-  // Shared background elements for visual consistency
-  const BackgroundEffects = () => (
-    <>
-      <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-primary/20 blur-[120px]" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-500/20 blur-[120px]" />
-    </>
-  );
 
   return (
     <div className="w-full min-h-screen grid lg:grid-cols-2">

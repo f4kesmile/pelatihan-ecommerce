@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShoppingCart, User, Menu, LayoutDashboard } from "lucide-react";
+import { User, Menu, LayoutDashboard } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +25,7 @@ export async function Navbar() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch user profile for settings modal
+  // Fetch user profile for role check
   const userProfile = user ? await getUserProfile() : null;
 
   return (

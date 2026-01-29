@@ -36,9 +36,10 @@ import {
   deleteTestimonial,
   toggleTestimonialVisibility,
 } from "@/server/actions/testimonial-admin.actions";
+import { TestimonialWithUser } from "@/types";
 
 interface TestimonialsListProps {
-  data: any[];
+  data: TestimonialWithUser[];
 }
 
 export function TestimonialsList({ data }: TestimonialsListProps) {
@@ -150,7 +151,7 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                       ))}
                     </div>
                     <p className="text-sm italic text-muted-foreground">
-                      "{item.message}"
+                      &quot;{item.message}&quot;
                     </p>
                   </div>
                 </div>

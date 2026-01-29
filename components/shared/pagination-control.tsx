@@ -34,8 +34,8 @@ export function PaginationControl({
     pages.push(1);
 
     // Calculate range around current page
-    let start = Math.max(2, currentPage - 1);
-    let end = Math.min(totalPages - 1, currentPage + 1);
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
 
     if (start > 2) {
       pages.push("ellipsis-start");

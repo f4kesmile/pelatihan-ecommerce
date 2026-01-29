@@ -66,7 +66,7 @@ export default async function ProductsPage({
             </div>
             <h3 className="text-lg font-semibold">No products found</h3>
             <p className="text-sm text-muted-foreground max-w-sm mt-1">
-              We couldn't find any products matching your criteria. Try
+              We couldn&apos;t find any products matching your criteria. Try
               adjusting your filters or search terms.
             </p>
           </div>

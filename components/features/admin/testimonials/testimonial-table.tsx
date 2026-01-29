@@ -34,9 +34,10 @@ import {
   deleteTestimonial,
   toggleTestimonialVisibility,
 } from "@/server/actions/testimonial-admin.actions";
+import { TestimonialWithUser } from "@/types";
 
 interface TestimonialTableProps {
-  data: any[];
+  data: TestimonialWithUser[];
 }
 
 export function TestimonialTable({ data }: TestimonialTableProps) {

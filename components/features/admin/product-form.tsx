@@ -63,7 +63,7 @@ export function ProductForm({
   const [creatingCategory, setCreatingCategory] = useState(false);
 
   const form = useForm<ProductFormValues>({
-    resolver: zodResolver(productFormSchema) as any,
+    resolver: zodResolver(productFormSchema),
     defaultValues: initialData || {
       name: "",
       slug: "",
@@ -173,8 +173,10 @@ export function ProductForm({
       }
       router.refresh();
       router.push("/dashboard/products");
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -354,7 +356,7 @@ export function ProductForm({
                     </FormControl>
                     <FormDescription>
                       Supports multiple lines. Press Enter for new line, use
-                      "1." for numbering.
+                      &quot;1.&quot; for numbering.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

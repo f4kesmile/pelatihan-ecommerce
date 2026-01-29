@@ -24,6 +24,14 @@ const initialState = {
   message: "",
 };
 
+// Background effects component for consistency
+const BackgroundEffects = () => (
+  <>
+    <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-primary/20 blur-[120px]" />
+    <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-purple-500/20 blur-[120px]" />
+  </>
+);
+
 interface RegisterFormProps {
   storeName: string;
 }
@@ -99,14 +107,6 @@ export function RegisterForm({ storeName }: RegisterFormProps) {
       </div>
     );
   }
-
-  // Shared background effects for consistency
-  const BackgroundEffects = () => (
-    <>
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-primary/20 blur-[120px]" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-purple-500/20 blur-[120px]" />
-    </>
-  );
 
   return (
     <div className="w-full min-h-screen grid lg:grid-cols-2">

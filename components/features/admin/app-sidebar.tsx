@@ -12,6 +12,7 @@ import {
   User2,
   ChevronUp,
 } from "lucide-react";
+import { UserProfile } from "@/types";
 
 import {
   Sidebar,
@@ -52,7 +53,7 @@ export function AppSidebar({
   user,
   storeName,
 }: {
-  user?: any;
+  user?: Partial<UserProfile>;
   storeName?: string;
 }) {
   const pathname = usePathname();
