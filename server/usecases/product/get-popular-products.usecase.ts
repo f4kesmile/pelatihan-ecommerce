@@ -15,6 +15,7 @@ export async function getPopularProductsUseCase(limit = 4) {
           ? `data:${p.images[0].mimeType};base64,${p.images[0].base64}`
           : null,
         minPrice,
+        isPopular: p.isPopular || (p._count?.orderItems ?? 0) > 0,
       }
     })
   } catch (error) {

@@ -39,6 +39,20 @@ export interface TestimonialWithUser {
   status: "APPROVED" | "PENDING" | "REJECTED" | "HIDDEN"; // Replaces isApproved and isHidden
   createdAt: Date | string;
   user: PublicUserInfo;
+  order: {
+    orderNumber: string;
+    createdAt: Date | string;
+    items: {
+      id: string;
+      productName: string;
+      variantName: string | null;
+      quantity: number;
+      unitPrice: number;
+      product: {
+        images: string[];
+      };
+    }[];
+  };
 }
 
 export interface StoreConfig {

@@ -38,7 +38,7 @@ export async function listProductsUseCase(params: ListProductsParams) {
         : null,
       minPrice,
       hasStock: p.variants.some(v => v.stock > 0),
-      isPopular: p.isPopular,
+      isPopular: p.isPopular || (p._count?.orderItems ?? 0) > 0,
     }
   })
 

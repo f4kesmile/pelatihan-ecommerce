@@ -70,8 +70,18 @@ export default async function OrdersPage() {
             {orders.map((order) => {
               const config = statusConfig[order.status] || statusConfig.PENDING;
               const StatusIcon = config.icon;
+              const isReviewed =
+                order.testimonial && order.testimonial.status === "APPROVED";
+
               return (
-                <Card key={order.id}>
+                <Card
+                  key={order.id}
+                  className={`transition-colors ${
+                    isReviewed
+                      ? "border-green-200 bg-green-50/40 dark:bg-green-900/10 dark:border-green-800"
+                      : "hover:border-primary/50"
+                  }`}
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div className="space-y-1">

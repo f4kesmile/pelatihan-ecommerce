@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ReviewModal } from "./review-modal";
 import { ReviewStatusBadge } from "./review-status-badge";
-import { Star } from "lucide-react";
+import { Star, CheckCircle } from "lucide-react";
 import type { Testimonial } from "@prisma/client";
 
 interface OrderReviewCTAProps {
@@ -57,17 +57,26 @@ export function OrderReviewCTA({
         isEligible={canSubmitReview}
       />
 
-      {canSubmitReview && (
+      {testimonial && testimonial.status === "APPROVED" ? (
+        <Button
+          size="sm"
+          variant="secondary"
+          className="ml-auto bg-green-100 text-green-700 hover:bg-green-200 border border-green-200 pointer-events-none"
+        >
+          <CheckCircle className="h-4 w-4 mr-2" />
+          Sudah Diulas
+        </Button>
+      ) : canSubmitReview ? (
         <Button
           size="sm"
           variant="outline"
           onClick={() => setIsModalOpen(true)}
-          className="ml-auto"
+          className="ml-auto border-primary text-primary hover:bg-primary hover:text-white"
         >
           <Star className="h-4 w-4 mr-2" />
           {testimonial?.status === "REJECTED" ? "Kirim Ulang" : "Tulis Review"}
         </Button>
-      )}
+      ) : null}
 
       {testimonial && testimonial.status === "APPROVED" && (
         <div className="ml-auto text-sm text-muted-foreground">

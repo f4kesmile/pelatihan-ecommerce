@@ -60,7 +60,7 @@ export function AppSidebar({
   storeLogo?: string | null;
 }) {
   const pathname = usePathname();
-  const { state } = useSidebar();
+  const { state, setOpenMobile, isMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
   const displayName = storeName || "Admin Panel";
   const [mounted, setMounted] = React.useState(false);
@@ -122,7 +122,14 @@ export function AppSidebar({
                       isActive={isActive}
                       tooltip={item.title}
                     >
-                      <Link href={item.url}>
+                      <Link
+                        href={item.url}
+                        onClick={() => {
+                          if (isMobile) {
+                            setOpenMobile(false);
+                          }
+                        }}
+                      >
                         <item.icon className="size-5 shrink-0" />
                         {!isCollapsed && <span>{item.title}</span>}
                       </Link>
@@ -192,7 +199,7 @@ export function AppSidebar({
                       await logout();
                     }}
                   >
-                    Sign out
+                    Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

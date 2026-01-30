@@ -4,7 +4,13 @@ import * as React from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Eye, ChevronDown, ChevronRight, Package } from "lucide-react";
+import {
+  Eye,
+  ChevronDown,
+  ChevronRight,
+  Package,
+  CheckCircle,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -37,6 +43,10 @@ interface Order {
   subtotal: number;
   createdAt: Date;
   items: OrderItem[];
+  testimonial?: {
+    id: string;
+    status: string;
+  } | null;
 }
 
 interface OrdersListProps {
@@ -105,6 +115,12 @@ export function OrdersList({ orders }: OrdersListProps) {
                           status={order.status}
                           className="text-xs px-2 py-0.5"
                         />
+                        {order.testimonial?.status === "APPROVED" && (
+                          <div className="flex items-center gap-1 text-[10px] font-medium text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-full">
+                            <CheckCircle className="h-3 w-3" />
+                            Reviewed
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex items-center justify-between mt-4">
@@ -232,7 +248,15 @@ export function OrdersList({ orders }: OrdersListProps) {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <OrderStatusBadge status={order.status} />
+                        <div className="flex flex-col gap-1 items-start">
+                          <OrderStatusBadge status={order.status} />
+                          {order.testimonial?.status === "APPROVED" && (
+                            <div className="flex items-center gap-1 text-[10px] font-medium text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-full">
+                              <CheckCircle className="h-3 w-3" />
+                              Reviewed
+                            </div>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">
                         <Money amount={order.subtotal} />

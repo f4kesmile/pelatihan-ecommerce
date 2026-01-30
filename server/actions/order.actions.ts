@@ -50,6 +50,12 @@ export async function getOrders(filters?: {
           select: { fullName: true, email: true },
         },
         items: true,
+        testimonial: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
       skip,

@@ -27,34 +27,43 @@ export default async function OrderDetailPage({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href="/dashboard/orders">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold tracking-tight">
-            Order #{order.orderNumber}
-          </h2>
-          <p className="text-muted-foreground">
-            {new Date(order.createdAt).toLocaleString("id-ID", {
-              dateStyle: "full",
-              timeStyle: "short",
-            })}
-          </p>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard/orders">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Order #{order.orderNumber}
+            </h2>
+            <p className="text-muted-foreground mr-2">
+              {new Date(order.createdAt).toLocaleString("id-ID", {
+                dateStyle: "full",
+                timeStyle: "short",
+              })}
+            </p>
+          </div>
         </div>
-        <OrderStatusBadge status={order.status} className="text-sm px-3 py-1" />
-        <TestimonialRequestButton
-          orderId={order.id}
-          customerName={order.buyerName}
-          customerPhone={order.buyerPhone}
-        />
-        <OrderStatusDialog orderId={order.id} currentStatus={order.status}>
-          <Button>
-            <Edit className="mr-2 h-4 w-4" /> Update Status
-          </Button>
-        </OrderStatusDialog>
+
+        <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
+          <OrderStatusBadge
+            status={order.status}
+            className="text-sm px-3 py-1"
+          />
+          <TestimonialRequestButton
+            orderId={order.id}
+            customerName={order.buyerName}
+            customerPhone={order.buyerPhone}
+          />
+          <OrderStatusDialog orderId={order.id} currentStatus={order.status}>
+            <Button>
+              <Edit className="mr-2 h-4 w-4" /> Update Status
+            </Button>
+          </OrderStatusDialog>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

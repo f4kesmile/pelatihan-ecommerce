@@ -16,6 +16,21 @@ export async function getAllTestimonials() {
         order: {
           select: {
             orderNumber: true,
+            createdAt: true,
+            items: {
+              select: {
+                id: true,
+                productName: true,
+                variantName: true,
+                quantity: true,
+                unitPrice: true,
+                product: {
+                  select: {
+                    images: true,
+                  },
+                },
+              },
+            },
           },
         },
       },

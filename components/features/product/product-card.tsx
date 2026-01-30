@@ -10,6 +10,7 @@ interface ProductCardProps {
   minPrice: number;
   image: string | null;
   isPopular?: boolean;
+  hideBadge?: boolean;
 }
 
 export function ProductCard({
@@ -19,11 +20,12 @@ export function ProductCard({
   minPrice,
   image,
   isPopular,
+  hideBadge,
 }: ProductCardProps) {
   return (
     <Link href={`/products/${slug}`} className="group block h-full">
       <div className="flex h-full flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md relative">
-        {isPopular && (
+        {isPopular && !hideBadge && (
           <div className="absolute top-2 left-2 z-10">
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2 py-1 text-[10px] font-bold text-white shadow-sm backdrop-blur-[2px]">
               <Star className="h-3 w-3 fill-white" /> POPULAR

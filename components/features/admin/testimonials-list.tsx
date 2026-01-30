@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import * as React from "react";
 import {
   Table,
   TableBody,
@@ -29,6 +30,9 @@ import {
   EyeOff,
   Star,
   Quote,
+  ChevronDown,
+  ChevronRight,
+  Package,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -43,6 +47,17 @@ interface TestimonialsListProps {
 
 export function TestimonialsList({ data }: TestimonialsListProps) {
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  const toggleRow = (id: string) => {
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedRows(newExpanded);
+  };
 
   const handleToggleStatus = async (id: string, currentStatus: string) => {
     setLoadingId(id);
@@ -165,6 +180,74 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                   </div>
                 </div>
 
+                {/* Mobile Expandable Order Details */}
+                <div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-between h-auto py-2 px-0 hover:bg-transparent"
+                    onClick={() => toggleRow(item.id)}
+                  >
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Order #{item.order.orderNumber}
+                    </span>
+                    {expandedRows.has(item.id) ? (
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+
+                  {expandedRows.has(item.id) && (
+                    <div className="mt-2 border rounded-md bg-background overflow-hidden">
+                      <div className="p-2 bg-muted/30 border-b text-xs text-muted-foreground">
+                        Ordered on{" "}
+                        {new Date(item.order.createdAt).toLocaleDateString(
+                          "id-ID",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          },
+                        )}
+                      </div>
+                      <div className="divide-y">
+                        {item.order.items.map((orderItem) => (
+                          <div
+                            key={orderItem.id}
+                            className="flex items-start gap-3 p-3"
+                          >
+                            <div className="h-10 w-10 flex-shrink-0 bg-muted rounded overflow-hidden relative">
+                              <Package className="h-5 w-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium line-clamp-1">
+                                {orderItem.productName}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {orderItem.variantName}
+                              </p>
+                            </div>
+                            <div className="text-right text-xs">
+                              <p className="font-medium">
+                                {new Intl.NumberFormat("id-ID", {
+                                  style: "currency",
+                                  currency: "IDR",
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                }).format(orderItem.unitPrice)}
+                              </p>
+                              <p className="text-muted-foreground">
+                                x{orderItem.quantity}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="flex justify-end gap-2 pt-2 border-t">
                   <Button
                     variant="ghost"
@@ -230,6 +313,7 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[50px]"></TableHead>
               <TableHead>Date</TableHead>
               <TableHead>User</TableHead>
               <TableHead>Rating</TableHead>
@@ -242,123 +326,206 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
             {data.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="h-24 text-center text-muted-foreground"
                 >
                   No testimonials found.
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>
-                    {new Date(item.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <span className="font-medium">{item.user.fullName}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {item.user.email}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <span className="font-bold">{item.rating}</span>
-                      <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                    </div>
-                  </TableCell>
-                  <TableCell className="max-w-[300px]">
-                    <p
-                      className="line-clamp-2 text-sm text-muted-foreground"
-                      title={item.message}
-                    >
-                      {item.message}
-                    </p>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      {item.status === "APPROVED" && (
-                        <Badge className="bg-green-600 hover:bg-green-700">
-                          Approved
-                        </Badge>
-                      )}
-                      {item.status === "PENDING" && (
-                        <Badge variant="secondary">Pending</Badge>
-                      )}
-                      {item.status === "REJECTED" && (
-                        <Badge variant="destructive">Rejected</Badge>
-                      )}
-                      {item.status === "HIDDEN" && (
-                        <Badge
-                          variant="outline"
-                          className="text-muted-foreground border-dashed"
-                        >
-                          Hidden
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+              data.map((item) => {
+                const isExpanded = expandedRows.has(item.id);
+                return (
+                  <React.Fragment key={item.id}>
+                    <TableRow className={isExpanded ? "bg-muted/50" : ""}>
+                      <TableCell>
                         <Button
                           variant="ghost"
                           size="icon"
-                          disabled={loadingId === item.id}
+                          className="h-8 w-8"
+                          onClick={() => toggleRow(item.id)}
                         >
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Actions</span>
+                          {isExpanded ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleToggleStatus(item.id, item.status)
-                          }
+                      </TableCell>
+                      <TableCell>
+                        {new Date(item.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {item.user.fullName}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {item.user.email}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <span className="font-bold">{item.rating}</span>
+                          <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                        </div>
+                      </TableCell>
+                      <TableCell className="max-w-[300px]">
+                        <p
+                          className="line-clamp-2 text-sm text-muted-foreground"
+                          title={item.message}
                         >
-                          {item.status === "APPROVED" ? (
-                            <>
-                              <ShieldAlert className="mr-2 h-4 w-4" /> Reject
-                            </>
-                          ) : (
-                            <>
-                              <ShieldCheck className="mr-2 h-4 w-4" /> Approve
-                            </>
+                          {item.message}
+                        </p>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          {item.status === "APPROVED" && (
+                            <Badge className="bg-green-600 hover:bg-green-700">
+                              Approved
+                            </Badge>
                           )}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleToggleVisibility(item.id, item.status)
-                          }
-                        >
-                          {item.status === "HIDDEN" ? (
-                            <>
-                              <Eye className="mr-2 h-4 w-4" /> Show
-                            </>
-                          ) : (
-                            <>
-                              <EyeOff className="mr-2 h-4 w-4" /> Hide
-                            </>
+                          {item.status === "PENDING" && (
+                            <Badge variant="secondary">Pending</Badge>
                           )}
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => handleDelete(item.id)}
-                          className="text-destructive"
-                        >
-                          <Trash className="mr-2 h-4 w-4" /> Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
+                          {item.status === "REJECTED" && (
+                            <Badge variant="destructive">Rejected</Badge>
+                          )}
+                          {item.status === "HIDDEN" && (
+                            <Badge
+                              variant="outline"
+                              className="text-muted-foreground border-dashed"
+                            >
+                              Hidden
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              disabled={loadingId === item.id}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleToggleStatus(item.id, item.status)
+                              }
+                            >
+                              {item.status === "APPROVED" ? (
+                                <>
+                                  <ShieldAlert className="mr-2 h-4 w-4" />{" "}
+                                  Reject
+                                </>
+                              ) : (
+                                <>
+                                  <ShieldCheck className="mr-2 h-4 w-4" />{" "}
+                                  Approve
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleToggleVisibility(item.id, item.status)
+                              }
+                            >
+                              {item.status === "HIDDEN" ? (
+                                <>
+                                  <Eye className="mr-2 h-4 w-4" /> Show
+                                </>
+                              ) : (
+                                <>
+                                  <EyeOff className="mr-2 h-4 w-4" /> Hide
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDelete(item.id)}
+                              className="text-destructive"
+                            >
+                              <Trash className="mr-2 h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                    {isExpanded && (
+                      <TableRow className="bg-muted/30 hover:bg-muted/30">
+                        <TableCell colSpan={7} className="p-0">
+                          <div className="px-4 py-4 sm:px-14">
+                            <div className="mb-3 flex items-center justify-between">
+                              <h4 className="font-semibold text-sm">
+                                Order Details (#{item.order.orderNumber})
+                              </h4>
+                              <span className="text-xs text-muted-foreground">
+                                Ordered on{" "}
+                                {new Date(
+                                  item.order.createdAt,
+                                ).toLocaleDateString("id-ID", {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                })}
+                              </span>
+                            </div>
+                            <div className="border rounded-md bg-background overflow-hidden">
+                              {item.order.items.map((orderItem, idx) => (
+                                <div
+                                  key={orderItem.id}
+                                  className={`flex items-start gap-3 p-3 ${
+                                    idx !== item.order.items.length - 1
+                                      ? "border-b"
+                                      : ""
+                                  }`}
+                                >
+                                  <div className="h-10 w-10 flex-shrink-0 bg-muted rounded overflow-hidden relative">
+                                    <Package className="h-5 w-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium line-clamp-1">
+                                      {orderItem.productName}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {orderItem.variantName}
+                                    </p>
+                                  </div>
+                                  <div className="text-right text-xs">
+                                    <p className="font-medium">
+                                      {new Intl.NumberFormat("id-ID", {
+                                        style: "currency",
+                                        currency: "IDR",
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0,
+                                      }).format(orderItem.unitPrice)}
+                                    </p>
+                                    <p className="text-muted-foreground">
+                                      x{orderItem.quantity}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                );
+              })
             )}
           </TableBody>
         </Table>

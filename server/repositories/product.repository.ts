@@ -64,6 +64,9 @@ export class ProductRepository {
             // Actually we need all variants to determine the true min price if not enforcing order during insert.
             // But relying on database sort is better.
           },
+          _count: {
+            select: { orderItems: true },
+          },
         },
         orderBy: this.getSortOrder(sort),
       }),
@@ -115,6 +118,9 @@ export class ProductRepository {
           where: { isActive: true },
           orderBy: { price: "asc" },
           take: 1,
+        },
+        _count: {
+          select: { orderItems: true },
         },
       },
       // In real implementation, this would join with OrderItem

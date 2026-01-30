@@ -29,8 +29,9 @@ export function ReviewPopup({
     const dismissed = localStorage.getItem(`dismissed_review_popup_${orderId}`);
 
     if (dismissed) {
-      setTimeout(() => setHasChecked(true), 0);
-      return;
+      // Use setTimeout to avoid "synchronous setState in effect" lint error
+      const t = setTimeout(() => setHasChecked(true), 0);
+      return () => clearTimeout(t);
     }
 
     // Delay showing for 3 seconds
