@@ -5,5 +5,5 @@ export default async function LoginPage() {
   const config = await getStoreConfig();
   const storeName = config?.storeName || "E-COMMERCE";
 
-  return <LoginForm storeName={storeName} />;
+  return <LoginForm storeName={storeName} storeLogo={config?.logoBase64} />;
 }

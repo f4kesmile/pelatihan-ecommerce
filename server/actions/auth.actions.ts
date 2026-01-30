@@ -44,6 +44,29 @@ export async function signup(formData: FormData) {
     return { error: error.message };
   }
 
+  // Manually create UserProfile to ensure sync
+  if (data?.user) {
+    try {
+      // const { db } = await import("@/lib/db/prisma"); 
+      // or just import prisma global if available, but let's assume standard import
+       const prisma = (await import("@/lib/db/prisma")).default;
+
+      await prisma.userProfile.create({
+        data: {
+          id: data.user.id, // Keep IDs in sync for easy lookup
+          supabaseUserId: data.user.id,
+          email: email,
+          fullName: fullName,
+          role: "USER",
+        },
+      });
+    } catch (err) {
+      console.error("Failed to create user profile:", err);
+      // Optional: Try to rollback auth user if profile creation fails? 
+      // For now, let's just log it. The fix-sync script can handle stragglers.
+    }
+  }
+
   // If email confirmation is disabled in Supabase, the user is logged in immediately
   if (data?.session) {
     redirect("/");

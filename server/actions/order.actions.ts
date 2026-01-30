@@ -23,6 +23,7 @@ export async function getUserOrders() {
           variant: { select: { name: true } },
         },
       },
+      testimonial: true,
     },
     orderBy: { createdAt: "desc" },
   })

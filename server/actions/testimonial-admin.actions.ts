@@ -30,11 +30,11 @@ export async function getAllTestimonials() {
   }
 }
 
-export async function toggleTestimonialStatus(id: string, isApproved: boolean) {
+export async function updateTestimonialStatus(id: string, status: "APPROVED" | "PENDING" | "REJECTED" | "HIDDEN") {
   try {
     await prisma.testimonial.update({
       where: { id },
-      data: { isApproved },
+      data: { status },
     });
     revalidatePath("/dashboard/testimonials");
     revalidatePath("/"); // Update homepage
@@ -45,20 +45,7 @@ export async function toggleTestimonialStatus(id: string, isApproved: boolean) {
   }
 }
 
-export async function toggleTestimonialVisibility(id: string, isHidden: boolean) {
-    try {
-      await prisma.testimonial.update({
-        where: { id },
-        data: { isHidden },
-      });
-      revalidatePath("/dashboard/testimonials");
-      revalidatePath("/"); // Update homepage
-      return { success: true };
-    } catch (error) {
-      console.error("Error updating testimonial visibility:", error);
-      return { success: false, error: "Failed to update visibility" };
-    }
-}
+
   
 export async function deleteTestimonial(id: string) {
   try {

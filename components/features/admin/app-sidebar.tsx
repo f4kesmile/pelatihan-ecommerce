@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 const menuItems = [
   { title: "Overview", url: "/dashboard", icon: LayoutDashboard },
@@ -52,9 +53,11 @@ const menuItems = [
 export function AppSidebar({
   user,
   storeName,
+  storeLogo,
 }: {
   user?: Partial<UserProfile>;
   storeName?: string;
+  storeLogo?: string | null;
 }) {
   const pathname = usePathname();
   const { state } = useSidebar();
@@ -74,8 +77,17 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild tooltip={displayName}>
               <Link href="/dashboard">
-                <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0">
-                  <LayoutDashboard className="size-5" />
+                <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0 overflow-hidden relative">
+                  {storeLogo ? (
+                    <Image
+                      src={storeLogo}
+                      alt={displayName}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <LayoutDashboard className="size-5" />
+                  )}
                 </div>
                 {!isCollapsed && (
                   <div className="flex flex-col gap-0.5 leading-none">

@@ -90,8 +90,23 @@ export class ProductRepository {
 
   async findPopular(limit = 4) {
     // Ideally use order items count, but for now simple fallback
+    // Hybrid logic:
+    // 1. Manual "Popular" picks (isPopular = true)
+    // 2. Best Sellers (most order items)
+    // 3. Newest fallback
     return prisma.product.findMany({
-      where: { isActive: true },
+      where: { 
+        isActive: true,
+        OR: [
+            { isPopular: true }, // Manual Select
+            { orderItems: { some: {} } } // OR Has Sales
+        ]
+      },
+      orderBy: [
+        { isPopular: 'desc' }, // Admin picks first
+        { orderItems: { _count: 'desc' } }, // Then high sales
+        { createdAt: 'desc' } // Then newest (but only if they have sales or are popular)
+      ],
       take: limit,
       include: {
         category: true,

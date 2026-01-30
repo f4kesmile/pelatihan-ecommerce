@@ -17,7 +17,7 @@ export async function getDashboardStats() {
         _sum: { subtotal: true },
         where: { status: "SUCCEEDED" },
       }),
-      prisma.testimonial.count({ where: { isApproved: false } }),
+      prisma.testimonial.count({ where: { status: "PENDING" } }),
       prisma.order.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
@@ -29,21 +29,44 @@ export async function getDashboardStats() {
       }),
     ]);
 
-    // Mock monthly data for chart (since we don't have enough real data history yet)
-    // In production, you'd aggregate this via SQL
+    // Aggregate monthly revenue for the current year
+    const currentYear = new Date().getFullYear();
+    const startDate = new Date(currentYear, 0, 1);
+    const endDate = new Date(currentYear, 11, 31);
+
+    const monthlyOrders = await prisma.order.findMany({
+      where: {
+        status: "SUCCEEDED",
+        createdAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      select: {
+        createdAt: true,
+        subtotal: true,
+      },
+    });
+
+    const monthlyRevenueMap = new Array(12).fill(0);
+    monthlyOrders.forEach((order) => {
+      const month = order.createdAt.getMonth(); // 0-11
+      monthlyRevenueMap[month] += order.subtotal;
+    });
+
     const monthlyRevenue = [
-      { name: "Jan", total: 0 },
-      { name: "Feb", total: 0 },
-      { name: "Mar", total: 0 },
-      { name: "Apr", total: 0 },
-      { name: "May", total: 0 },
-      { name: "Jun", total: 0 },
-      { name: "Jul", total: 0 },
-      { name: "Aug", total: 0 },
-      { name: "Sep", total: 0 },
-      { name: "Oct", total: 0 },
-      { name: "Nov", total: 0 },
-      { name: "Dec", total: 0 },
+      { name: "Jan", total: monthlyRevenueMap[0] },
+      { name: "Feb", total: monthlyRevenueMap[1] },
+      { name: "Mar", total: monthlyRevenueMap[2] },
+      { name: "Apr", total: monthlyRevenueMap[3] },
+      { name: "May", total: monthlyRevenueMap[4] },
+      { name: "Jun", total: monthlyRevenueMap[5] },
+      { name: "Jul", total: monthlyRevenueMap[6] },
+      { name: "Aug", total: monthlyRevenueMap[7] },
+      { name: "Sep", total: monthlyRevenueMap[8] },
+      { name: "Oct", total: monthlyRevenueMap[9] },
+      { name: "Nov", total: monthlyRevenueMap[10] },
+      { name: "Dec", total: monthlyRevenueMap[11] },
     ];
 
     return {

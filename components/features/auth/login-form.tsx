@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Loader2, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,9 +26,10 @@ const BackgroundEffects = () => (
 
 interface LoginFormProps {
   storeName: string;
+  storeLogo?: string | null;
 }
 
-export function LoginForm({ storeName }: LoginFormProps) {
+export function LoginForm({ storeName, storeLogo }: LoginFormProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   const [state, formAction, isPending] = useActionState(
@@ -37,7 +39,7 @@ export function LoginForm({ storeName }: LoginFormProps) {
         if (result?.error) {
           return { error: result.error };
         }
-      } catch (e) {
+      } catch {
         return { error: "An unexpected error occurred" };
       }
       return { error: "" };
@@ -62,8 +64,17 @@ export function LoginForm({ storeName }: LoginFormProps) {
             href="/"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10">
-              <span className="font-bold text-lg">{storeName.charAt(0)}</span>
+            <div className="w-10 h-10 relative rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10 overflow-hidden">
+              {storeLogo ? (
+                <Image
+                  src={storeLogo}
+                  alt={storeName}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <span className="font-bold text-lg">{storeName.charAt(0)}</span>
+              )}
             </div>
             <span className="text-xl font-bold tracking-tight">
               {storeName}
@@ -86,9 +97,14 @@ export function LoginForm({ storeName }: LoginFormProps) {
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="w-10 h-10 rounded-full border-2 border-zinc-900 bg-zinc-800 flex items-center justify-center text-xs text-zinc-500 overflow-hidden"
+                  className="w-10 h-10 relative rounded-full border-2 border-zinc-900 bg-zinc-800 flex items-center justify-center text-xs text-zinc-500 overflow-hidden"
                 >
-                  <div className="w-full h-full bg-gradient-to-br from-zinc-700 to-zinc-800" />
+                  <Image
+                    src={`https://i.pravatar.cc/150?u=${i + 20}`}
+                    alt="User"
+                    fill
+                    className="object-cover grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all"
+                  />
                 </div>
               ))}
             </div>

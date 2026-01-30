@@ -4,13 +4,7 @@ import * as React from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Eye,
-  ChevronDown,
-  ChevronRight,
-  Package,
-  ArrowUpRight,
-} from "lucide-react";
+import { Eye, ChevronDown, ChevronRight, Package } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -20,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Money } from "@/components/shared/money";
-import { cn } from "@/lib/utils";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { OrderStatusBadge } from "@/components/features/admin/order-status-badge";
 import { OrderStatus } from "@prisma/client";

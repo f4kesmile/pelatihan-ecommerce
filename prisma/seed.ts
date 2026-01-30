@@ -9,7 +9,7 @@ async function main() {
   // Delete existing config if any
   await prisma.storeConfig.deleteMany({})
   
-  const storeConfig = await prisma.storeConfig.create({
+  await prisma.storeConfig.create({
     data: {
       storeName: "Zinc Store",
       storeCity: "Jakarta",
@@ -67,7 +67,7 @@ async function main() {
     },
   })
 
-  const product2 = await prisma.product.create({
+  await prisma.product.create({
     data: {
       name: "Wireless Earbuds Pro",
       slug: "wireless-earbuds-pro",
@@ -83,7 +83,7 @@ async function main() {
     },
   })
 
-  const product3 = await prisma.product.create({
+  await prisma.product.create({
     data: {
       name: "Leather Backpack",
       slug: "leather-backpack",
@@ -159,8 +159,9 @@ async function main() {
       orderId: order1.id,
       rating: 5,
       message: "Excellent product quality! The t-shirt fits perfectly and the material is very comfortable. Highly recommend!",
-      isApproved: true,
-      isHidden: false,
+      status: "APPROVED",
+      source: "MY_ORDERS",
+      approvedAt: new Date(),
     },
   })
 
@@ -172,6 +173,63 @@ async function main() {
   - 1 User Profile
   - 1 Sample Order
   - 1 Testimonial
+  `)
+
+  // 6. Review System Settings
+  console.log("Creating review system settings...")
+  await prisma.reviewSettings.deleteMany({})
+  
+  await prisma.reviewSettings.create({
+    data: {
+      // General
+      reviewsEnabled: true,
+      requireOrderSucceeded: true,
+      oneReviewPerOrder: true,
+      reviewWindowDays: 30,
+      moderationRequired: true,
+
+      // Magic Link
+      tokenExpiryHours: 720, // 30 days
+      allowTokenRegenerate: true,
+      waTemplate: "Halo {customerName}! Terima kasih atas pesanan {orderCode}. Kami ingin mendengar pengalaman Anda. Klik link ini untuk memberi review: {reviewLink}",
+
+      // Smart Popup
+      popupEnabled: true,
+      popupMinSessions: 2,
+      popupMinDaysSinceFirstSeen: 3,
+      popupMinSecondsOnSite: 45,
+      popupCooldownDays: 14,
+      popupMaxImpressionsPerWindow: 3,
+      popupOnlyIfEligibleOrdersExist: true,
+
+      // Popup Copy
+      popupTitle: "Bagaimana pengalaman Anda?",
+      popupBody: "Kami ingin mendengar pendapat Anda tentang toko kami!",
+      successMessage: "Terima kasih atas review Anda!",
+
+      // My Orders
+      myOrdersReviewEnabled: true,
+      showReviewForLastNOrders: 5,
+      allowResubmitOnRejected: false,
+
+      // Validation
+      ratingRequired: true,
+      minMessageLength: 10,
+      maxMessageLength: 300,
+    },
+  })
+
+  console.log(`
+  ✅ Database seeded successfully!
+  
+  Summary:
+  - 1 Store Configuration
+  - 3 Categories
+  - 3 Products with multiple variants
+  - 1 User Profile
+  - 1 Sample Order
+  - 1 Testimonial
+  - 1 Review System Settings ⭐
   `)
 }
 

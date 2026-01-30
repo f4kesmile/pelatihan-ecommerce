@@ -1,13 +1,8 @@
 import Link from "next/link";
-import { User, Menu, LayoutDashboard } from "lucide-react";
+import { User, LayoutDashboard } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { MobileNav } from "./mobile-nav";
 import { CartSheet } from "@/components/features/cart/cart-sheet";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { getStoreConfig } from "@/server/actions/store.actions";
@@ -32,53 +27,7 @@ export async function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="w-full flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Mobile Menu */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left">
-            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-            <nav className="flex flex-col gap-4 mt-8">
-              <Link
-                href="/"
-                className="text-lg font-medium hover:text-primary transition-colors"
-              >
-                Home
-              </Link>
-              <Link
-                href="/products"
-                className="text-lg font-medium hover:text-primary transition-colors"
-              >
-                Products
-              </Link>
-              <Link
-                href="/orders"
-                className="text-lg font-medium hover:text-primary transition-colors"
-              >
-                Orders
-              </Link>
-              <Link
-                href="/support"
-                className="text-lg font-medium hover:text-primary transition-colors"
-              >
-                Support
-              </Link>
-              {(userProfile?.role === "ADMIN" ||
-                userProfile?.role === "SUPERADMIN") && (
-                <Link
-                  href="/dashboard"
-                  className="text-lg font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </Link>
-              )}
-            </nav>
-          </SheetContent>
-        </Sheet>
+        <MobileNav userProfile={userProfile} />
 
         {/* Logo & Desktop Nav */}
         <div className="flex items-center gap-6 lg:gap-8 flex-1">

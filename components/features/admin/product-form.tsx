@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -45,6 +44,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageCropper } from "@/components/shared/image-cropper";
 
 interface ProductFormProps {
   initialData?: ProductFormValues & { id: string };
@@ -62,7 +62,7 @@ export function ProductForm({
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [creatingCategory, setCreatingCategory] = useState(false);
 
-  const form = useForm<ProductFormValues>({
+  const form = useForm({
     resolver: zodResolver(productFormSchema),
     defaultValues: initialData || {
       name: "",
@@ -70,6 +70,7 @@ export function ProductForm({
       description: "",
       categoryId: categories[0]?.id || "",
       isActive: true,
+      isPopular: false,
       images: [],
       variants: [{ name: "Standard", price: 0, stock: 0, isActive: true }],
     },
@@ -111,46 +112,65 @@ export function ProductForm({
         setNewCategoryName("");
         setCategoryDialogOpen(false);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to create category");
     } finally {
       setCreatingCategory(false);
     }
   };
 
-  // Image Upload Handler
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Image Cropper State
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [currentImageSrc, setCurrentImageSrc] = useState<string>("");
+
+  // Image Select Handler (Step 1: Read file & Open Cropper)
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    const file = files[0]; // Process one file at a time for cropping
+
+    if (file.size > 5 * 1024 * 1024) {
+      // Increased limit for raw file before crop
+      toast.error(`Image ${file.name} is too large (max 5MB).`);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setCurrentImageSrc(event.target.result as string);
+        setCropperOpen(true);
+      }
+    };
+    reader.readAsDataURL(file);
+
+    // Reset input so same file can be selected again if needed
+    e.target.value = "";
+  };
+
+  // Image Crop Handler (Step 2: Save cropped image)
+  const onCropComplete = (croppedBase64: string) => {
     const currentImages = form.getValues("images") || [];
     const newImages = [...currentImages];
 
-    for (const file of Array.from(files)) {
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error(`Image ${file.name} exceeds 2MB limit.`);
-        continue;
-      }
+    // Extract base64 data and mime type
+    const [prefix, base64Data] = croppedBase64.split(",");
+    const mimeType = prefix.match(/:(.*?);/)?.[1] || "image/jpeg";
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          const base64String = event.target.result as string;
-          const [prefix, base64Data] = base64String.split(",");
-          const mimeType = prefix.match(/:(.*?);/)?.[1] || "image/jpeg";
+    // Calculate approximate size (base64 length * 0.75)
+    const approximateSize = Math.ceil((base64Data.length * 3) / 4);
 
-          newImages.push({
-            name: file.name,
-            mimeType,
-            base64: base64Data,
-            size: file.size,
-          });
+    newImages.push({
+      name: `image-${Date.now()}.jpg`, // Generate a name
+      mimeType,
+      base64: base64Data,
+      size: approximateSize,
+    });
 
-          form.setValue("images", newImages, { shouldValidate: true });
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+    form.setValue("images", newImages, { shouldValidate: true });
+    setCropperOpen(false);
+    toast.success("Image added successfully");
   };
 
   const removeImage = (index: number) => {
@@ -340,6 +360,56 @@ export function ProductForm({
                 )}
               />
 
+              <div className="flex gap-6">
+                <FormField
+                  control={form.control}
+                  name="isActive"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm flex-1">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Active Status
+                        </FormLabel>
+                        <FormDescription>
+                          Product will be visible in the store.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          disabled={loading}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isPopular"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm flex-1">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Popular Product
+                        </FormLabel>
+                        <FormDescription>
+                          Show in &quot;Popular Products&quot; section.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          disabled={loading}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name="description"
@@ -459,6 +529,7 @@ export function ProductForm({
                                 placeholder="0"
                                 className="h-12 text-base"
                                 {...field}
+                                value={field.value as number}
                               />
                             </FormControl>
                             <FormMessage />
@@ -478,6 +549,7 @@ export function ProductForm({
                                 placeholder="0"
                                 className="h-12 text-base"
                                 {...field}
+                                value={field.value as number}
                               />
                             </FormControl>
                             <FormMessage />
@@ -503,8 +575,8 @@ export function ProductForm({
               <div>
                 <h3 className="font-semibold text-xl">Product Images</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Upload 1 or more images. Max 2MB each. First image is the main
-                  display image.
+                  Upload 1 or more images. Images will be cropped to 1:1 aspect
+                  ratio. Max 2MB each. First image is the main display image.
                 </p>
               </div>
 
@@ -545,14 +617,13 @@ export function ProductForm({
                     Upload Image
                   </span>
                   <span className="text-xs text-muted-foreground mt-1">
-                    Max 2MB
+                    Max 5MB (Before Crop)
                   </span>
                   <input
                     type="file"
                     accept="image/*"
-                    multiple
                     className="hidden"
-                    onChange={handleImageUpload}
+                    onChange={handleImageSelect}
                     disabled={loading}
                   />
                 </label>
@@ -568,7 +639,7 @@ export function ProductForm({
         </Tabs>
 
         {/* Submit Buttons */}
-        <div className="flex justify-end gap-4 sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 border rounded-xl shadow-lg">
+        <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
           <Button
             type="button"
             variant="outline"
@@ -584,6 +655,15 @@ export function ProductForm({
           </Button>
         </div>
       </form>
+
+      {/* Image Cropper Modal */}
+      <ImageCropper
+        imageSrc={currentImageSrc}
+        isOpen={cropperOpen}
+        onClose={() => setCropperOpen(false)}
+        onCropComplete={onCropComplete}
+        aspect={1} // 1:1 Aspect Ratio
+      />
     </Form>
   );
 }

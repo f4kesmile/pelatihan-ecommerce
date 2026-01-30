@@ -72,7 +72,7 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
       } else {
         toast.error(res.error || "Failed to update role");
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred");
     } finally {
       setLoadingId(null);
@@ -148,9 +148,9 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
 
                 {canEditUser(user) && (
                   <div className="flex justify-end gap-2 pt-2 border-t">
-                    {/* Permission Button - Only for Super Admin */}
+                    {/* Permission Button - Only for Super Admin to manage Admins */}
                     {currentUser?.role === "SUPERADMIN" &&
-                      user.role !== "SUPERADMIN" && (
+                      user.role === "ADMIN" && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -265,9 +265,9 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {/* Permission Button - Only for Super Admin */}
+                      {/* Permission Button - Only for Super Admin to manage Admins */}
                       {currentUser?.role === "SUPERADMIN" &&
-                        user.role !== "SUPERADMIN" && (
+                        user.role === "ADMIN" && (
                           <Button
                             variant="ghost"
                             size="icon"

@@ -1,6 +1,5 @@
 import { getAllUsers, getUserProfile } from "@/server/actions/user.actions";
 import { UsersList } from "@/components/features/admin/users-list";
-import { Separator } from "@/components/ui/separator";
 
 export default async function UsersPage() {
   const [result, userProfile] = await Promise.all([

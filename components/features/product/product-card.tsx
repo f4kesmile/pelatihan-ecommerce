@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Money } from "@/components/shared/money";
+import { Star } from "lucide-react";
 
 interface ProductCardProps {
   name: string;
@@ -7,6 +9,7 @@ interface ProductCardProps {
   categoryName: string;
   minPrice: number;
   image: string | null;
+  isPopular?: boolean;
 }
 
 export function ProductCard({
@@ -15,17 +18,25 @@ export function ProductCard({
   categoryName,
   minPrice,
   image,
+  isPopular,
 }: ProductCardProps) {
   return (
     <Link href={`/products/${slug}`} className="group block h-full">
-      <div className="flex h-full flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md">
+      <div className="flex h-full flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md relative">
+        {isPopular && (
+          <div className="absolute top-2 left-2 z-10">
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2 py-1 text-[10px] font-bold text-white shadow-sm backdrop-blur-[2px]">
+              <Star className="h-3 w-3 fill-white" /> POPULAR
+            </span>
+          </div>
+        )}
         <div className="aspect-square w-full overflow-hidden bg-muted relative">
           {image ? (
-            <img
+            <Image
               src={image}
               alt={name}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              loading="lazy"
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground/50">

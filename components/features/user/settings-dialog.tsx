@@ -195,7 +195,7 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
       form.setValue("avatarBase64", croppedImage);
       setShowCropper(false);
       setImageSrc(null);
-    } catch (error) {
+    } catch {
       toast.error("Failed to crop image");
     }
   };

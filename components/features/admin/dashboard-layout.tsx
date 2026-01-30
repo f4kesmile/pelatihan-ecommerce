@@ -15,6 +15,7 @@ interface DashboardLayoutProps {
   defaultOpen?: boolean;
   user?: Partial<UserProfile>;
   storeName?: string;
+  storeLogo?: string | null;
 }
 
 export function DashboardLayout({
@@ -22,10 +23,11 @@ export function DashboardLayout({
   defaultOpen = true,
   user,
   storeName,
+  storeLogo,
 }: DashboardLayoutProps) {
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <AppSidebar user={user} storeName={storeName} />
+      <AppSidebar user={user} storeName={storeName} storeLogo={storeLogo} />
       <SidebarInset>
         <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
           <SidebarTrigger />

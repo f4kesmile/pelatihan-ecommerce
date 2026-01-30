@@ -47,24 +47,24 @@ export function PermissionsDialog({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    const loadPermissions = async () => {
+      setLoading(true);
+      try {
+        const res = await getUserPermissions(user.id);
+        if (res.success && res.permissions) {
+          setPermissions(res.permissions);
+        }
+      } catch {
+        toast.error("Failed to load permissions");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (open) {
       loadPermissions();
     }
   }, [open, user.id]);
-
-  const loadPermissions = async () => {
-    setLoading(true);
-    try {
-      const res = await getUserPermissions(user.id);
-      if (res.success && res.permissions) {
-        setPermissions(res.permissions);
-      }
-    } catch (error) {
-      toast.error("Failed to load permissions");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleToggle = (key: string) => {
     setPermissions((prev) =>
@@ -82,7 +82,7 @@ export function PermissionsDialog({
       } else {
         toast.error(res.error || "Failed to update permissions");
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred");
     } finally {
       setSaving(false);

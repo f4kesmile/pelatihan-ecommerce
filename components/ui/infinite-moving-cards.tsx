@@ -14,9 +14,12 @@ export const InfiniteMovingCards = ({
   items: {
     id: string;
     name: string;
+    avatar?: string | null;
     rating: number;
     message: string;
     date: Date;
+    productName?: string;
+    productImage?: string | null;
   }[];
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
@@ -101,9 +104,12 @@ export const InfiniteMovingCards = ({
           >
             <TestimonialCard
               name={item.name}
+              avatar={item.avatar}
               rating={item.rating}
               message={item.message}
               date={item.date}
+              productName={item.productName}
+              productImage={item.productImage}
             />
           </li>
         ))}

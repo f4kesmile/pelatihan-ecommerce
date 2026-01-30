@@ -41,6 +41,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const initialData = {
     ...product,
     categoryId: product.categoryId,
+    isActive: product.isActive,
+    isPopular: product.isPopular,
     description: product.description || undefined,
     images: product.images.map((img) => ({
       id: img.id, // Only present in edit

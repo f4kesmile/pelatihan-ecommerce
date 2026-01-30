@@ -11,6 +11,8 @@ import {
   Package,
   Pencil,
   Eye,
+  Star,
+  Flame,
 } from "lucide-react";
 import {
   Table,
@@ -52,9 +54,13 @@ interface Product {
   name: string;
   slug: string;
   isActive: boolean;
+  isPopular: boolean; // Added isPopular
   category: { name: string };
   variants: Variant[];
   images: ProductImage[];
+  _count: {
+    orderItems: number;
+  };
 }
 
 interface ProductsListProps {
@@ -195,6 +201,24 @@ export function ProductsList({ products }: ProductsListProps) {
                           isActive={product.isActive}
                         />
                       </div>
+
+                      {product.isPopular && (
+                        <div className="mt-1">
+                          <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium bg-amber-500/10 text-amber-600 border-amber-500/20">
+                            <Star className="h-3 w-3 fill-amber-600" /> Popular
+                            (Admin)
+                          </span>
+                        </div>
+                      )}
+
+                      {product._count?.orderItems > 0 && (
+                        <div className="mt-1">
+                          <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium bg-orange-500/10 text-orange-600 border-orange-500/20">
+                            <Flame className="h-3 w-3 fill-orange-600" /> Best
+                            Seller ({product._count.orderItems} sold)
+                          </span>
+                        </div>
+                      )}
 
                       <div className="flex items-center gap-4 mt-2 text-sm">
                         <div>
@@ -360,6 +384,22 @@ export function ProductsList({ products }: ProductsListProps) {
                     </TableCell>
                     <TableCell className="font-medium text-base">
                       {product.name}
+                      {product.isPopular && (
+                        <span
+                          className="ml-2 inline-flex items-center"
+                          title="Manually set as Popular"
+                        >
+                          <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                        </span>
+                      )}
+                      {product._count?.orderItems > 0 && (
+                        <span
+                          className="ml-2 inline-flex items-center"
+                          title={`Best Seller (${product._count.orderItems} sold)`}
+                        >
+                          <Flame className="h-4 w-4 text-orange-500 fill-orange-500" />
+                        </span>
+                      )}
                       <div className="text-sm text-muted-foreground">
                         {product.variants.length} variant
                         {product.variants.length > 1 ? "s" : ""}

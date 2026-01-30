@@ -10,6 +10,9 @@ export default async function ProductsPage() {
         orderBy: { sortOrder: "asc" },
         take: 1,
       },
+      _count: {
+        select: { orderItems: true },
+      },
     },
     orderBy: { createdAt: "desc" },
   });

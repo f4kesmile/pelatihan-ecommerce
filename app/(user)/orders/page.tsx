@@ -1,9 +1,12 @@
 import { getUserOrders } from "@/server/actions/order.actions";
+import { getReviewSettingsWithDefaults } from "@/server/actions/review-settings.actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Money } from "@/components/shared/money";
 import { Package, Clock, CheckCircle, XCircle, Truck } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { OrderReviewCTA } from "@/components/features/testimonial/order-review-cta";
 
 const statusConfig: Record<
   string,
@@ -22,7 +25,12 @@ const statusConfig: Record<
 };
 
 export default async function OrdersPage() {
-  const { orders, error } = await getUserOrders();
+  const [{ orders, error }, settingsResult] = await Promise.all([
+    getUserOrders(),
+    getReviewSettingsWithDefaults(),
+  ]);
+
+  const settings = settingsResult.success ? settingsResult.data : null;
 
   if (error) {
     return (
@@ -97,12 +105,13 @@ export default async function OrdersPage() {
                           key={idx}
                           className="flex items-center gap-3 text-sm"
                         >
-                          <div className="h-12 w-12 rounded bg-muted flex items-center justify-center overflow-hidden">
+                          <div className="h-12 w-12 rounded bg-muted flex items-center justify-center overflow-hidden relative">
                             {item.product.images?.[0] ? (
-                              <img
+                              <Image
                                 src={item.product.images[0].base64}
                                 alt={item.product.name}
-                                className="h-full w-full object-cover"
+                                fill
+                                className="object-cover"
                               />
                             ) : (
                               <Package className="h-5 w-5 text-muted-foreground" />
@@ -139,6 +148,23 @@ export default async function OrdersPage() {
                         className="text-lg font-bold"
                       />
                     </div>
+
+                    {settings &&
+                      settings.reviewsEnabled &&
+                      settings.myOrdersReviewEnabled && (
+                        <OrderReviewCTA
+                          orderId={order.id}
+                          orderNumber={order.orderNumber}
+                          orderStatus={order.status}
+                          orderDate={order.createdAt}
+                          testimonial={order.testimonial}
+                          reviewWindowDays={settings.reviewWindowDays}
+                          requireOrderSucceeded={settings.requireOrderSucceeded}
+                          allowResubmitOnRejected={
+                            settings.allowResubmitOnRejected
+                          }
+                        />
+                      )}
                   </CardContent>
                 </Card>
               );

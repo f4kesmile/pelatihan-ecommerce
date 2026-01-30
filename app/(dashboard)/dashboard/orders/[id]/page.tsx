@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Edit } from "lucide-react";
 import Link from "next/link";
+import { TestimonialRequestButton } from "@/components/features/admin/testimonial-request-button";
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>;
@@ -44,6 +45,11 @@ export default async function OrderDetailPage({
           </p>
         </div>
         <OrderStatusBadge status={order.status} className="text-sm px-3 py-1" />
+        <TestimonialRequestButton
+          orderId={order.id}
+          customerName={order.buyerName}
+          customerPhone={order.buyerPhone}
+        />
         <OrderStatusDialog orderId={order.id} currentStatus={order.status}>
           <Button>
             <Edit className="mr-2 h-4 w-4" /> Update Status

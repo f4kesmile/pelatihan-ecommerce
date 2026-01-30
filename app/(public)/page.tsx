@@ -7,7 +7,7 @@ import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 
 export default async function LandingPage() {
   const config = await getStoreConfig();
-  const popularProducts = await getPopularProductsUseCase(4);
+  const popularProducts = await getPopularProductsUseCase(12);
   const testimonials = await getApprovedTestimonials(10); // Get more for carousel
 
   return (
@@ -55,10 +55,13 @@ export default async function LandingPage() {
             <InfiniteMovingCards
               items={testimonials.map((t) => ({
                 id: t.id,
-                name: t.user.fullName,
+                name: t.user?.fullName || "Guest Customer",
+                avatar: t.user?.avatarBase64,
                 rating: t.rating,
                 message: t.message,
                 date: t.createdAt,
+                productName: t.order?.items[0]?.product.name || "Product",
+                productImage: t.order?.items[0]?.product.images[0]?.base64,
               }))}
               direction="right"
               speed="normal"

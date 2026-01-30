@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Loader2,
   Mail,
@@ -34,9 +35,10 @@ const BackgroundEffects = () => (
 
 interface RegisterFormProps {
   storeName: string;
+  storeLogo?: string | null;
 }
 
-export function RegisterForm({ storeName }: RegisterFormProps) {
+export function RegisterForm({ storeName, storeLogo }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -65,7 +67,7 @@ export function RegisterForm({ storeName }: RegisterFormProps) {
             error: "",
           };
         }
-      } catch (e) {
+      } catch {
         return {
           error: "An unexpected error occurred",
           success: false,
@@ -119,8 +121,17 @@ export function RegisterForm({ storeName }: RegisterFormProps) {
             href="/"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10">
-              <span className="font-bold text-lg">{storeName.charAt(0)}</span>
+            <div className="w-10 h-10 relative rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10 overflow-hidden">
+              {storeLogo ? (
+                <Image
+                  src={storeLogo}
+                  alt={storeName}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <span className="font-bold text-lg">{storeName.charAt(0)}</span>
+              )}
             </div>
             <span className="text-xl font-bold tracking-tight">
               {storeName}

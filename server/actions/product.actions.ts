@@ -3,7 +3,7 @@
 import prisma from "@/lib/db/prisma"
 import { productFormSchema, ProductFormValues } from "@/server/schemas/product.schema"
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
+
 
 export async function createProduct(data: ProductFormValues) {
   const validation = productFormSchema.safeParse(data)
@@ -12,7 +12,7 @@ export async function createProduct(data: ProductFormValues) {
     return { error: "Invalid data" }
   }
 
-  const { name, slug, description, categoryId, isActive, images, variants } = validation.data
+  const { name, slug, description, categoryId, isActive, isPopular, images, variants } = validation.data
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -24,6 +24,7 @@ export async function createProduct(data: ProductFormValues) {
           description: description || "",
           categoryId,
           isActive,
+          isPopular,
         },
       })
 
@@ -70,7 +71,7 @@ export async function updateProduct(productId: string, data: ProductFormValues) 
     return { error: "Invalid data" }
   }
 
-  const { name, slug, description, categoryId, isActive, images, variants } = validation.data
+  const { name, slug, description, categoryId, isActive, isPopular, images, variants } = validation.data
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -83,6 +84,7 @@ export async function updateProduct(productId: string, data: ProductFormValues) 
           description: description || "",
           categoryId,
           isActive,
+          isPopular,
         },
       })
 

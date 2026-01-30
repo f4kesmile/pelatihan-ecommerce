@@ -76,7 +76,7 @@ export function UserSettingsForm({ initialData }: UserSettingsFormProps) {
         form.setValue("avatarSize", file.size);
       };
       reader.readAsDataURL(file);
-    } catch (error) {
+    } catch {
       toast.error("Failed to process image");
     }
   };

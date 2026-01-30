@@ -5,5 +5,5 @@ export default async function RegisterPage() {
   const config = await getStoreConfig();
   const storeName = config?.storeName || "E-COMMERCE";
 
-  return <RegisterForm storeName={storeName} />;
+  return <RegisterForm storeName={storeName} storeLogo={config?.logoBase64} />;
 }

@@ -23,6 +23,7 @@ export const productFormSchema = z.object({
   description: z.string().optional(),
   categoryId: z.string().min(1, "Category is required"),
   isActive: z.boolean().default(true),
+  isPopular: z.boolean().default(false),
   
   images: z.array(productImageSchema).optional(),
   

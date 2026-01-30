@@ -20,6 +20,19 @@ enum OrderStatus {
   CANCELED
 }
 
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  HIDDEN
+}
+
+enum TestimonialSource {
+  MAGIC_LINK
+  MY_ORDERS
+  POPUP
+}
+
 model UserProfile {
   id             String  @id @default(cuid())
   supabaseUserId String  @unique
@@ -37,6 +50,7 @@ model UserProfile {
   adminPermissions AdminPermission[]
   orders           Order[]
   testimonials     Testimonial[]
+  engagement       UserEngagement?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -75,7 +89,8 @@ model Product {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
-  isActive Boolean @default(true)
+  isActive  Boolean @default(true)
+  isPopular Boolean @default(false)
 
   images     ProductImage[]
   variants   ProductVariant[]
@@ -180,8 +195,9 @@ model Order {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  statusLogs   OrderStatusLog[]
-  testimonials Testimonial[]
+  statusLogs        OrderStatusLog[]
+  testimonial       Testimonial?
+  testimonialTokens TestimonialRequestToken[]
 
   @@index([userId, createdAt])
   @@index([status])
@@ -223,31 +239,130 @@ model OrderStatusLog {
 
 model Testimonial {
   id      String @id @default(cuid())
-  userId  String
-  orderId String
+  orderId String @unique // ⭐ One review per order
+
+  userId String? // Nullable for guest via magic link
 
   rating  Int
   message String
 
-  isApproved Boolean @default(false)
-  isHidden   Boolean @default(false)
+  status TestimonialStatus @default(PENDING)
+  source TestimonialSource
 
-  user  UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
-  order Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  // Timestamps
+  submittedAt DateTime  @default(now())
+  approvedAt  DateTime?
+  rejectedAt  DateTime?
+
+  // Metadata (JSON: userAgent, ipHash, referrer, etc)
+  metadata Json?
+
+  // Relations
+  user  UserProfile? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([source])
+}
+
+// Magic link token for guest/WhatsApp submissions
+model TestimonialRequestToken {
+  id      String @id @default(cuid())
+  orderId String
+
+  tokenHash String @unique // SHA-256 hash
+
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  sendChannel      String  @default("WHATSAPP")
+  createdByAdminId String?
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
-  @@unique([userId, orderId])
-  @@index([isApproved, isHidden, createdAt])
+  @@index([orderId])
+  @@index([expiresAt])
+}
+
+// Dynamic review system settings (admin-controlled)
+model ReviewSettings {
+  id String @id @default(cuid())
+
+  // General
+  reviewsEnabled        Boolean @default(true)
+  requireOrderSucceeded Boolean @default(true)
+  oneReviewPerOrder     Boolean @default(true)
+  reviewWindowDays      Int     @default(30)
+  moderationRequired    Boolean @default(true)
+
+  // Magic Link
+  tokenExpiryHours     Int     @default(720) // 30 days
+  allowTokenRegenerate Boolean @default(true)
+  waTemplate           String  @default("Halo {customerName}! Terima kasih atas pesanan {orderCode}. Kami ingin mendengar pengalaman Anda. Klik link ini untuk memberi review: {reviewLink}")
+
+  // Smart Popup Rules
+  popupEnabled                   Boolean @default(true)
+  popupMinSessions               Int     @default(2)
+  popupMinDaysSinceFirstSeen     Int     @default(3)
+  popupMinSecondsOnSite          Int     @default(45)
+  popupCooldownDays              Int     @default(14)
+  popupMaxImpressionsPerWindow   Int     @default(3)
+  popupOnlyIfEligibleOrdersExist Boolean @default(true)
+
+  // Popup Copy
+  popupTitle     String @default("Bagaimana pengalaman Anda?")
+  popupBody      String @default("Kami ingin mendengar pendapat Anda tentang toko kami!")
+  successMessage String @default("Terima kasih atas review Anda!")
+
+  // My Orders CTA
+  myOrdersReviewEnabled    Boolean @default(true)
+  showReviewForLastNOrders Int     @default(5)
+  allowResubmitOnRejected  Boolean @default(false)
+
+  // Validation
+  ratingRequired   Boolean @default(true)
+  minMessageLength Int     @default(10)
+  maxMessageLength Int     @default(300)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// User engagement tracking for smart popup
+model UserEngagement {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  // Session tracking (Option 2: once per day)
+  firstSeenAt     DateTime @default(now())
+  sessionCount    Int      @default(0)
+  lastSessionAt   DateTime @default(now())
+  lastSessionDate String? // YYYY-MM-DD format for daily tracking
+
+  // Popup impression tracking
+  lastPopupShownAt         DateTime?
+  popupImpressionsInWindow Int       @default(0)
+  windowStartDate          DateTime?
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, lastSessionDate])
 }
 
 model FAQ {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   question  String
   answer    String
-  sortOrder Int     @default(0)
-  isActive  Boolean @default(true)
-
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

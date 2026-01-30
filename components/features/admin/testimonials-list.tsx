@@ -32,9 +32,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import {
-  toggleTestimonialStatus,
+  updateTestimonialStatus,
   deleteTestimonial,
-  toggleTestimonialVisibility,
 } from "@/server/actions/testimonial-admin.actions";
 import { TestimonialWithUser } from "@/types";
 
@@ -45,32 +44,34 @@ interface TestimonialsListProps {
 export function TestimonialsList({ data }: TestimonialsListProps) {
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
-  const handleToggleStatus = async (id: string, currentStatus: boolean) => {
+  const handleToggleStatus = async (id: string, currentStatus: string) => {
     setLoadingId(id);
-    const result = await toggleTestimonialStatus(id, !currentStatus);
+    const newStatus = currentStatus === "APPROVED" ? "PENDING" : "APPROVED";
+    const result = await updateTestimonialStatus(id, newStatus);
     setLoadingId(null);
 
     if (result.success) {
       toast.success(
-        currentStatus
-          ? "Testimonial hidden from public"
-          : "Testimonial approved",
+        newStatus === "APPROVED"
+          ? "Testimonial approved"
+          : "Testimonial reverted to pending",
       );
     } else {
       toast.error(result.error);
     }
   };
 
-  const handleToggleVisibility = async (id: string, currentHidden: boolean) => {
+  const handleToggleVisibility = async (id: string, currentStatus: string) => {
     setLoadingId(id);
-    const result = await toggleTestimonialVisibility(id, !currentHidden);
+    const newStatus = currentStatus === "HIDDEN" ? "APPROVED" : "HIDDEN";
+    const result = await updateTestimonialStatus(id, newStatus);
     setLoadingId(null);
 
     if (result.success) {
       toast.success(
-        currentHidden
-          ? "Testimonial is now visible"
-          : "Testimonial is now hidden",
+        newStatus === "HIDDEN"
+          ? "Testimonial is now hidden"
+          : "Testimonial is now visible",
       );
     } else {
       toast.error(result.error);
@@ -123,13 +124,21 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    {item.isApproved ? (
+                    {item.status === "APPROVED" ? (
                       <span className="text-xs bg-green-500/15 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full font-medium">
                         Approved
                       </span>
-                    ) : (
+                    ) : item.status === "PENDING" ? (
                       <span className="text-xs bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 px-2 py-0.5 rounded-full font-medium">
                         Pending
+                      </span>
+                    ) : item.status === "REJECTED" ? (
+                      <span className="text-xs bg-red-500/15 text-red-700 dark:text-red-400 px-2 py-0.5 rounded-full font-medium">
+                        Rejected
+                      </span>
+                    ) : (
+                      <span className="text-xs bg-gray-500/15 text-gray-700 dark:text-gray-400 px-2 py-0.5 rounded-full font-medium">
+                        Hidden
                       </span>
                     )}
                   </div>
@@ -161,12 +170,14 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                     variant="ghost"
                     size="sm"
                     disabled={loadingId === item.id}
-                    onClick={() => handleToggleStatus(item.id, item.isApproved)}
+                    onClick={() => handleToggleStatus(item.id, item.status)}
                     className={
-                      item.isApproved ? "text-destructive" : "text-green-600"
+                      item.status === "APPROVED"
+                        ? "text-destructive"
+                        : "text-green-600"
                     }
                   >
-                    {item.isApproved ? (
+                    {item.status === "APPROVED" ? (
                       <>
                         <ShieldAlert className="h-4 w-4 mr-2" /> Reject
                       </>
@@ -185,10 +196,10 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
                         onClick={() =>
-                          handleToggleVisibility(item.id, item.isHidden)
+                          handleToggleVisibility(item.id, item.status)
                         }
                       >
-                        {item.isHidden ? (
+                        {item.status === "HIDDEN" ? (
                           <>
                             <Eye className="mr-2 h-4 w-4" /> Show Publicly
                           </>
@@ -271,17 +282,18 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      {item.isApproved ? (
-                        <Badge
-                          variant="default"
-                          className="bg-green-600 hover:bg-green-700"
-                        >
+                      {item.status === "APPROVED" && (
+                        <Badge className="bg-green-600 hover:bg-green-700">
                           Approved
                         </Badge>
-                      ) : (
+                      )}
+                      {item.status === "PENDING" && (
                         <Badge variant="secondary">Pending</Badge>
                       )}
-                      {item.isHidden && (
+                      {item.status === "REJECTED" && (
+                        <Badge variant="destructive">Rejected</Badge>
+                      )}
+                      {item.status === "HIDDEN" && (
                         <Badge
                           variant="outline"
                           className="text-muted-foreground border-dashed"
@@ -307,10 +319,10 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
                           onClick={() =>
-                            handleToggleStatus(item.id, item.isApproved)
+                            handleToggleStatus(item.id, item.status)
                           }
                         >
-                          {item.isApproved ? (
+                          {item.status === "APPROVED" ? (
                             <>
                               <ShieldAlert className="mr-2 h-4 w-4" /> Reject
                             </>
@@ -322,10 +334,10 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() =>
-                            handleToggleVisibility(item.id, item.isHidden)
+                            handleToggleVisibility(item.id, item.status)
                           }
                         >
-                          {item.isHidden ? (
+                          {item.status === "HIDDEN" ? (
                             <>
                               <Eye className="mr-2 h-4 w-4" /> Show
                             </>

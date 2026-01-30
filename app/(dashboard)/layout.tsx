@@ -37,6 +37,7 @@ export default async function AdminLayout({
       defaultOpen={defaultOpen}
       user={serializedUser}
       storeName={storeConfig?.storeName}
+      storeLogo={storeConfig?.logoBase64}
     >
       {children}
     </DashboardLayout>

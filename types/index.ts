@@ -1,8 +1,12 @@
 export interface UserProfile {
   id: string;
-  userId: string;
+  supabaseUserId: string;
   fullName: string;
   email: string;
+  phone?: string | null;
+  city?: string | null;
+  address?: string | null;
+  avatarBase64?: string | null;
   role: "USER" | "ADMIN" | "SUPERADMIN";
   createdAt: Date | string;
   updatedAt: Date | string;
@@ -32,8 +36,7 @@ export interface TestimonialWithUser {
   id: string;
   rating: number;
   message: string;
-  isApproved: boolean;
-  isHidden: boolean;
+  status: "APPROVED" | "PENDING" | "REJECTED" | "HIDDEN"; // Replaces isApproved and isHidden
   createdAt: Date | string;
   user: PublicUserInfo;
 }
