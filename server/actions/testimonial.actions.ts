@@ -556,10 +556,15 @@ export async function getTestimonials({
           order: {
             select: {
               orderNumber: true,
+              createdAt: true,
               items: {
                 take: 1,
                 select: {
+                  id: true,
                   productName: true,
+                  variantName: true,
+                  quantity: true,
+                  unitPrice: true,
                 },
               },
             },

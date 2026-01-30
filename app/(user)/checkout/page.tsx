@@ -20,7 +20,12 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     getStoreConfig().then((data) => {
-      if (data) setConfig(data as StoreConfig);
+      if (data) {
+        setConfig({
+          whatsappAdmin: data.whatsappAdmin || "",
+          whatsappTemplate: data.whatsappTemplate || "",
+        });
+      }
     });
   }, []);
 
