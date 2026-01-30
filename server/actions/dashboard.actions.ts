@@ -23,7 +23,7 @@ export async function getDashboardStats() {
         orderBy: { createdAt: "desc" },
         include: {
           user: {
-            select: { fullName: true, email: true, avatarBase64: true },
+            select: { id: true, fullName: true, email: true, avatarBase64: true },
           },
         },
       }),
