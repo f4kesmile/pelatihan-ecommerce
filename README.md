@@ -57,61 +57,69 @@ A premium, modern, and high-performance e-commerce platform built with **Next.js
 ```text
 .
 ├── app/
-│   ├── (auth)/                 # Authentication routes (Login, Register)
-│   ├── (dashboard)/            # Admin Dashboard (Protected)
-│   │   ├── dashboard/          # Main dashboard views
-│   │   │   ├── orders/         # Order management
-│   │   │   ├── products/       # Product management
-│   │   │   ├── settings/       # Store settings
-│   │   │   ├── testimonials/   # Testimonial moderation
-│   │   │   └── users/          # User & Role management
-│   │   └── layout.tsx          # Dashboard layout with strict role checks
-│   ├── (public)/              # Core storefront routes
-│   │   ├── products/           # Product catalog & details
-│   │   ├── privacy/            # Privacy policy
-│   │   ├── terms/              # Terms of service
-│   │   ├── layout.tsx          # Public theme layout
-│   │   └── page.tsx            # Home page (Hero, Featured, etc.)
-│   ├── (user)/                # User-specific routes (Cart, Order History)
-│   ├── api/                    # API route handlers
-│   ├── globals.css             # Global Tailwind styles
-│   └── layout.tsx              # Root HTML layout
+│   ├── (auth)/                 # Authentication (Login, Register, Forgot Password)
+│   ├── (dashboard)/            # Admin Dashboard Layout & Routes
+│   │   └── dashboard/
+│   │       ├── orders/         # Order List & Details Management
+│   │       ├── products/       # Product CRUD & Inventory
+│   │       ├── reviews/        # Review Moderation & Settings
+│   │       ├── settings/       # Store Configuration (Hero, Support, SEO)
+│   │       ├── testimonials/   # Testimonial Approval System
+│   │       └── users/          # User Role & Permission Management
+│   ├── (public)/              # Main Storefront Layout & Routes
+│   │   ├── products/           # Product Catalog, Search & Details
+│   │   ├── review/             # Magic Link Review Page
+│   │   ├── privacy/            # Privacy Policy Page
+│   │   └── terms/              # Terms of Service Page
+│   ├── (user)/                # Customer Personal Area
+│   │   ├── cart/               # Cart Management & Summary
+│   │   ├── checkout/           # Checkout Form & WhatsApp Integration
+│   │   ├── orders/             # Order History & Status Tracking
+│   │   └── support/            # Customer Support Info
+│   ├── api/                    # Helper API Routes (if any)
+│   ├── not-found.tsx           # Custom 404 Error UI
+│   ├── globals.css             # Global Styles & Tailwind Directives
+│   └── layout.tsx              # Root Layout (Fonts, Providers, Toaster)
 ├── components/
-│   ├── features/               # Domain-specific feature components
-│   │   ├── admin/              # Dashboard-specific features (ProductsList, UsersList, etc.)
-│   │   ├── auth/               # Identity & Access components
-│   │   ├── cart/               # Shopping cart logic
-│   │   ├── home/               # Landing page sections (Hero)
-│   │   ├── product/            # Product display logic
-│   │   └── testimonial/        # Review & Rating components
-│   ├── layouts/                # Shared UI structures (Navbar, Footer, Sidebar)
-│   ├── shared/                 # Generic reusable components (ThemeToggle)
-│   └── ui/                     # Base UI components (Button, Input, Dialog, etc.)
+│   ├── features/               # Feature-Specific Components
+│   │   ├── admin/              # Admin Dashboard Modules
+│   │   │   ├── dashboard/      # Statistics & Charts
+│   │   │   ├── orders/         # Order Tables & Status Badges
+│   │   │   ├── products/       # Product Forms & Image Upload
+│   │   │   ├── store-settings/ # Store Config Forms
+│   │   │   └── users/          # User Tables & Access Control
+│   │   ├── auth/               # Access Control (LoginForm, RegisterForm)
+│   │   ├── cart/               # Cart Logic (Context, Items, Summary)
+│   │   ├── checkout/           # Checkout Logic (Form, WA Generator)
+│   │   ├── home/               # Homepage Sections (Hero, Featured)
+│   │   ├── product/            # Product UI (Cards, Gallery, Filters)
+│   │   └── testimonial/        # Review UI (Carousel, Popups, Modals)
+│   ├── layouts/                # Structural Components (Navbar, Footer, Sidebar)
+│   ├── shared/                 # Reusable Utilities (Pagination, Price Format)
+│   └── ui/                     # Primitives (Button, Dialog, Input...)
 ├── server/
-│   ├── actions/                # Next.js Server Actions (The "Backend")
-│   │   ├── auth.actions.ts         # User authentication logic
-│   │   ├── product.actions.ts      # Product CRUD & logic
-│   │   ├── user.actions.ts         # Profile & Role management
-│   │   ├── order.actions.ts        # Checkout & Order processing
-│   │   └── store.actions.ts        # Store configuration logic
-│   ├── schemas/                # Zod validation schemas
-│   │   ├── product.schema.ts
-│   │   ├── user.schema.ts
-│   │   └── store.schema.ts
-│   ├── repositories/           # Database abstraction layer
-│   └── usecases/               # Complex business logic
-├── prisma/                     # Database layer
-│   ├── schema.prisma           # Prisma model definitions
-│   └── seed.ts                 # Initial data seeding script
-├── lib/                        # Shared library initializations
-│   ├── prisma.ts               # Prisma client singleton
-│   └── supabase/               # Supabase client config (Server/Client)
-├── utils/                      # Formatting & helper utilities
-├── public/                     # Static assets (Logos, Icons)
-├── next.config.ts              # Next.js configuration
-├── package.json                # Project dependencies & scripts
-├── tailwind.config.ts          # Tailwind CSS theme configuration
-└── tsconfig.json               # TypeScript configuration
+│   ├── actions/                # Server Actions (Backend Logic)
+│   │   ├── auth.actions.ts         # Authentication & Session
+│   │   ├── dashboard.actions.ts    # Statistics & Reporting
+│   │   ├── order.actions.ts        # Order CRUD & Persistence
+│   │   ├── product.actions.ts      # Product Catalog Management
+│   │   ├── store.actions.ts        # Store Configuration
+│   │   └── user.actions.ts         # User Profile & Roles
+│   ├── repositories/           # Database Query Layer
+│   ├── schemas/                # Zod Validation Schemas
+│   └── usecases/               # Business Logic Aggregation
+├── prisma/                     # Database Schema & Migrations
+│   ├── schema.prisma           # Database Models Definition
+│   └── seed.ts                 # Initial Data Population Script
+├── lib/                        # Core Configuration & Clients
+│   ├── prisma.ts               # Prisma Client Singleton
+│   ├── supabase/               # Supabase Auth Clients
+│   ├── utils.ts                # Helper Functions
+│   └── whatsapp.ts             # WhatsApp Link Generator
+├── public/                     # Static Assets
+├── next.config.ts              # Next.js Build Config
+├── tailwind.config.ts          # Tailwind Theme Config
+└── tsconfig.json               # TypeScript Config
 ```
 
 ## 🛠️ Getting Started
