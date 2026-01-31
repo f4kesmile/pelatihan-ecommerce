@@ -8,6 +8,7 @@ export async function Footer() {
   return (
     <footer className="border-t bg-background">
       <div className="container px-4 md:px-6 lg:px-8 py-12">
+        <h2 className="sr-only">Footer</h2>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3">
             <h3 className="text-lg font-semibold tracking-tight">Our Store</h3>

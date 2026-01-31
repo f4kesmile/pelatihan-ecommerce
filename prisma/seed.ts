@@ -2,11 +2,7 @@ import prisma from "../lib/db/prisma"
 
 async function main() {
   console.log("🌱 Starting database seed...")
-
-  // 1. Store Configuration
   console.log("Creating store config...")
-  
-  // Delete existing config if any
   await prisma.storeConfig.deleteMany({})
   
   await prisma.storeConfig.create({
@@ -28,8 +24,6 @@ async function main() {
       termsContent: "By using our service, you agree to our terms and conditions.",
     },
   })
-
-  // 2. Categories
   console.log("Creating categories...")
   await prisma.category.deleteMany({})
   
@@ -44,8 +38,6 @@ async function main() {
   const accessories = await prisma.category.create({
     data: { name: "Accessories", slug: "accessories", isActive: true },
   })
-
-  // 3. Sample Products with Variants
   console.log("Creating sample products...")
   
   const product1 = await prisma.product.create({
@@ -98,8 +90,6 @@ async function main() {
       },
     },
   })
-
-  // 3. Sample User
   console.log("Creating sample user...")
   const user = await prisma.userProfile.create({
     data: {
@@ -112,8 +102,6 @@ async function main() {
       role: "USER",
     },
   })
-
-  // 4. Sample Orders
   console.log("Creating sample orders...")
   const order1 = await prisma.order.create({
     data: {
@@ -150,8 +138,6 @@ async function main() {
       note: "Order created",
     },
   })
-
-  // 5. Sample Testimonials
   console.log("Creating sample testimonials...")
   await prisma.testimonial.create({
     data: {
@@ -174,26 +160,19 @@ async function main() {
   - 1 Sample Order
   - 1 Testimonial
   `)
-
-  // 6. Review System Settings
   console.log("Creating review system settings...")
   await prisma.reviewSettings.deleteMany({})
   
   await prisma.reviewSettings.create({
     data: {
-      // General
       reviewsEnabled: true,
       requireOrderSucceeded: true,
       oneReviewPerOrder: true,
       reviewWindowDays: 30,
       moderationRequired: true,
-
-      // Magic Link
       tokenExpiryHours: 720, // 30 days
       allowTokenRegenerate: true,
       waTemplate: "Halo {customerName}! Terima kasih atas pesanan {orderCode}. Kami ingin mendengar pengalaman Anda. Klik link ini untuk memberi review: {reviewLink}",
-
-      // Smart Popup
       popupEnabled: true,
       popupMinSessions: 2,
       popupMinDaysSinceFirstSeen: 3,
@@ -201,18 +180,12 @@ async function main() {
       popupCooldownDays: 14,
       popupMaxImpressionsPerWindow: 3,
       popupOnlyIfEligibleOrdersExist: true,
-
-      // Popup Copy
       popupTitle: "Bagaimana pengalaman Anda?",
       popupBody: "Kami ingin mendengar pendapat Anda tentang toko kami!",
       successMessage: "Terima kasih atas review Anda!",
-
-      // My Orders
       myOrdersReviewEnabled: true,
       showReviewForLastNOrders: 5,
       allowResubmitOnRejected: false,
-
-      // Validation
       ratingRequired: true,
       minMessageLength: 10,
       maxMessageLength: 300,

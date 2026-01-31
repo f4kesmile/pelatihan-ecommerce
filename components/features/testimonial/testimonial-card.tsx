@@ -24,17 +24,13 @@ export function TestimonialCard({
   productImage,
   className,
 }: TestimonialCardProps) {
-  // Helper to handle base64 prefixing
   const getSafeImageSrc = (src?: string | null) => {
     if (!src) return undefined;
 
-    // Check for known valid URL formats
     if (src.startsWith("http") || src.startsWith("data:")) {
       return src;
     }
 
-    // Check for static asset paths (if any exist in public folder)
-    // Avoids treating Base64 JPEGs (starting with /9j/) as paths
     if (
       src.startsWith("/images/") ||
       src.startsWith("/icons/") ||
@@ -43,7 +39,6 @@ export function TestimonialCard({
       return src;
     }
 
-    // Assume it's a Raw Base64 string
     return `data:image/jpeg;base64,${src}`;
   };
 

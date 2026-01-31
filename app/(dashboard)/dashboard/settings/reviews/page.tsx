@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getReviewSettingsWithDefaults } from "@/server/actions/review-settings.actions";
-import { ReviewSettingsForm } from "@/components/features/admin/review-settings-form";
+import { ReviewSettingsForm } from "@/components/features/admin/reviews/review-settings-form";
 import {
   Card,
   CardContent,

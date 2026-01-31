@@ -37,8 +37,6 @@ export const storeConfigSchema = z.object({
 
   websiteUrl: z.string().optional().nullable(),
   showWebsite: z.boolean(),
-
-  // Footer Config
   footerSocialText: z.string().optional().nullable(),
 
   supportLinkText: z.string().optional().nullable(),

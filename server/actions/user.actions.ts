@@ -63,11 +63,7 @@ export async function changePassword(data: { currentPassword: string; newPasswor
   try {
     const { error } = await supabase.auth.updateUser({
       password: data.newPassword,
-    }); // Note: Supabase implementation usually requires signing in first to verify old password, 
-        // but for now we assume session is active and valid. 
-        // Ideally should verify current password if strict security needed, 
-        // but Supabase JS client handles re-auth often on client side.
-        // Server side updateUser works if authenticated.
+    });
 
     if (error) throw error;
     return { success: true };
@@ -108,7 +104,6 @@ export async function updateUserRole(userId: string, newRole: Role) {
   }
 
   try {
-    // Fetch requester's profile to check their role
     const requesterProfile = await prisma.userProfile.findUnique({
       where: { supabaseUserId: currentUser.id },
     });
@@ -117,12 +112,10 @@ export async function updateUserRole(userId: string, newRole: Role) {
       return { success: false, error: "Insufficient permissions" };
     }
 
-    // Rule 1: Cannot change own role (prevent locking oneself out)
     if (requesterProfile.id === userId) {
       return { success: false, error: "You cannot change your own role" };
     }
 
-    // Fetch target user's profile
     const targetUser = await prisma.userProfile.findUnique({
       where: { id: userId },
     });
@@ -131,12 +124,10 @@ export async function updateUserRole(userId: string, newRole: Role) {
       return { success: false, error: "User not found" };
     }
 
-    // Rule 2: Only SUPERADMIN can change another SUPERADMIN's role
     if (targetUser.role === "SUPERADMIN" && requesterProfile.role !== "SUPERADMIN") {
       return { success: false, error: "Only Super Admin can modify another Super Admin" };
     }
 
-    // Rule 3: Only SUPERADMIN can promote someone to SUPERADMIN
     if (newRole === "SUPERADMIN" && requesterProfile.role !== "SUPERADMIN") {
       return { success: false, error: "Only Super Admin can promote users to Super Admin" };
     }

@@ -20,7 +20,6 @@ export async function Navbar() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch user profile for role check
   const userProfile = user ? await getUserProfile() : null;
 
   return (

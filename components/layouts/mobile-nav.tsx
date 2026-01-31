@@ -20,9 +20,7 @@ export function MobileNav({ userProfile }: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Prevent hydration mismatch
   useEffect(() => {
-    // Small timeout to avoid "setState in effect" warning and ensure client-side only
     const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
   }, []);
@@ -33,7 +31,7 @@ export function MobileNav({ userProfile }: MobileNavProps) {
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle menu</span>
       </Button>
-    ); // Return a placeholder button to prevent layout shift
+    );
   }
 
   return (

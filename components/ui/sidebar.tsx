@@ -96,7 +96,6 @@ const SidebarProvider = React.forwardRef<
       return isMobile ? setOpenMobile((o) => !o) : setOpen((o) => !o);
     }, [isMobile, setOpen]);
 
-    // Keyboard shortcut
     React.useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
         if (
@@ -172,7 +171,6 @@ const Sidebar = React.forwardRef<
   ) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
-    // Mobile: use Sheet
     if (isMobile) {
       return (
         <Sheet open={openMobile} onOpenChange={setOpenMobile}>
@@ -190,7 +188,6 @@ const Sidebar = React.forwardRef<
       );
     }
 
-    // Desktop: STATIC sidebar (BUKAN FIXED!)
     return (
       <aside
         ref={ref}

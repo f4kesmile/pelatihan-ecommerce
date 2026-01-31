@@ -1,4 +1,3 @@
-// app/(public)/review/page.tsx
 import { validateMagicLinkToken } from "@/server/actions/testimonial.actions";
 import { MagicReviewForm } from "@/components/features/testimonial/magic-review-form";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,6 @@ export default async function ReviewPage({ searchParams }: ReviewPageProps) {
     notFound();
   }
 
-  // Validate Token and Fetch Data
   const { success, error, order, settings } =
     await validateMagicLinkToken(token);
 
@@ -39,7 +37,6 @@ export default async function ReviewPage({ searchParams }: ReviewPageProps) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4 sm:p-8">
         <div className="w-full max-w-md text-center animate-in fade-in zoom-in-95 duration-500">
-          {/* Glow Effect */}
           <div className="relative mx-auto mb-8 h-24 w-24">
             <div className="absolute inset-0 animate-pulse rounded-full bg-destructive/20 blur-xl" />
             <div className="relative flex h-full w-full items-center justify-center rounded-full bg-destructive/10 ring-1 ring-destructive/20">
@@ -70,7 +67,6 @@ export default async function ReviewPage({ searchParams }: ReviewPageProps) {
     );
   }
 
-  // Check if already reviewed (and not allowing resubmit)
   const existingTestimonial = order.testimonial;
   const canResubmit =
     existingTestimonial &&
@@ -81,7 +77,6 @@ export default async function ReviewPage({ searchParams }: ReviewPageProps) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4 sm:p-8">
         <div className="w-full max-w-lg text-center animate-in fade-in zoom-in-95 duration-500">
-          {/* Success Animation */}
           <div className="relative mx-auto mb-8 h-24 w-24">
             <div className="absolute inset-0 animate-pulse rounded-full bg-green-500/20 blur-xl" />
             <div className="relative flex h-full w-full items-center justify-center rounded-full bg-green-500/10 ring-1 ring-green-500/20 text-green-600 dark:text-green-400">
@@ -96,7 +91,6 @@ export default async function ReviewPage({ searchParams }: ReviewPageProps) {
             Thank you for reviewing your order <b>#{order.orderNumber}</b>.
           </p>
 
-          {/* Product List - Minimal Grid */}
           <div className="mb-10 text-left">
             <h3 className="mb-4 text-sm font-medium text-muted-foreground uppercase tracking-wider text-center">
               Review Details
@@ -127,7 +121,6 @@ export default async function ReviewPage({ searchParams }: ReviewPageProps) {
                     </h4>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                       {item.variant && <span>{item.variant.name}</span>}
-                      {/* <span className="opacity-50">|</span> */}
                       <span className="block w-full sm:w-auto">
                         {order.createdAt.toLocaleDateString("en-US", {
                           month: "short",
@@ -159,7 +152,6 @@ export default async function ReviewPage({ searchParams }: ReviewPageProps) {
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-muted/30 p-4 sm:p-8">
-      {/* Header outside the card for the main form to reduce visual noise inside */}
       <div className="mb-8 text-center max-w-xl animate-in fade-in slide-in-from-top-4 duration-700">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl mb-3 bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent">
           Share Your Experience

@@ -344,6 +344,11 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                           size="icon"
                           className="h-8 w-8"
                           onClick={() => toggleRow(item.id)}
+                          aria-label={
+                            isExpanded
+                              ? "Collapse order details"
+                              : "Expand order details"
+                          }
                         >
                           {isExpanded ? (
                             <ChevronDown className="h-4 w-4" />

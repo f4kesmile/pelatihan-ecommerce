@@ -71,12 +71,11 @@ export function AppSidebar({
 
   return (
     <Sidebar collapsible="icon">
-      {/* Header */}
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild tooltip={displayName}>
-              <Link href="/dashboard">
+              <Link href="/dashboard" aria-label={displayName}>
                 <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0 overflow-hidden relative">
                   {storeLogo ? (
                     <Image
@@ -124,6 +123,7 @@ export function AppSidebar({
                     >
                       <Link
                         href={item.url}
+                        aria-label={item.title}
                         onClick={() => {
                           if (isMobile) {
                             setOpenMobile(false);
@@ -147,7 +147,7 @@ export function AppSidebar({
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Back to Store">
-                  <Link href="/">
+                  <Link href="/" aria-label="Back to Store">
                     <Store className="size-5 shrink-0" />
                     {!isCollapsed && <span>Back to Store</span>}
                   </Link>
@@ -169,6 +169,7 @@ export function AppSidebar({
                     size="lg"
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     tooltip={user?.fullName || "Admin"}
+                    aria-label={user?.fullName || "Admin"}
                   >
                     <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-muted text-muted-foreground shrink-0">
                       <User2 className="size-5" />
@@ -204,7 +205,11 @@ export function AppSidebar({
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <SidebarMenuButton size="lg" tooltip={user?.fullName || "Admin"}>
+              <SidebarMenuButton
+                size="lg"
+                tooltip={user?.fullName || "Admin"}
+                aria-label={user?.fullName || "Admin"}
+              >
                 <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-muted text-muted-foreground shrink-0">
                   <User2 className="size-5" />
                 </div>

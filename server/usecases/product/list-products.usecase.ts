@@ -20,12 +20,7 @@ export async function listProductsUseCase(params: ListProductsParams) {
     page,
     limit,
   })
-
-  // Transform to DTO if needed using minVariantPrice logic
   const mappedProducts = products.map((p) => {
-    // Calculate min price from the fetched variants
-    // Repo fetched 'variants' (maybe filtered/limited). 
-    // To be safe, we rely on what repo returned.
     const minPrice = p.variants?.[0]?.price || 0
 
     return {

@@ -116,7 +116,6 @@ export async function updateOrderStatus(input: UpdateOrderStatusInput) {
       return { error: "Order not found" }
     }
 
-    // Update order and create audit log in a transaction
     await prisma.$transaction([
       prisma.order.update({
         where: { id: orderId },
@@ -127,7 +126,7 @@ export async function updateOrderStatus(input: UpdateOrderStatusInput) {
           orderId,
           from: currentOrder.status,
           to: status,
-          changedBy: "admin", // TODO: Replace with actual admin user ID when auth is implemented
+          changedBy: "admin",
           note: note || null,
         },
       }),

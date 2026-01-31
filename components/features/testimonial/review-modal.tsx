@@ -50,7 +50,6 @@ export function ReviewModal({
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async () => {
-    // Validation
     if (rating === 0) {
       toast.error("Mohon pilih rating terlebih dahulu");
       return;
@@ -66,7 +65,6 @@ export function ReviewModal({
       return;
     }
 
-    // Submit
     startTransition(async () => {
       const result = await submitReviewFromMyOrders({
         orderId,

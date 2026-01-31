@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export type CartItem = {
-  id: string; // variantId
+  id: string;
   productId: string;
   name: string;
   slug: string;
@@ -29,7 +29,6 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
-    // Lazy initialization from localStorage
     if (typeof window !== "undefined") {
       const savedCart = localStorage.getItem("zinc-cart");
       if (savedCart) {
@@ -43,7 +42,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return [];
   });
 
-  // Save to localStorage on change
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("zinc-cart", JSON.stringify(items));
@@ -112,9 +110,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     0,
   );
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
-
-  // Avoid hydration mismatch by not rendering items until initialized
-  // OR just accept that it might be empty on server render (recommended for simple localStorage)
 
   return (
     <CartContext.Provider

@@ -8,11 +8,10 @@ import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 export default async function LandingPage() {
   const config = await getStoreConfig();
   const popularProducts = await getPopularProductsUseCase(12);
-  const testimonials = await getApprovedTestimonials(10); // Get more for carousel
+  const testimonials = await getApprovedTestimonials(10);
 
   return (
     <div className="flex flex-col gap-16 pb-16">
-      {/* Hero - Keep centered */}
       <div className="mx-auto max-w-7xl w-full">
         <Hero
           headline={config?.heroHeadline}
@@ -22,7 +21,6 @@ export default async function LandingPage() {
         />
       </div>
 
-      {/* Popular Products - Left-aligned full width */}
       <section className="w-full px-4 md:px-6 lg:px-8 space-y-8">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold tracking-tight">
@@ -37,7 +35,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials - Full width with auto-scroll carousel */}
       <section className="space-y-8">
         <div className="mx-auto max-w-7xl w-full px-4 md:px-6 lg:px-8">
           <div className="text-center space-y-2">

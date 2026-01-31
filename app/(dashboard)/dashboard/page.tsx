@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/card";
 import { Package, ShoppingCart, DollarSign, MessageSquare } from "lucide-react";
 import { getDashboardStats } from "@/server/actions/dashboard.actions";
-import { Overview } from "@/components/features/admin/overview";
-import { RecentSales } from "@/components/features/admin/recent-sales";
+import { Overview } from "@/components/features/admin/dashboard/overview";
+import { RecentSales } from "@/components/features/admin/dashboard/recent-sales";
 import { Money } from "@/components/shared/money";
 
 export default async function DashboardPage() {

@@ -25,16 +25,13 @@ export function ReviewPopup({
   const [hasChecked, setHasChecked] = useState(false);
 
   useEffect(() => {
-    // Check if dismissed
     const dismissed = localStorage.getItem(`dismissed_review_popup_${orderId}`);
 
     if (dismissed) {
-      // Use setTimeout to avoid "synchronous setState in effect" lint error
       const t = setTimeout(() => setHasChecked(true), 0);
       return () => clearTimeout(t);
     }
 
-    // Delay showing for 3 seconds
     const timer = setTimeout(() => {
       setIsVisible(true);
       setHasChecked(true);
@@ -54,7 +51,6 @@ export function ReviewPopup({
   };
 
   const handleReviewSuccess = () => {
-    // Mark as dismissed/done so it doesn't show again
     localStorage.setItem(`dismissed_review_popup_${orderId}`, "true");
   };
 

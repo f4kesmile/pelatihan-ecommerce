@@ -3,7 +3,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
   return (
     <div className="flex flex-col gap-16 pb-16">
-      {/* Hero Skeleton */}
       <div className="mx-auto max-w-7xl w-full px-4 md:px-6 lg:px-8 mt-10">
         <div className="flex flex-col items-center space-y-4 text-center">
           <Skeleton className="h-12 w-3/4 max-w-2xl" />
@@ -15,7 +14,6 @@ export default function Loading() {
         </div>
       </div>
 
-      {/* Popular Products Skeleton */}
       <section className="w-full px-4 md:px-6 lg:px-8 space-y-8">
         <div className="flex items-center justify-between">
           <Skeleton className="h-8 w-48" />
@@ -34,7 +32,6 @@ export default function Loading() {
         </div>
       </section>
 
-      {/* Testimonials Skeleton */}
       <section className="space-y-8">
         <div className="mx-auto max-w-7xl w-full px-4 md:px-6 lg:px-8">
           <div className="text-center space-y-2 flex flex-col items-center">

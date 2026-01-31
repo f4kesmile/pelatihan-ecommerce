@@ -54,7 +54,7 @@ interface Product {
   name: string;
   slug: string;
   isActive: boolean;
-  isPopular: boolean; // Added isPopular
+  isPopular: boolean;
   category: { name: string };
   variants: Variant[];
   images: ProductImage[];
@@ -67,7 +67,6 @@ interface ProductsListProps {
   products: Product[];
 }
 
-// Status Badge Component
 function StatusBadge({
   soldOut,
   isActive,
@@ -109,7 +108,6 @@ export function ProductsList({ products }: ProductsListProps) {
     setExpandedRows(newExpanded);
   };
 
-  // Helper to check if product is "sold out" (no active variants with stock)
   const isSoldOut = (variants: Variant[]) => {
     const hasActiveStock = variants.some((v) => v.isActive && v.stock > 0);
     return !hasActiveStock;
@@ -245,6 +243,9 @@ export function ProductsList({ products }: ProductsListProps) {
                             e.stopPropagation();
                             toggleRow(product.id);
                           }}
+                          aria-label={
+                            isExpanded ? "Collapse variants" : "Expand variants"
+                          }
                         >
                           {isExpanded ? (
                             <>
@@ -261,7 +262,10 @@ export function ProductsList({ products }: ProductsListProps) {
                         </button>
                         <div className="flex gap-2">
                           <Button asChild size="sm" variant="outline">
-                            <Link href={`/dashboard/products/${product.id}`}>
+                            <Link
+                              href={`/dashboard/products/${product.id}`}
+                              aria-label={`Edit ${product.name}`}
+                            >
                               <Pencil className="h-4 w-4" />
                             </Link>
                           </Button>
@@ -269,6 +273,7 @@ export function ProductsList({ products }: ProductsListProps) {
                             <Link
                               href={`/products/${product.slug}`}
                               target="_blank"
+                              aria-label={`View ${product.name} on public site`}
                             >
                               <Eye className="h-4 w-4" />
                             </Link>
@@ -360,11 +365,22 @@ export function ProductsList({ products }: ProductsListProps) {
                     onClick={() => toggleRow(product.id)}
                   >
                     <TableCell>
-                      {isExpanded ? (
-                        <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                      ) : (
-                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleRow(product.id);
+                        }}
+                        className="p-1"
+                        aria-label={
+                          isExpanded ? "Collapse variants" : "Expand variants"
+                        }
+                      >
+                        {isExpanded ? (
+                          <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                        )}
+                      </button>
                     </TableCell>
                     <TableCell>
                       <div className="relative aspect-square h-14 w-14 rounded-lg overflow-hidden bg-muted">

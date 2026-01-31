@@ -13,7 +13,6 @@ export function ReviewStatusBadge({
   isExpired,
   isEligible,
 }: ReviewStatusBadgeProps) {
-  // If expired
   if (isExpired) {
     return (
       <Badge variant="secondary" className="flex items-center gap-1">
@@ -23,7 +22,6 @@ export function ReviewStatusBadge({
     );
   }
 
-  // If has testimonial
   if (testimonial) {
     switch (testimonial.status) {
       case "PENDING":
@@ -60,11 +58,9 @@ export function ReviewStatusBadge({
     }
   }
 
-  // If eligible for review
   if (isEligible) {
-    return null; // Show button instead
+    return null;
   }
 
-  // Not eligible
   return null;
 }

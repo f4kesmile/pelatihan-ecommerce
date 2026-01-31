@@ -6,7 +6,7 @@ export default async function PrivacyPage() {
   const config = await getStoreConfig();
 
   return (
-    <div className="container max-w-4xl py-12 md:py-16 mx-auto">
+    <div className="container max-w-4xl py-12 md:py-16 mx-auto px-4 md:px-6">
       <div className="space-y-4 mb-10 text-center">
         <h1 className="text-3xl font-bold tracking-tight lg:text-4xl text-center">
           {config?.privacyTitle || "Privacy Policy"}

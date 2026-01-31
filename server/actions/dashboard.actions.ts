@@ -29,7 +29,6 @@ export async function getDashboardStats() {
       }),
     ]);
 
-    // Aggregate monthly revenue for the current year
     const currentYear = new Date().getFullYear();
     const startDate = new Date(currentYear, 0, 1);
     const endDate = new Date(currentYear, 11, 31);
@@ -50,7 +49,7 @@ export async function getDashboardStats() {
 
     const monthlyRevenueMap = new Array(12).fill(0);
     monthlyOrders.forEach((order) => {
-      const month = order.createdAt.getMonth(); // 0-11
+      const month = order.createdAt.getMonth();
       monthlyRevenueMap[month] += order.subtotal;
     });
 

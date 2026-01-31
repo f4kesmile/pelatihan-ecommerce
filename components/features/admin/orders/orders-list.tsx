@@ -22,7 +22,7 @@ import {
 import { Money } from "@/components/shared/money";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { OrderStatusBadge } from "@/components/features/admin/order-status-badge";
+import { OrderStatusBadge } from "./order-status-badge";
 import { OrderStatus } from "@prisma/client";
 
 interface OrderItem {
@@ -129,7 +129,10 @@ export function OrdersList({ orders }: OrdersListProps) {
                         </div>
                         <div className="flex gap-2">
                           <Button asChild size="sm" variant="outline">
-                            <Link href={`/dashboard/orders/${order.id}`}>
+                            <Link
+                              href={`/dashboard/orders/${order.id}`}
+                              aria-label={`View order #${order.orderNumber}`}
+                            >
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
@@ -272,7 +275,10 @@ export function OrdersList({ orders }: OrdersListProps) {
                             size="icon"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <Link href={`/dashboard/orders/${order.id}`}>
+                            <Link
+                              href={`/dashboard/orders/${order.id}`}
+                              aria-label={`View order #${order.orderNumber}`}
+                            >
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>

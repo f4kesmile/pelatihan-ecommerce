@@ -48,10 +48,11 @@ interface SettingsDialogProps {
     address?: string | null;
     avatarBase64?: string | null;
   };
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-// Password change schema
 const passwordChangeSchema = z
   .object({
     currentPassword: z
@@ -69,7 +70,6 @@ const passwordChangeSchema = z
 
 type PasswordChangeInput = z.infer<typeof passwordChangeSchema>;
 
-// Helper function to create cropped image
 async function getCroppedImg(
   imageSrc: string,
   pixelCrop: { x: number; y: number; width: number; height: number },
@@ -107,13 +107,31 @@ function createImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
-export function SettingsDialog({ user, children }: SettingsDialogProps) {
+export function SettingsDialog({
+  user,
+  children,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+}: SettingsDialogProps) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+
+  const setOpen = useCallback(
+    (value: boolean) => {
+      if (isControlled && controlledOnOpenChange) {
+        controlledOnOpenChange(value);
+      } else {
+        setInternalOpen(value);
+      }
+    },
+    [isControlled, controlledOnOpenChange],
+  );
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
 
-  // Avatar cropper state
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -128,7 +146,6 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
   );
   const [showCropper, setShowCropper] = useState(false);
 
-  // Password visibility
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -245,7 +262,7 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -372,6 +389,7 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
                           onChange={handleFileSelect}
                           disabled={loading}
                           className="absolute inset-0 opacity-0 cursor-pointer"
+                          aria-label="Upload profile picture"
                         />
                       </Button>
                       {avatarPreview && (

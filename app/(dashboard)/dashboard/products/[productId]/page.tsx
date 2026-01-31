@@ -1,4 +1,4 @@
-import { ProductForm } from "@/components/features/admin/product-form";
+import { ProductForm } from "@/components/features/admin/products/product-form";
 import prisma from "@/lib/db/prisma";
 
 interface ProductPageProps {
@@ -12,7 +12,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const categories = await prisma.category.findMany();
 
-  // New Product
   if (resolvedParams.productId === "new") {
     return (
       <div className="space-y-6">
@@ -24,7 +23,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     );
   }
 
-  // Edit Product
   const product = await prisma.product.findUnique({
     where: { id: resolvedParams.productId },
     include: {
@@ -37,7 +35,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     return <div>Product not found</div>;
   }
 
-  // Transform to match schema shape
   const initialData = {
     ...product,
     categoryId: product.categoryId,
@@ -45,7 +42,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     isPopular: product.isPopular,
     description: product.description || undefined,
     images: product.images.map((img) => ({
-      id: img.id, // Only present in edit
+      id: img.id,
       base64: img.base64,
       mimeType: img.mimeType,
       size: img.size,
@@ -54,7 +51,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     variants: product.variants.map((v) => ({
       id: v.id,
       name: v.name,
-      // Ensure explicit null/undefined handling to match schema optional
       sku: v.sku ?? undefined,
       price: v.price,
       stock: v.stock,

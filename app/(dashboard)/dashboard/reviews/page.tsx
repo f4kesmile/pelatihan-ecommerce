@@ -1,6 +1,6 @@
 import { getTestimonials } from "@/server/actions/testimonial.actions";
-import { ReviewsTable } from "@/components/features/admin/reviews-table";
-import { ReviewsFilter } from "@/components/features/admin/reviews-filter";
+import { ReviewsTable } from "@/components/features/admin/reviews/reviews-table";
+import { ReviewsFilter } from "@/components/features/admin/reviews/reviews-filter";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -61,7 +61,7 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
           </span>
           <Link
             href={`/dashboard/reviews?${new URLSearchParams({
-              ...params, // preserve other params
+              ...params,
               page: String(
                 page < pagination.totalPages ? page + 1 : pagination.totalPages,
               ),

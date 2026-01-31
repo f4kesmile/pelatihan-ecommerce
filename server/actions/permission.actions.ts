@@ -28,7 +28,6 @@ export async function updateUserPermissions(userId: string, permissionKeys: stri
   }
 
   try {
-    // Check if requester is SUPERADMIN
     const requesterProfile = await prisma.userProfile.findUnique({
       where: { supabaseUserId: currentUser.id },
     });
@@ -37,14 +36,11 @@ export async function updateUserPermissions(userId: string, permissionKeys: stri
       return { success: false, error: "Only Super Admin can manage permissions" };
     }
 
-    // Transaction to replace permissions
     await prisma.$transaction(async (tx) => {
-      // 1. Delete all existing permissions for user
       await tx.adminPermission.deleteMany({
         where: { userId },
       });
 
-      // 2. Create new permissions
       if (permissionKeys.length > 0) {
         await tx.adminPermission.createMany({
           data: permissionKeys.map((key) => ({

@@ -2,7 +2,7 @@ import { getOrders } from "@/server/actions/order.actions";
 import { OrderStatus } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { OrdersList } from "@/components/features/admin/orders-list";
+import { OrdersList } from "@/components/features/admin/orders/orders-list";
 
 interface OrdersPageProps {
   searchParams: Promise<{ status?: string; page?: string }>;
@@ -15,7 +15,6 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
 
   const { orders, pagination } = await getOrders({ status, page, limit: 10 });
 
-  // Serialize dates to avoid warnings/error passing to Client Component
   const serializedOrders = JSON.parse(JSON.stringify(orders));
 
   return (

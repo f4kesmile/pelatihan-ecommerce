@@ -53,10 +53,6 @@ export async function getApprovedTestimonials(limit: number = 6) {
   return testimonials;
 }
 
-/**
- * Get eligible orders for review
- * Returns orders that can have testimonials submitted
- */
 export async function getEligibleOrdersForReview(userId: string) {
   try {
     const settingsResult = await getReviewSettingsWithDefaults();
@@ -65,7 +61,6 @@ export async function getEligibleOrdersForReview(userId: string) {
     }
     const settings = settingsResult.data;
 
-    // Calculate the review window cutoff date
     const reviewWindowCutoff = new Date();
     reviewWindowCutoff.setDate(
       reviewWindowCutoff.getDate() - settings.reviewWindowDays
@@ -74,11 +69,9 @@ export async function getEligibleOrdersForReview(userId: string) {
     const orders = await prisma.order.findMany({
       where: {
         userId,
-        // Only include orders within the review window
         createdAt: {
           gte: reviewWindowCutoff,
         },
-        // Optionally filter by status
         ...(settings.requireOrderSucceeded && {
           status: "SUCCEEDED",
         }),
@@ -95,12 +88,11 @@ export async function getEligibleOrdersForReview(userId: string) {
             variant: true,
           },
         },
-        testimonial: true, // Include existing testimonials
+        testimonial: true,
       },
       orderBy: {
         createdAt: "desc",
       },
-      // Limit to last N orders if configured
       take: settings.myOrdersReviewEnabled
         ? settings.showReviewForLastNOrders
         : undefined,
@@ -113,9 +105,6 @@ export async function getEligibleOrdersForReview(userId: string) {
   }
 }
 
-/**
- * Get existing testimonial for a specific order
- */
 export async function getTestimonialByOrderId(orderId: string) {
   try {
     const testimonial = await prisma.testimonial.findUnique({
@@ -131,14 +120,10 @@ export async function getTestimonialByOrderId(orderId: string) {
   }
 }
 
-/**
- * Submit review from My Orders
- */
 export async function submitReviewFromMyOrders(
   data: Omit<TestimonialSubmission, "source">
 ) {
   try {
-    // Get current user
     const supabase = await createClient();
     const {
       data: { user },
@@ -148,25 +133,21 @@ export async function submitReviewFromMyOrders(
       return { success: false, error: "Unauthorized. Please log in." };
     }
 
-    // Validate input
     const validatedData = testimonialSubmissionSchema.parse({
       ...data,
       source: "MY_ORDERS",
     });
 
-    // Get review settings
     const settingsResult = await getReviewSettingsWithDefaults();
     if (!settingsResult.success || !settingsResult.data) {
       return { success: false, error: "Failed to load review settings." };
     }
     const settings = settingsResult.data;
 
-    // Check if reviews are enabled
     if (!settings.reviewsEnabled || !settings.myOrdersReviewEnabled) {
       return { success: false, error: "Reviews are currently disabled." };
     }
 
-    // Verify order ownership
     const order = await prisma.order.findUnique({
       where: {
         id: validatedData.orderId,
@@ -187,7 +168,6 @@ export async function submitReviewFromMyOrders(
       };
     }
 
-    // Check order status
     if (settings.requireOrderSucceeded && order.status !== "SUCCEEDED") {
       return {
         success: false,
@@ -195,7 +175,6 @@ export async function submitReviewFromMyOrders(
       };
     }
 
-    // Check review window
     const reviewWindowCutoff = new Date();
     reviewWindowCutoff.setDate(
       reviewWindowCutoff.getDate() - settings.reviewWindowDays
@@ -208,14 +187,11 @@ export async function submitReviewFromMyOrders(
       };
     }
 
-    // Check for existing testimonial
     if (order.testimonial) {
-      // Allow resubmit if rejected and setting allows
       if (
         order.testimonial.status === "REJECTED" &&
         settings.allowResubmitOnRejected
       ) {
-        // Delete old rejected testimonial
         await prisma.testimonial.delete({
           where: {
             id: order.testimonial.id,
@@ -229,7 +205,6 @@ export async function submitReviewFromMyOrders(
       }
     }
 
-    // Validate message length
     if (
       validatedData.message.length < settings.minMessageLength ||
       validatedData.message.length > settings.maxMessageLength
@@ -240,7 +215,6 @@ export async function submitReviewFromMyOrders(
       };
     }
 
-    // Create testimonial
     const testimonial = await prisma.testimonial.create({
       data: {
         orderId: validatedData.orderId,
@@ -254,7 +228,6 @@ export async function submitReviewFromMyOrders(
       },
     });
 
-    // Revalidate paths
     revalidatePath("/orders");
     revalidatePath("/(dashboard)/dashboard/reviews");
 
@@ -274,16 +247,10 @@ export async function submitReviewFromMyOrders(
   }
 }
 
-
-/**
- * Generate a magic link token for an order
- */
 export async function generateTestimonialToken(orderId: string) {
   try {
-    // Get settings to determine expiry
     const settingsResult = await getReviewSettingsWithDefaults();
     
-    // Default to 30 days if settings fail to load or are missing
     const reviewWindowDays = settingsResult.success && settingsResult.data
       ? settingsResult.data.reviewWindowDays
       : 30;
@@ -297,18 +264,13 @@ export async function generateTestimonialToken(orderId: string) {
   }
 }
 
-/**
- * Validate a magic link token and get order details
- */
 export async function validateMagicLinkToken(token: string) {
   try {
-    // Verify token signature and expiry
     const verification = verifyToken(token);
     if (!verification.valid || !verification.orderId) {
       return { success: false, error: verification.error || "Invalid link" };
     }
 
-    // Get order details
     const order = await prisma.order.findUnique({
       where: { id: verification.orderId },
       include: {
@@ -336,7 +298,6 @@ export async function validateMagicLinkToken(token: string) {
       return { success: false, error: "Order not found" };
     }
 
-    // Check settings for global review status
     const settingsResult = await getReviewSettingsWithDefaults();
     const settings = settingsResult.success ? settingsResult.data : null;
 
@@ -362,15 +323,11 @@ export async function validateMagicLinkToken(token: string) {
   }
 }
 
-/**
- * Submit review via Magic Link (No auth required)
- */
 export async function submitReviewViaMagicLink(
   token: string,
   data: Omit<TestimonialSubmission, "source" | "orderId">
 ) {
   try {
-    // 1. Verify token
     const verification = verifyToken(token);
     if (!verification.valid || !verification.orderId) {
       return { success: false, error: verification.error || "Invalid token" };
@@ -378,21 +335,18 @@ export async function submitReviewViaMagicLink(
 
     const orderId = verification.orderId;
 
-    // 2. Validate input
     const validatedData = testimonialSubmissionSchema.parse({
       ...data,
-      orderId, // Injected from token
+      orderId,
       source: "MAGIC_LINK",
     });
 
-    // 3. Get Settings
     const settingsResult = await getReviewSettingsWithDefaults();
     if (!settingsResult.success || !settingsResult.data) {
       return { success: false, error: "System error loading settings" };
     }
     const settings = settingsResult.data;
 
-    // 4. Validate Order & Logic
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: { testimonial: true },
@@ -402,7 +356,6 @@ export async function submitReviewViaMagicLink(
       return { success: false, error: "Order not found" };
     }
 
-    // Check duplication / resubmission
     if (order.testimonial) {
       if (
         order.testimonial.status === "REJECTED" &&
@@ -417,7 +370,6 @@ export async function submitReviewViaMagicLink(
       }
     }
 
-    // Check message length logic
     if (
       validatedData.message.length < settings.minMessageLength ||
       validatedData.message.length > settings.maxMessageLength
@@ -428,11 +380,10 @@ export async function submitReviewViaMagicLink(
       };
     }
 
-    // 5. Create Testimonial (Attributed to order.userId)
     const testimonial = await prisma.testimonial.create({
       data: {
         orderId: order.id,
-        userId: order.userId, // Authenticated via the signed token = user ownership proved
+        userId: order.userId,
         rating: validatedData.rating,
         message: validatedData.message,
         source: "MAGIC_LINK",
@@ -442,7 +393,7 @@ export async function submitReviewViaMagicLink(
       },
     });
 
-    revalidatePath("/orders"); // In case they visit their dashboard later
+    revalidatePath("/orders");
 
     return {
       success: true,
@@ -457,13 +408,6 @@ export async function submitReviewViaMagicLink(
   }
 }
 
-/**
- * Get the latest eligible order for the smart popup
- * Prioritizes:
- * 1. Most recent delivered/succeeded order
- * 2. Within review window
- * 3. Not yet reviewed (or eligible for resubmit)
- */
 export async function getLatestEligibleOrder(userId: string) {
   try {
     const { orders, settings } = await getEligibleOrdersForReview(userId);
@@ -472,24 +416,21 @@ export async function getLatestEligibleOrder(userId: string) {
       return null;
     }
 
-    // Filter for popup eligibility
     const eligibleOrder = orders.find((order) => {
-      // 1. Check if already reviewed
       if (order.testimonial) {
         if (
           order.testimonial.status === "REJECTED" &&
           settings.allowResubmitOnRejected
         ) {
-          return true; // Eligible for resubmit
+          return true;
         }
-        return false; // Already reviewed
+        return false;
       }
-      return true; // Not reviewed
+      return true;
     });
 
     if (!eligibleOrder) return null;
 
-    // Return minimal data needed for popup
     return {
       orderId: eligibleOrder.id,
       orderNumber: eligibleOrder.orderNumber,
@@ -503,9 +444,6 @@ export async function getLatestEligibleOrder(userId: string) {
   }
 }
 
-/**
- * Admin: Get all testimonials with filtering and pagination
- */
 export async function getTestimonials({
   page = 1,
   limit = 10,
@@ -523,7 +461,6 @@ export async function getTestimonials({
       data: { user },
     } = await supabase.auth.getUser();
 
-    // In a real app, check for ADMIN role here
     if (!user) {
       return { success: false, error: "Unauthorized" };
     }
@@ -593,12 +530,8 @@ export async function getTestimonials({
   }
 }
 
-/**
- * Admin: Update testimonial status
- */
 export async function updateTestimonialStatus(id: string, status: string) {
   try {
-    // Validate status enum (basic check)
     const validStatuses = ["PENDING", "APPROVED", "REJECTED", "HIDDEN"];
     if (!validStatuses.includes(status)) {
       return { success: false, error: "Invalid status" };
@@ -619,7 +552,7 @@ export async function updateTestimonialStatus(id: string, status: string) {
     });
 
     revalidatePath("/dashboard/reviews");
-    revalidatePath("/orders"); // To update user's view
+    revalidatePath("/orders");
     return { success: true };
   } catch (error) {
     console.error("Error updating testimonial:", error);
@@ -627,9 +560,6 @@ export async function updateTestimonialStatus(id: string, status: string) {
   }
 }
 
-/**
- * Admin: Delete testimonial
- */
 export async function deleteTestimonial(id: string) {
   try {
     await prisma.testimonial.delete({

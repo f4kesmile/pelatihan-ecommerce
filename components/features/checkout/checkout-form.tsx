@@ -56,16 +56,13 @@ export function CheckoutForm({ whatsappNumber, template }: CheckoutFormProps) {
       template,
     });
 
-    // Clear cart after successful order logic initiated
-    // (In a real app, we might wait for confirmation, but for WA flow this is common)
     clearCart();
 
     toast.success("Order prepared! Redirecting to WhatsApp...");
 
-    // Slight delay to allow toast to show
     setTimeout(() => {
       window.open(waLink, "_blank");
-      router.push("/"); // Redirect home
+      router.push("/");
     }, 1500);
   }
 
@@ -93,7 +90,6 @@ export function CheckoutForm({ whatsappNumber, template }: CheckoutFormProps) {
             <FormItem>
               <FormLabel>WhatsApp Number</FormLabel>
               <FormControl>
-                {/* Enforce numeric input if needed, controlled by Shadcn Input props or regex */}
                 <Input placeholder="08123456789" type="tel" {...field} />
               </FormControl>
               <FormDescription>

@@ -20,20 +20,16 @@ export function PaginationControl({
   currentPage,
   className,
 }: PaginationProps) {
-  // Helper to create page links
   const createPageLink = (page: number) => {
     const params = new URLSearchParams();
     params.set("page", page.toString());
     return `?${params.toString()}`;
   };
 
-  // Generate page numbers to show
   const getPageNumbers = () => {
     const pages = [];
-    // Always show first page
     pages.push(1);
 
-    // Calculate range around current page
     const start = Math.max(2, currentPage - 1);
     const end = Math.min(totalPages - 1, currentPage + 1);
 
@@ -49,12 +45,10 @@ export function PaginationControl({
       pages.push("ellipsis-end");
     }
 
-    // Always show last page if more than 1 page
     if (totalPages > 1) {
       pages.push(totalPages);
     }
 
-    // Filter duplicates just in case logic overlaps for small totalPages
     return Array.from(new Set(pages));
   };
 

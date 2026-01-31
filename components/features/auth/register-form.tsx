@@ -25,7 +25,6 @@ const initialState = {
   message: "",
 };
 
-// Background effects component for consistency
 const BackgroundEffects = () => (
   <>
     <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-primary/20 blur-[120px]" />
@@ -164,7 +163,7 @@ export function RegisterForm({ storeName, storeLogo }: RegisterFormProps) {
           </ul>
         </div>
 
-        <div className="relative z-10 text-sm text-zinc-600">
+        <div className="relative z-10 text-sm text-zinc-400">
           © {new Date().getFullYear()} {storeName} Inc. All rights reserved.
         </div>
       </div>
@@ -205,7 +204,7 @@ export function RegisterForm({ storeName, storeLogo }: RegisterFormProps) {
                         name="fullName"
                         placeholder="Mamat Gentong"
                         required
-                        className="pl-9 h-12 bg-zinc-800/50 lg:bg-muted/50 border-zinc-700 lg:border-input text-white lg:text-foreground placeholder:text-zinc-600 focus:ring-2 ring-primary/20 transition-all"
+                        className="pl-9 h-12 bg-zinc-800/50 lg:bg-muted/50 border-zinc-700 lg:border-input text-white lg:text-foreground placeholder:text-zinc-400 focus:ring-2 ring-primary/20 transition-all"
                       />
                     </div>
                   </div>
@@ -250,6 +249,9 @@ export function RegisterForm({ storeName, storeLogo }: RegisterFormProps) {
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors p-1"
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
                       >
                         {showPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -282,6 +284,11 @@ export function RegisterForm({ storeName, storeLogo }: RegisterFormProps) {
                           setShowConfirmPassword(!showConfirmPassword)
                         }
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors p-1"
+                        aria-label={
+                          showConfirmPassword
+                            ? "Hide password"
+                            : "Show password"
+                        }
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="h-4 w-4" />

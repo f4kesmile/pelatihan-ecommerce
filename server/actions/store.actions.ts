@@ -6,10 +6,9 @@ import { storeConfigSchema, StoreConfigFormValues } from "@/server/schemas/store
 
 export async function getStoreConfig() {
   const config = await prisma.storeConfig.findFirst({
-    orderBy: { createdAt: "desc" }, // Get the latest one
+    orderBy: { createdAt: "desc" },
   })
 
-  // Fallback if no config exists (should be seeded, but safe fallback logic)
   if (!config) {
      return null
   }
@@ -24,8 +23,6 @@ export async function updateStoreConfig(data: StoreConfigFormValues) {
   }
 
   try {
-    // Upsert logic: Update the first one found, or create new if absolutely empty
-    // Since we rely on 'findFirst' for reading, we should try to update the existing one.
     const existing = await prisma.storeConfig.findFirst()
 
     if (existing) {

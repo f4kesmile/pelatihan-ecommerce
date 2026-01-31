@@ -52,7 +52,7 @@ export async function updateTestimonialStatus(id: string, status: "APPROVED" | "
       data: { status },
     });
     revalidatePath("/dashboard/testimonials");
-    revalidatePath("/"); // Update homepage
+    revalidatePath("/");
     return { success: true };
   } catch (error) {
     console.error("Error updating testimonial status:", error);
@@ -60,8 +60,6 @@ export async function updateTestimonialStatus(id: string, status: "APPROVED" | "
   }
 }
 
-
-  
 export async function deleteTestimonial(id: string) {
   try {
     await prisma.testimonial.delete({

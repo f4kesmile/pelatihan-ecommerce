@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, MoreHorizontal, Shield, User, Key } from "lucide-react";
 import { toast } from "sonner";
 import { updateUserRole } from "@/server/actions/user.actions";
-import { PermissionsDialog } from "@/components/features/admin/permissions-dialog";
+import { PermissionsDialog } from "./permissions-dialog";
 
 interface User {
   id: string;
@@ -42,7 +42,6 @@ export function UsersTable({ initialUsers, currentUser }: UsersTableProps) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
-  // Permission Dialog State
   const [permissionUser, setPermissionUser] = useState<User | null>(null);
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
 
@@ -74,12 +73,9 @@ export function UsersTable({ initialUsers, currentUser }: UsersTableProps) {
 
   const canEditUser = (targetUser: User) => {
     if (!currentUser) return false;
-    // Cannot edit self
     if (currentUser.id === targetUser.id) return false;
-    // Only Super Admin can edit Super Admin
     if (targetUser.role === "SUPERADMIN" && currentUser.role !== "SUPERADMIN")
       return false;
-    // Admin can only edit Users
     return true;
   };
 
@@ -133,8 +129,6 @@ export function UsersTable({ initialUsers, currentUser }: UsersTableProps) {
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  {/* Permission Button - Only for Super Admin */}
-                  {/* Permission Button - Only for Super Admin to manage Admins */}
                   {currentUser?.role === "SUPERADMIN" &&
                     user.role === "ADMIN" && (
                       <Button
@@ -172,7 +166,6 @@ export function UsersTable({ initialUsers, currentUser }: UsersTableProps) {
                       >
                         Set as Admin
                       </DropdownMenuItem>
-                      {/* Only prevent showing SUPERADMIN option if not superadmin, though server checks too */}
                       {currentUser?.role === "SUPERADMIN" && (
                         <DropdownMenuItem
                           onClick={() =>

@@ -3,10 +3,6 @@ import crypto from "crypto";
 const MAGIC_LINK_SECRET =
   process.env.MAGIC_LINK_SECRET || "default-secret-change-in-prod";
 
-/**
- * Generates a signed token for magic links
- * Format: base64url(orderId.expirationTimestamp.signature)
- */
 export function generateToken(
   orderId: string,
   expiryHours: number = 168 // 7 days default
@@ -20,9 +16,6 @@ export function generateToken(
   return Buffer.from(`${payload}.${signature}`).toString("base64url");
 }
 
-/**
- * Verifies a signed token
- */
 export function verifyToken(token: string): {
   valid: boolean;
   orderId?: string;
@@ -43,7 +36,6 @@ export function verifyToken(token: string): {
       .update(payload)
       .digest("hex");
 
-    // Constant time comparison to prevent timing attacks
     const signatureBuffer = Buffer.from(signature);
     const expectedBuffer = Buffer.from(expectedSignature);
     const validSignature =

@@ -16,7 +16,6 @@ export async function createProduct(data: ProductFormValues) {
 
   try {
     await prisma.$transaction(async (tx) => {
-      // Create Product
       const product = await tx.product.create({
         data: {
           name,
@@ -28,7 +27,6 @@ export async function createProduct(data: ProductFormValues) {
         },
       })
 
-      // Create Images
       if (images && images.length > 0) {
         await tx.productImage.createMany({
           data: images.map((img, index) => ({
@@ -42,12 +40,11 @@ export async function createProduct(data: ProductFormValues) {
         })
       }
 
-      // Create Variants
       await tx.productVariant.createMany({
         data: variants.map((variant) => ({
           productId: product.id,
           name: variant.name,
-          sku: variant.sku ?? null, // Ensure explicit null if undefined/missing
+          sku: variant.sku ?? null,
           price: variant.price,
           stock: variant.stock,
           isActive: variant.isActive,
@@ -56,7 +53,7 @@ export async function createProduct(data: ProductFormValues) {
     })
 
     revalidatePath("/dashboard/products")
-    revalidatePath("/") // Revalidate public home just in case
+    revalidatePath("/")
     return { success: true }
   } catch (error) {
     console.error("Failed to create product:", error)
@@ -75,7 +72,6 @@ export async function updateProduct(productId: string, data: ProductFormValues) 
 
   try {
     await prisma.$transaction(async (tx) => {
-      // Update Product Basic Info
       await tx.product.update({
         where: { id: productId },
         data: {
@@ -88,8 +84,6 @@ export async function updateProduct(productId: string, data: ProductFormValues) 
         },
       })
 
-      // Replace Images (Simplest strategy: Delete all, Re-create)
-      // Efficiency note: For large images, diffing would be better, but for base64 strict replacement ensures consistency.
       if (images) {
         await tx.productImage.deleteMany({ where: { productId } })
         if (images.length > 0) {
@@ -105,23 +99,16 @@ export async function updateProduct(productId: string, data: ProductFormValues) 
             })
         }
       }
-
-      // Update Variants (Strategy: Delete all excluded, Create new, Update existing)
-      // However, simple strategy for this scope: Delete all and recreate to ensure IDs match form? 
-      // User might want to keep IDs for order history integrity.
-      // Better strategy: Update if ID exists, Create if not. Delete missing.
       
       const currentVariants = await tx.productVariant.findMany({ where: { productId } })
       const currentVariantIds = currentVariants.map(v => v.id)
       const incomingVariantIds = variants.map(v => v.id).filter(Boolean) as string[]
 
-      // Delete variants not present in incoming data
       const toDelete = currentVariantIds.filter(id => !incomingVariantIds.includes(id))
       if (toDelete.length > 0) {
         await tx.productVariant.deleteMany({ where: { id: { in: toDelete } } })
       }
 
-      // Upsert variants
       for (const variant of variants) {
         if (variant.id && currentVariantIds.includes(variant.id)) {
             await tx.productVariant.update({

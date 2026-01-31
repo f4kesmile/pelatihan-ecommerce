@@ -1,6 +1,6 @@
 "use client";
 
-import { AppSidebar } from "@/components/features/admin/app-sidebar";
+import { AppSidebar } from "./app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
@@ -30,7 +30,7 @@ export function DashboardLayout({
       <AppSidebar user={user} storeName={storeName} storeLogo={storeLogo} />
       <SidebarInset>
         <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
-          <SidebarTrigger />
+          <SidebarTrigger aria-label="Toggle Sidebar" />
           <Separator orientation="vertical" className="h-4" />
           <span className="font-semibold text-sm">Dashboard</span>
           <div className="ml-auto">

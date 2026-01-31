@@ -1,14 +1,14 @@
 import { getOrderById } from "@/server/actions/order.actions";
 import { notFound } from "next/navigation";
-import { OrderStatusBadge } from "@/components/features/admin/order-status-badge";
-import { OrderStatusDialog } from "@/components/features/admin/order-status-dialog";
-import { OrderAuditLog } from "@/components/features/admin/order-audit-log";
+import { OrderStatusBadge } from "@/components/features/admin/orders/order-status-badge";
+import { OrderStatusDialog } from "@/components/features/admin/orders/order-status-dialog";
+import { OrderAuditLog } from "@/components/features/admin/orders/order-audit-log";
 import { Money } from "@/components/shared/money";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Edit } from "lucide-react";
 import Link from "next/link";
-import { TestimonialRequestButton } from "@/components/features/admin/testimonial-request-button";
+import { TestimonialRequestButton } from "@/components/features/admin/testimonials/testimonial-request-button";
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>;
@@ -26,8 +26,6 @@ export default async function OrderDetailPage({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
         <div className="flex items-center gap-4">
           <Link href="/dashboard/orders">

@@ -8,7 +8,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Accordion,
@@ -100,7 +99,7 @@ export default function SupportPage() {
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <HelpCircle className="h-6 w-6 text-primary" />
-                  <CardTitle className="text-2xl font-bold">FAQ</CardTitle>
+                  <h2 className="text-2xl font-bold">FAQ</h2>
                 </div>
                 <CardDescription>Commonly asked questions</CardDescription>
               </CardHeader>
@@ -125,10 +124,12 @@ export default function SupportPage() {
           <section className="h-full">
             <Card className="h-full flex flex-col">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <div className="flex items-center gap-2 space-y-1.5 p-6 pb-0">
                   <Mail className="h-5 w-5" />
-                  Still need help?
-                </CardTitle>
+                  <h2 className="font-semibold leading-none tracking-tight">
+                    Still need help?
+                  </h2>
+                </div>
                 <CardDescription>
                   Send us a message and we&apos;ll get back to you shortly
                 </CardDescription>

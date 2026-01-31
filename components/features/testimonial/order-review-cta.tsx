@@ -32,18 +32,15 @@ export function OrderReviewCTA({
 }: OrderReviewCTAProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Check if order is eligible based on status
   if (requireOrderSucceeded && orderStatus !== "SUCCEEDED") {
-    return null; // No CTA for non-succeeded orders
+    return null;
   }
 
-  // Check if review window has expired
   const daysSinceOrder =
     (new Date().getTime() - new Date(orderDate).getTime()) /
     (1000 * 60 * 60 * 24);
   const isExpired = daysSinceOrder > reviewWindowDays;
 
-  // Determine if eligible for new review
   const canSubmitReview =
     !isExpired &&
     (!testimonial ||

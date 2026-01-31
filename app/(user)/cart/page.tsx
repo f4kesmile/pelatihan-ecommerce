@@ -81,9 +81,9 @@ export default function CartPage() {
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between mt-4">
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-y-3 gap-x-2">
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center border rounded-md">
+                      <div className="flex items-center rounded-md border">
                         <Button
                           variant="ghost"
                           size="icon"
@@ -110,12 +110,12 @@ export default function CartPage() {
                           <Plus className="h-3 w-3" />
                         </Button>
                       </div>
-                      <span className="text-xs text-muted-foreground ml-2">
+                      <span className="text-xs text-muted-foreground hidden sm:inline-block">
                         (Max: {item.maxStock})
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4 ml-auto sm:ml-0">
                       <Money
                         amount={item.price * item.quantity}
                         className="font-medium"

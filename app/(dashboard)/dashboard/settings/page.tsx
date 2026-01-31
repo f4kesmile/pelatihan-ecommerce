@@ -4,7 +4,6 @@ import { StoreSettingsPage } from "@/components/features/admin/store-settings/st
 export default async function SettingsPage() {
   const config = await getStoreConfig();
 
-  // Explicitly cast to undefined if null/empty and sanitize nulls
   const initialData = config
     ? {
         ...config,

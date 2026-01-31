@@ -4,10 +4,6 @@ import prisma from "@/lib/db/prisma";
 import { reviewSettingsSchema, ReviewSettingsInput } from "@/server/schemas/review-settings.schema";
 import { revalidatePath } from "next/cache";
 
-/**
- * Get current review system settings
- * Returns first record or null if not exists
- */
 export async function getReviewSettings() {
   try {
     const settings = await prisma.reviewSettings.findFirst();
@@ -20,27 +16,19 @@ export async function getReviewSettings() {
   }
 }
 
-/**
- * Update review system settings
- * Creates new record if doesn't exist (upsert)
- */
 export async function updateReviewSettings(data: ReviewSettingsInput) {
   try {
-    // Validate input
     const validatedData = reviewSettingsSchema.parse(data);
 
-    // Get existing settings to determine upsert
     const existing = await prisma.reviewSettings.findFirst();
 
     let updated;
     if (existing) {
-      // Update existing
       updated = await prisma.reviewSettings.update({
         where: { id: existing.id },
         data: validatedData,
       });
     } else {
-      // Create new
       updated = await prisma.reviewSettings.create({
         data: validatedData,
       });
@@ -56,16 +44,11 @@ export async function updateReviewSettings(data: ReviewSettingsInput) {
   }
 }
 
-/**
- * Get settings with defaults if not exists
- * Returns default values if no settings in database
- */
 export async function getReviewSettingsWithDefaults() {
   try {
     const settings = await prisma.reviewSettings.findFirst();
     
     if (!settings) {
-      // Return defaults from schema
       return {
         success: true,
         data: {

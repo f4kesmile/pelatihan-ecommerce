@@ -17,13 +17,11 @@ export async function createCategory(name: string) {
 
   const trimmedName = name.trim();
   
-  // Generate slug from name
   const slug = trimmedName
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
   
-  // Check if category exists
   const existing = await prisma.category.findFirst({
     where: { 
       OR: [
@@ -54,7 +52,6 @@ export async function createCategory(name: string) {
 }
 
 export async function deleteCategory(id: string) {
-  // Check if category has products
   const productsCount = await prisma.product.count({
     where: { categoryId: id },
   });

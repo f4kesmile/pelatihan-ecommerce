@@ -11,6 +11,7 @@ interface ProductCardProps {
   image: string | null;
   isPopular?: boolean;
   hideBadge?: boolean;
+  headingLevel?: "h2" | "h3" | "h4";
 }
 
 export function ProductCard({
@@ -21,7 +22,10 @@ export function ProductCard({
   image,
   isPopular,
   hideBadge,
+  headingLevel,
 }: ProductCardProps) {
+  const Heading = (headingLevel || "h3") as React.ElementType;
+
   return (
     <Link href={`/products/${slug}`} className="group block h-full">
       <div className="flex h-full flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md relative">
@@ -50,9 +54,9 @@ export function ProductCard({
           <div className="mb-2 text-xs text-muted-foreground uppercase tracking-wider">
             {categoryName}
           </div>
-          <h3 className="font-semibold leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
+          <Heading className="font-semibold leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
             {name}
-          </h3>
+          </Heading>
           <div className="mt-auto pt-2">
             <p className="text-xs text-muted-foreground mb-1">Mulai dari</p>
             <Money

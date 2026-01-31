@@ -76,13 +76,11 @@ export function ProductForm({
     },
   });
 
-  // Variant Field Array
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "variants",
   });
 
-  // Auto-generate slug from name
   const generateSlug = useDebouncedCallback((name: string) => {
     if (!initialData) {
       const slug = name
@@ -93,7 +91,6 @@ export function ProductForm({
     }
   }, 500);
 
-  // Handle category creation
   const handleCreateCategory = async () => {
     if (!newCategoryName.trim()) {
       toast.error("Category name is required");
@@ -119,11 +116,9 @@ export function ProductForm({
     }
   };
 
-  // Image Cropper State
   const [cropperOpen, setCropperOpen] = useState(false);
   const [currentImageSrc, setCurrentImageSrc] = useState<string>("");
 
-  // Image Select Handler (Step 1: Read file & Open Cropper)
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -131,7 +126,6 @@ export function ProductForm({
     const file = files[0]; // Process one file at a time for cropping
 
     if (file.size > 5 * 1024 * 1024) {
-      // Increased limit for raw file before crop
       toast.error(`Image ${file.name} is too large (max 5MB).`);
       return;
     }
@@ -145,20 +139,16 @@ export function ProductForm({
     };
     reader.readAsDataURL(file);
 
-    // Reset input so same file can be selected again if needed
     e.target.value = "";
   };
 
-  // Image Crop Handler (Step 2: Save cropped image)
   const onCropComplete = (croppedBase64: string) => {
     const currentImages = form.getValues("images") || [];
     const newImages = [...currentImages];
 
-    // Extract base64 data and mime type
     const [prefix, base64Data] = croppedBase64.split(",");
     const mimeType = prefix.match(/:(.*?);/)?.[1] || "image/jpeg";
 
-    // Calculate approximate size (base64 length * 0.75)
     const approximateSize = Math.ceil((base64Data.length * 3) / 4);
 
     newImages.push({

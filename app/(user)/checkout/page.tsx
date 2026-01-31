@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Money } from "@/components/shared/money";
 import Link from "next/link";
-import { StoreConfig } from "@/types";
 import Image from "next/image";
 
 export default function CheckoutPage() {

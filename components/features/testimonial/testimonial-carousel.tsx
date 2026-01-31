@@ -35,8 +35,6 @@ export function TestimonialCarousel({
 
       scrollPosition += scrollSpeed;
 
-      // Reset when we've scrolled past the first set
-      // We use scrollWidth / 2 because we duplicated the items once
       if (scrollPosition >= scrollContainer.scrollWidth / 2) {
         scrollPosition = 0;
       }
@@ -45,10 +43,8 @@ export function TestimonialCarousel({
       animationFrameId = requestAnimationFrame(scroll);
     };
 
-    // Start auto-scroll
     animationFrameId = requestAnimationFrame(scroll);
 
-    // Pause on hover
     const handleMouseEnter = () => {
       cancelAnimationFrame(animationFrameId);
     };
@@ -67,7 +63,6 @@ export function TestimonialCarousel({
     };
   }, [testimonials.length, shouldScroll]);
 
-  // Duplicate testimonials for infinite scroll effect only if active
   const displayTestimonials = shouldScroll
     ? [...testimonials, ...testimonials]
     : testimonials;
