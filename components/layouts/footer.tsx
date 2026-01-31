@@ -31,7 +31,7 @@ export async function Footer() {
               </li>
               <li>
                 <Link
-                  href={config?.faqLinkHref || "/faq"}
+                  href={config?.faqLinkHref || "/support"}
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {config?.faqLinkText || "FAQ"}

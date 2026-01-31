@@ -416,7 +416,6 @@ model StoreConfig {
   websiteUrl  String?
   showWebsite Boolean @default(false)
 
-  // Footer Customization
   footerSocialText String?
 
   supportLinkText String?

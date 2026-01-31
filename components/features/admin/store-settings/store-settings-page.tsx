@@ -56,6 +56,14 @@ export function StoreSettingsPage({ initialData }: StoreSettingsPageProps) {
       showTiktok: false,
       websiteUrl: "",
       showWebsite: false,
+      supportLinkText: "",
+      supportLinkHref: "",
+      faqLinkText: "",
+      faqLinkHref: "",
+      termsLinkText: "",
+      termsLinkHref: "",
+      privacyLinkText: "",
+      privacyLinkHref: "",
     },
   });
 
