@@ -36,7 +36,7 @@ export interface TestimonialWithUser {
   id: string;
   rating: number;
   message: string;
-  status: "APPROVED" | "PENDING" | "REJECTED" | "HIDDEN"; // Replaces isApproved and isHidden
+  status: "APPROVED" | "PENDING" | "REJECTED" | "HIDDEN"; 
   createdAt: Date | string;
   user: PublicUserInfo;
   order: {

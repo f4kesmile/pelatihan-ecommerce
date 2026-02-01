@@ -140,7 +140,7 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                   </div>
                   <div className="flex gap-2">
                     {item.status === "APPROVED" ? (
-                      <span className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full font-medium">
+                      <span className="text-xs bg-green-200 text-green-900 dark:bg-green-900/40 dark:text-green-300 px-2 py-0.5 rounded-full font-medium">
                         Approved
                       </span>
                     ) : item.status === "PENDING" ? (
@@ -392,7 +392,7 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                       <TableCell>
                         <div className="flex gap-2">
                           {item.status === "APPROVED" && (
-                            <Badge className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800">
+                            <Badge className="bg-green-700 hover:bg-green-800 dark:bg-green-800 dark:hover:bg-green-900">
                               Approved
                             </Badge>
                           )}

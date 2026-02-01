@@ -120,6 +120,7 @@ export function PermissionsDialog({
                     id={perm.key}
                     checked={permissions.includes(perm.key)}
                     onCheckedChange={() => handleToggle(perm.key)}
+                    aria-label={perm.label}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label

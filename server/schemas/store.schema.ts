@@ -29,8 +29,8 @@ export const storeConfigSchema = z.object({
   facebookUrl: z.string().optional().nullable(),
   showFacebook: z.boolean(),
 
-  twitterUrl: z.string().optional().nullable(),
-  showTwitter: z.boolean(),
+  shopeeUrl: z.string().optional().nullable(),
+  showShopee: z.boolean(),
 
   tiktokUrl: z.string().optional().nullable(),
   showTiktok: z.boolean(),

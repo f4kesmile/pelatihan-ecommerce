@@ -407,8 +407,8 @@ model StoreConfig {
   facebookUrl  String?
   showFacebook Boolean @default(false)
 
-  twitterUrl  String?
-  showTwitter Boolean @default(false)
+  shopeeUrl  String?
+  showShopee Boolean @default(false)
 
   tiktokUrl  String?
   showTiktok Boolean @default(false)
