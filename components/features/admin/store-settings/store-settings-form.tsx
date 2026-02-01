@@ -22,15 +22,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import {
-  Loader2,
-  Save,
-  Instagram,
-  Facebook,
-  Twitter,
-  Globe,
-  Music2,
-} from "lucide-react";
+import { Loader2, Save, Globe } from "lucide-react";
+import { Shopee, TikTok, Instagram, Facebook } from "@/components/shared/icons";
 import { useRouter } from "next/navigation";
 
 interface StoreSettingsFormProps {
@@ -63,8 +56,8 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
       showInstagram: false,
       facebookUrl: "",
       showFacebook: false,
-      twitterUrl: "",
-      showTwitter: false,
+      shopeeUrl: "",
+      showShopee: false,
       tiktokUrl: "",
       showTiktok: false,
       websiteUrl: "",
@@ -155,7 +148,7 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
                 name="heroCtaText"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>CTA Text</FormLabel>
+                    <FormLabel>Teks Tombol Utama (CTA)</FormLabel>
                     <FormControl>
                       <Input disabled={loading} {...field} />
                     </FormControl>
@@ -168,7 +161,7 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
                 name="heroCtaHref"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>CTA Link</FormLabel>
+                    <FormLabel>Link Tombol Utama (CTA)</FormLabel>
                     <FormControl>
                       <Input disabled={loading} {...field} />
                     </FormControl>
@@ -367,13 +360,13 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
               />
             </div>
 
-            {/* Twitter/X */}
+            {/* Shopee */}
             <div className="rounded-lg border p-3 bg-muted/30">
               <div className="flex items-center gap-4 mb-2">
-                <Twitter className="h-5 w-5 text-sky-500" />
+                <Shopee className="h-5 w-5 text-orange-500" />
                 <FormField
                   control={form.control}
-                  name="showTwitter"
+                  name="showShopee"
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                       <FormControl>
@@ -392,13 +385,13 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
               </div>
               <FormField
                 control={form.control}
-                name="twitterUrl"
+                name="shopeeUrl"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <Input
-                        placeholder="https://twitter.com/yourstore"
-                        disabled={loading || !form.watch("showTwitter")}
+                        placeholder="https://shopee.co.id/yourstore"
+                        disabled={loading || !form.watch("showShopee")}
                         value={field.value || ""}
                         onChange={field.onChange}
                       />
@@ -412,7 +405,7 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
             {/* TikTok */}
             <div className="rounded-lg border p-3 bg-muted/30">
               <div className="flex items-center gap-4 mb-2">
-                <Music2 className="h-5 w-5 text-pink-500" />
+                <TikTok className="h-5 w-5 text-black dark:text-white" />
                 <FormField
                   control={form.control}
                   name="showTiktok"

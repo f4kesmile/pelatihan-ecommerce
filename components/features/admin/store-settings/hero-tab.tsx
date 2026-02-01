@@ -58,9 +58,9 @@ export function HeroTab() {
             name="heroCtaText"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CTA Button Text</FormLabel>
+                <FormLabel>Teks Tombol Utama (CTA)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Shop Now" {...field} />
+                  <Input placeholder="Belanja Sekarang" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -71,7 +71,7 @@ export function HeroTab() {
             name="heroCtaHref"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CTA Button Link</FormLabel>
+                <FormLabel>Link Tombol Utama (CTA)</FormLabel>
                 <FormControl>
                   <Input placeholder="/products" {...field} />
                 </FormControl>

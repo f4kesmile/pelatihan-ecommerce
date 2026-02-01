@@ -13,7 +13,7 @@ export default async function SettingsPage() {
         logoSize: config.logoSize || undefined,
         instagramUrl: config.instagramUrl || undefined,
         facebookUrl: config.facebookUrl || undefined,
-        twitterUrl: config.twitterUrl || undefined,
+        shopeeUrl: config.shopeeUrl || undefined,
         tiktokUrl: config.tiktokUrl || undefined,
         websiteUrl: config.websiteUrl || undefined,
 
