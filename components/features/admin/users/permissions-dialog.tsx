@@ -30,11 +30,11 @@ interface PermissionsDialogProps {
 }
 
 const AVAILABLE_PERMISSIONS = [
-  { key: "manage:dashboard", label: "Access Dashboard (View)" },
-  { key: "manage:products", label: "Manage Products (Create/Edit/Delete)" },
-  { key: "manage:orders", label: "Manage Orders (Status Updates)" },
-  { key: "manage:users", label: "Manage Users (View Only)" },
-  { key: "manage:settings", label: "Manage Store Settings" },
+  { key: "manage_dashboard", label: "Access Dashboard (View)" },
+  { key: "manage_products", label: "Manage Products (Create/Edit/Delete)" },
+  { key: "manage_orders", label: "Manage Orders (Status Updates)" },
+  { key: "manage_users", label: "Manage Users (View Only)" },
+  { key: "manage_settings", label: "Manage Store Settings" },
 ];
 
 export function PermissionsDialog({

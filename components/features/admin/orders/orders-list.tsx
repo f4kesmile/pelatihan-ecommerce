@@ -116,7 +116,7 @@ export function OrdersList({ orders }: OrdersListProps) {
                           className="text-xs px-2 py-0.5"
                         />
                         {order.testimonial?.status === "APPROVED" && (
-                          <div className="flex items-center gap-1 text-[10px] font-medium text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-full">
+                          <div className="flex items-center gap-1 text-[10px] font-medium text-green-800 bg-green-100 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800 px-1.5 py-0.5 rounded-full">
                             <CheckCircle className="h-3 w-3" />
                             Reviewed
                           </div>
@@ -254,7 +254,7 @@ export function OrdersList({ orders }: OrdersListProps) {
                         <div className="flex flex-col gap-1 items-start">
                           <OrderStatusBadge status={order.status} />
                           {order.testimonial?.status === "APPROVED" && (
-                            <div className="flex items-center gap-1 text-[10px] font-medium text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-full">
+                            <div className="flex items-center gap-1 text-[10px] font-medium text-green-800 bg-green-100 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800 px-1.5 py-0.5 rounded-full">
                               <CheckCircle className="h-3 w-3" />
                               Reviewed
                             </div>

@@ -88,7 +88,7 @@ export function CheckoutForm({ whatsappNumber, template }: CheckoutFormProps) {
 
       setTimeout(() => {
         window.open(waLink, "_blank");
-        router.push("/dashboard/orders");
+        router.push("/orders");
       }, 1500);
     } catch {
       toast.error("Something went wrong. Please try again.");
