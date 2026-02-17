@@ -13,7 +13,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="container flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
+      <div className="container flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center min-w-full">
         <div className="rounded-full bg-muted p-8">
           <ShoppingBag className="h-12 w-12 text-muted-foreground" />
         </div>

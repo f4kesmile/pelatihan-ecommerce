@@ -28,25 +28,26 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window !== "undefined") {
-      const savedCart = localStorage.getItem("zinc-cart");
-      if (savedCart) {
-        try {
-          return JSON.parse(savedCart);
-        } catch (e) {
-          console.error("Failed to parse cart", e);
-        }
-      }
-    }
-    return [];
-  });
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    const savedCart = localStorage.getItem("zinc-cart");
+    if (savedCart) {
+      try {
+        setItems(JSON.parse(savedCart));
+      } catch (e) {
+        console.error("Failed to parse cart", e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
       localStorage.setItem("zinc-cart", JSON.stringify(items));
     }
-  }, [items]);
+  }, [items, isLoaded]);
 
   const addItem = (
     newItem: Omit<CartItem, "quantity"> & { quantity?: number },
