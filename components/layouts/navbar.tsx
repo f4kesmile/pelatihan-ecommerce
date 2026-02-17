@@ -3,6 +3,7 @@ import { User, LayoutDashboard } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "./mobile-nav";
+import { MainNav } from "./main-nav";
 import { CartSheet } from "@/components/features/cart/cart-sheet";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { getStoreConfig } from "@/server/actions/store.actions";
@@ -33,26 +34,7 @@ export async function Navbar() {
           <Link href="/" className="flex items-center space-x-2">
             <span className="font-bold text-lg">{storeName}</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <Link
-              href="/products"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Products
-            </Link>
-            <Link
-              href="/orders"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Orders
-            </Link>
-            <Link
-              href="/support"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Support
-            </Link>
-          </nav>
+          <MainNav />
         </div>
 
         {/* Actions - Always at the far right */}

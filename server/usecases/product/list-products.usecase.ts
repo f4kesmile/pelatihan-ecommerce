@@ -34,6 +34,12 @@ export async function listProductsUseCase(params: ListProductsParams) {
       minPrice,
       hasStock: p.variants.some(v => v.stock > 0),
       isPopular: p.isPopular || (p._count?.orderItems ?? 0) > 0,
+      variants: p.variants.map(v => ({
+        id: v.id,
+        name: v.name,
+        price: v.price,
+        stock: v.stock,
+      })),
     }
   })
 

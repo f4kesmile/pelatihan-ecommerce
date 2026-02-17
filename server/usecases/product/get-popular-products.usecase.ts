@@ -16,6 +16,12 @@ export async function getPopularProductsUseCase(limit = 4) {
           : null,
         minPrice,
         isPopular: p.isPopular || (p._count?.orderItems ?? 0) > 0,
+        variants: p.variants.map(v => ({
+          id: v.id,
+          name: v.name,
+          price: v.price,
+          stock: v.stock,
+        })),
       }
     })
   } catch (error) {

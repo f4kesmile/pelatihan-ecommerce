@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   Plus,
   MoreHorizontal,
@@ -13,7 +13,11 @@ import {
   Eye,
   Star,
   Flame,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -29,74 +33,61 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Money } from "@/components/shared/money";
-import Image from "next/image";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
+import { Money } from "@/components/shared/money";
+import { cn } from "@/lib/utils";
 
-interface Variant {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  isActive: boolean;
-}
-
-interface ProductImage {
-  id: string;
-  base64: string;
-  mimeType: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  isActive: boolean;
-  isPopular: boolean;
-  category: { name: string };
-  variants: Variant[];
-  images: ProductImage[];
-  _count: {
-    orderItems: number;
-  };
-}
+import { Product, SortKey, SortState } from "@/types";
+import {
+  getProductStatus,
+  sortProducts,
+  LOW_STOCK_THRESHOLD,
+} from "@/components/features/admin/products/product-utils";
+import { StatusBadge } from "@/components/features/admin/products/product-status-badge";
 
 interface ProductsListProps {
   products: Product[];
 }
 
-function StatusBadge({
-  soldOut,
-  isActive,
+function SortableHeader({
+  label,
+  sortKey,
+  currentSort,
+  onSort,
+  className,
 }: {
-  soldOut: boolean;
-  isActive: boolean;
+  label: string;
+  sortKey: SortKey;
+  currentSort: SortState | null;
+  onSort: (key: SortKey) => void;
+  className?: string;
 }) {
-  if (soldOut) {
-    return (
-      <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-destructive/15 text-destructive border-destructive/20">
-        Sold Out
-      </span>
-    );
-  }
-  if (isActive) {
-    return (
-      <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800">
-        Active
-      </span>
-    );
-  }
+  const isActive = currentSort?.key === sortKey;
+
   return (
-    <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-secondary text-secondary-foreground">
-      Draft
-    </span>
+    <TableHead className={className}>
+      <button
+        className="inline-flex items-center gap-1 hover:text-foreground transition-colors -ml-2 px-2 py-1 rounded-md hover:bg-muted"
+        onClick={() => onSort(sortKey)}
+      >
+        {label}
+        {isActive ? (
+          currentSort.direction === "asc" ? (
+            <ArrowUp className="h-3.5 w-3.5" />
+          ) : (
+            <ArrowDown className="h-3.5 w-3.5" />
+          )
+        ) : (
+          <ArrowUpDown className="h-3.5 w-3.5 opacity-40" />
+        )}
+      </button>
+    </TableHead>
   );
 }
 
 export function ProductsList({ products }: ProductsListProps) {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [sort, setSort] = useState<SortState | null>(null);
 
   const toggleRow = (productId: string) => {
     const newExpanded = new Set(expandedRows);
@@ -108,14 +99,25 @@ export function ProductsList({ products }: ProductsListProps) {
     setExpandedRows(newExpanded);
   };
 
-  const isSoldOut = (variants: Variant[]) => {
-    const hasActiveStock = variants.some((v) => v.isActive && v.stock > 0);
-    return !hasActiveStock;
+  const handleSort = (key: SortKey) => {
+    setSort((prev) => {
+      if (prev?.key === key) {
+        if (prev.direction === "asc") {
+          return { key, direction: "desc" };
+        }
+        return null;
+      }
+      return { key, direction: "asc" };
+    });
   };
+
+  const sortedProducts = useMemo(
+    () => sortProducts(products, sort),
+    [products, sort],
+  );
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
@@ -132,9 +134,8 @@ export function ProductsList({ products }: ProductsListProps) {
         </Button>
       </div>
 
-      {/* Mobile Cards View */}
       <div className="block lg:hidden space-y-4">
-        {products.length === 0 ? (
+        {sortedProducts.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <Package className="h-12 w-12 text-muted-foreground mb-4" />
@@ -147,7 +148,7 @@ export function ProductsList({ products }: ProductsListProps) {
             </CardContent>
           </Card>
         ) : (
-          products.map((product) => {
+          sortedProducts.map((product) => {
             const mainImage = product.images[0];
             const prices = product.variants.map((v) => v.price);
             const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
@@ -157,17 +158,15 @@ export function ProductsList({ products }: ProductsListProps) {
               0,
             );
             const isExpanded = expandedRows.has(product.id);
-            const soldOut = isSoldOut(product.variants);
+            const status = getProductStatus(product);
 
             return (
               <Card key={product.id} className="overflow-hidden">
                 <CardContent className="p-0">
-                  {/* Product Info */}
                   <div
                     className="flex gap-4 p-4 cursor-pointer"
                     onClick={() => toggleRow(product.id)}
                   >
-                    {/* Image */}
                     <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted shrink-0">
                       {mainImage ? (
                         <Image
@@ -183,7 +182,6 @@ export function ProductsList({ products }: ProductsListProps) {
                       )}
                     </div>
 
-                    {/* Details */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
@@ -194,10 +192,7 @@ export function ProductsList({ products }: ProductsListProps) {
                             {product.category.name}
                           </p>
                         </div>
-                        <StatusBadge
-                          soldOut={soldOut}
-                          isActive={product.isActive}
-                        />
+                        <StatusBadge status={status} />
                       </div>
 
                       {product.isPopular && (
@@ -283,7 +278,6 @@ export function ProductsList({ products }: ProductsListProps) {
                     </div>
                   </div>
 
-                  {/* Expanded Variants */}
                   {isExpanded && (
                     <div className="border-t bg-muted/30 p-4 space-y-2">
                       <div className="text-xs font-medium text-muted-foreground mb-2">
@@ -329,231 +323,277 @@ export function ProductsList({ products }: ProductsListProps) {
         )}
       </div>
 
-      {/* Desktop Table View */}
-      <div className="hidden lg:block rounded-xl border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[50px]"></TableHead>
-              <TableHead className="w-[80px]">Image</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Price Range</TableHead>
-              <TableHead>Total Stock</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products.map((product) => {
-              const mainImage = product.images[0];
-              const prices = product.variants.map((v) => v.price);
-              const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
-              const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
-              const totalStock = product.variants.reduce(
-                (acc, v) => acc + v.stock,
-                0,
-              );
-              const isExpanded = expandedRows.has(product.id);
-              const soldOut = isSoldOut(product.variants);
+      {/* Desktop Grid Layout - Hybrid Table/Card Look */}
+      <div className="hidden lg:block space-y-0 border rounded-md overflow-hidden bg-card">
+        {/* Header - Styled like TableHeader */}
+        <div className="bg-muted/40 px-6 py-3 font-medium text-sm text-muted-foreground grid grid-cols-[50px_80px_3fr_100px_140px_100px_120px_80px_50px] gap-4 items-center border-b">
+          <div />
+          <div>Image</div>
+          <div
+            className="cursor-pointer hover:text-foreground flex items-center gap-1"
+            onClick={() => handleSort("name")}
+          >
+            Name
+            {sort?.key === "name" &&
+              (sort.direction === "asc" ? (
+                <ArrowUp className="w-3.5 h-3.5" />
+              ) : (
+                <ArrowDown className="w-3.5 h-3.5" />
+              ))}
+          </div>
+          <div
+            className="cursor-pointer hover:text-foreground flex items-center gap-1"
+            onClick={() => handleSort("status")}
+          >
+            Status
+            {sort?.key === "status" &&
+              (sort.direction === "asc" ? (
+                <ArrowUp className="w-3.5 h-3.5" />
+              ) : (
+                <ArrowDown className="w-3.5 h-3.5" />
+              ))}
+          </div>
+          <div
+            className="cursor-pointer hover:text-foreground flex items-center gap-1"
+            onClick={() => handleSort("price")}
+          >
+            Price Range
+            {sort?.key === "price" &&
+              (sort.direction === "asc" ? (
+                <ArrowUp className="w-3.5 h-3.5" />
+              ) : (
+                <ArrowDown className="w-3.5 h-3.5" />
+              ))}
+          </div>
+          <div
+            className="cursor-pointer hover:text-foreground flex items-center gap-1"
+            onClick={() => handleSort("stock")}
+          >
+            Total Stock
+            {sort?.key === "stock" &&
+              (sort.direction === "asc" ? (
+                <ArrowUp className="w-3.5 h-3.5" />
+              ) : (
+                <ArrowDown className="w-3.5 h-3.5" />
+              ))}
+          </div>
+          <div
+            className="cursor-pointer hover:text-foreground flex items-center gap-1"
+            onClick={() => handleSort("category")}
+          >
+            Category
+            {sort?.key === "category" &&
+              (sort.direction === "asc" ? (
+                <ArrowUp className="w-3.5 h-3.5" />
+              ) : (
+                <ArrowDown className="w-3.5 h-3.5" />
+              ))}
+          </div>
+          <div
+            className="text-center cursor-pointer hover:text-foreground flex items-center justify-center gap-1"
+            onClick={() => handleSort("popular")}
+          >
+            Popular
+            {sort?.key === "popular" &&
+              (sort.direction === "asc" ? (
+                <ArrowUp className="w-3.5 h-3.5" />
+              ) : (
+                <ArrowDown className="w-3.5 h-3.5" />
+              ))}
+          </div>
+          <div className="text-right">Actions</div>
+        </div>
 
-              return (
-                <React.Fragment key={product.id}>
-                  {/* Main Product Row */}
-                  <TableRow
-                    className="cursor-pointer hover:bg-muted/50 transition-colors"
-                    onClick={() => toggleRow(product.id)}
-                  >
-                    <TableCell>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleRow(product.id);
-                        }}
-                        className="p-1"
-                        aria-label={
-                          isExpanded ? "Collapse variants" : "Expand variants"
-                        }
-                      >
-                        {isExpanded ? (
-                          <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                        ) : (
-                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                        )}
-                      </button>
-                    </TableCell>
-                    <TableCell>
-                      <div className="relative aspect-square h-14 w-14 rounded-lg overflow-hidden bg-muted">
-                        {mainImage ? (
-                          <Image
-                            src={`data:${mainImage.mimeType};base64,${mainImage.base64}`}
-                            alt={product.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="flex items-center justify-center h-full">
-                            <Package className="h-6 w-6 text-muted-foreground" />
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium text-base">
-                      {product.name}
-                      {product.isPopular && (
-                        <span
-                          className="ml-2 inline-flex items-center"
-                          title="Manually set as Popular"
-                        >
-                          <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                        </span>
-                      )}
-                      {product._count?.orderItems > 0 && (
-                        <span
-                          className="ml-2 inline-flex items-center"
-                          title={`Best Seller (${product._count.orderItems} sold)`}
-                        >
-                          <Flame className="h-4 w-4 text-orange-500 fill-orange-500" />
-                        </span>
-                      )}
-                      <div className="text-sm text-muted-foreground">
-                        {product.variants.length} variant
-                        {product.variants.length > 1 ? "s" : ""}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge
-                        soldOut={soldOut}
-                        isActive={product.isActive}
-                      />
-                    </TableCell>
-                    <TableCell className="text-base">
-                      {minPrice === maxPrice ? (
-                        <Money amount={minPrice} />
+        {/* Rows - Styled like TableRows */}
+        <div className="divide-y">
+          {sortedProducts.map((product) => {
+            const mainImage = product.images[0];
+            const prices = product.variants.map((v) => v.price);
+            const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+            const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+            const totalStock = product.variants.reduce(
+              (acc, v) => acc + v.stock,
+              0,
+            );
+            const isExpanded = expandedRows.has(product.id);
+            const status = getProductStatus(product);
+
+            return (
+              <div
+                key={product.id}
+                className={cn(
+                  "group transition-all",
+                  isExpanded ? "bg-muted/30" : "hover:bg-muted/50",
+                )}
+              >
+                {/* Product Main Row - Flat Table Look */}
+                <div
+                  onClick={() => toggleRow(product.id)}
+                  className="px-6 py-4 grid grid-cols-[50px_80px_3fr_100px_140px_100px_120px_80px_50px] gap-4 items-center cursor-pointer"
+                >
+                  <div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleRow(product.id);
+                      }}
+                      className="p-1 rounded-md hover:bg-muted transition-colors"
+                    >
+                      {isExpanded ? (
+                        <ChevronDown className="h-5 w-5 text-muted-foreground" />
                       ) : (
-                        <>
-                          <Money amount={minPrice} /> -{" "}
-                          <Money amount={maxPrice} />
-                        </>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
                       )}
-                    </TableCell>
-                    <TableCell className="text-base font-medium">
-                      {totalStock}
-                    </TableCell>
-                    <TableCell className="text-base">
-                      {product.category.name}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          asChild
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Button variant="ghost" className="h-9 w-9 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-5 w-5" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem asChild>
-                            <Link href={`/dashboard/products/${product.id}`}>
-                              Edit
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link
-                              target="_blank"
-                              href={`/products/${product.slug}`}
-                            >
-                              View Public
-                            </Link>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Expanded Variants Row */}
-                  {isExpanded && (
-                    <TableRow className="bg-muted/30 hover:bg-muted/30">
-                      <TableCell colSpan={8} className="p-0">
-                        <div className="px-16 py-4">
-                          <div className="text-sm font-medium text-muted-foreground mb-3">
-                            Variant Details
-                          </div>
-                          <div className="grid gap-2">
-                            {product.variants.map((variant) => (
-                              <div
-                                key={variant.id}
-                                className={cn(
-                                  "flex items-center justify-between rounded-lg border bg-background px-4 py-3",
-                                  !variant.isActive && "opacity-50",
-                                )}
-                              >
-                                <div className="flex items-center gap-4">
-                                  <span className="font-medium">
-                                    {variant.name}
-                                  </span>
-                                  {!variant.isActive && (
-                                    <span className="text-xs bg-muted px-2 py-0.5 rounded">
-                                      Inactive
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-8">
-                                  <div className="text-right">
-                                    <div className="text-xs text-muted-foreground">
-                                      Price
-                                    </div>
-                                    <div className="font-medium">
-                                      <Money amount={variant.price} />
-                                    </div>
-                                  </div>
-                                  <div className="text-right min-w-[60px]">
-                                    <div className="text-xs text-muted-foreground">
-                                      Stock
-                                    </div>
-                                    <div
-                                      className={cn(
-                                        "font-medium",
-                                        variant.stock === 0 &&
-                                          "text-destructive",
-                                      )}
-                                    >
-                                      {variant.stock}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </React.Fragment>
-              );
-            })}
-            {products.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={8} className="h-32 text-center">
-                  <div className="flex flex-col items-center gap-2">
-                    <Package className="h-10 w-10 text-muted-foreground" />
-                    <span className="text-muted-foreground">
-                      No products yet.
-                    </span>
-                    <Button asChild size="sm" variant="outline">
-                      <Link href="/dashboard/products/new">
-                        Create your first product
-                      </Link>
-                    </Button>
+                    </button>
                   </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                  <div>
+                    <div className="relative aspect-square h-14 w-14 rounded-lg overflow-hidden bg-muted ring-1 ring-border">
+                      {mainImage ? (
+                        <Image
+                          src={`data:${mainImage.mimeType};base64,${mainImage.base64}`}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <Package className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="font-medium text-base">
+                    {product.name}
+                    <div className="text-sm text-muted-foreground">
+                      {product.variants.length} variant
+                      {product.variants.length > 1 ? "s" : ""}
+                    </div>
+                  </div>
+                  <div>
+                    <StatusBadge status={status} />
+                  </div>
+                  <div className="text-sm">
+                    {minPrice === maxPrice ? (
+                      <Money amount={minPrice} />
+                    ) : (
+                      <>
+                        <Money amount={minPrice} /> -{" "}
+                        <Money amount={maxPrice} />
+                      </>
+                    )}
+                  </div>
+                  <div className="text-sm font-medium">{totalStock}</div>
+                  <div className="text-sm">{product.category.name}</div>
+                  <div className="flex items-center justify-center gap-1">
+                    {product.isPopular && (
+                      <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                    )}
+                    {product._count?.orderItems > 0 && (
+                      <Flame className="h-4 w-4 text-orange-500 fill-orange-500" />
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        asChild
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Button variant="ghost" className="h-9 w-9 p-0">
+                          <MoreHorizontal className="h-5 w-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                          <Link href={`/dashboard/products/${product.id}`}>
+                            Edit
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link
+                            target="_blank"
+                            href={`/products/${product.slug}`}
+                          >
+                            View Public
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+
+                {/* Variants Expansion - Explicit Card Styling */}
+                {isExpanded && (
+                  <div className="px-6 pb-6 pt-0 space-y-3">
+                    {/* Decorative connector */}
+                    <div className="ml-[24px] h-4 border-l-2 border-dashed border-border/50" />
+
+                    {product.variants.map((variant) => (
+                      <div
+                        key={variant.id}
+                        className={cn(
+                          "relative grid grid-cols-[50px_80px_3fr_100px_140px_100px_120px_80px_50px] gap-4 items-center bg-background border rounded-lg py-3 shadow-sm hover:shadow-md transition-all",
+                          !variant.isActive &&
+                            "opacity-60 bg-muted/10 grayscale",
+                        )}
+                      >
+                        {/* Card Connector Line */}
+                        <div className="absolute -left-[26px] top-1/2 w-[26px] h-px border-t-2 border-dashed border-border/50" />
+                        <div className="absolute -left-[26px] -top-[50px] bottom-1/2 w-0 border-l-2 border-dashed border-border/50" />
+
+                        {/* Checkbox Placeholder */}
+                        <div className="flex justify-center">
+                          {/* Dot / Icon could go here */}
+                        </div>
+
+                        {/* Image Placeholder */}
+                        <div />
+
+                        {/* Name (Aligned) */}
+                        <div className="flex items-center gap-2 -ml-4">
+                          <span className="font-medium text-sm">
+                            {variant.name}
+                          </span>
+                          {!variant.isActive && (
+                            <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded border font-medium">
+                              Off
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Status (Empty) */}
+                        <div />
+
+                        {/* Price (Aligned) */}
+                        <div className="text-sm font-medium text-muted-foreground">
+                          <Money amount={variant.price} />
+                        </div>
+
+                        {/* Stock (Aligned) */}
+                        <div
+                          className={cn(
+                            "text-sm font-medium",
+                            variant.stock === 0
+                              ? "text-destructive"
+                              : variant.stock <= LOW_STOCK_THRESHOLD
+                                ? "text-amber-600 dark:text-amber-400"
+                                : "text-muted-foreground",
+                          )}
+                        >
+                          {variant.stock}
+                        </div>
+
+                        {/* Empty Columns */}
+                        <div className="col-span-3" />
+                      </div>
+                    ))}
+                    <div className="h-2" />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

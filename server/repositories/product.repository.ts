@@ -45,7 +45,7 @@ export class ProductRepository {
       }),
     }
 
-    const [total, products] = await prisma.$transaction([
+    const [total, products] = await Promise.all([
       prisma.product.count({ where }),
       prisma.product.findMany({
         where,
@@ -60,7 +60,6 @@ export class ProductRepository {
           variants: {
             where: { isActive: true },
             orderBy: { price: "asc" },
-            take: 1, 
           },
           _count: {
             select: { orderItems: true },
@@ -110,7 +109,6 @@ export class ProductRepository {
         variants: {
           where: { isActive: true },
           orderBy: { price: "asc" },
-          take: 1,
         },
         _count: {
           select: { orderItems: true },

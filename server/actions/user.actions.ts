@@ -83,6 +83,7 @@ export async function getAllUsers() {
         email: true,
         role: true,
         avatarBase64: true,
+        phone: true,
         createdAt: true,
       },
     });

@@ -86,3 +86,47 @@ export interface FormActionState<T = unknown> {
   error?: string;
   data?: T;
 }
+
+export interface Variant {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+  isActive: boolean;
+}
+
+export interface ProductImage {
+  id: string;
+  base64: string;
+  mimeType: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  isActive: boolean;
+  isPopular: boolean;
+  category: { name: string };
+  variants: Variant[];
+  images: ProductImage[];
+  _count: {
+    orderItems: number;
+  };
+}
+
+export type ProductStatus = "ready" | "low" | "empty";
+
+export type SortKey =
+  | "name"
+  | "status"
+  | "category"
+  | "popular"
+  | "stock"
+  | "price";
+export type SortDirection = "asc" | "desc";
+
+export interface SortState {
+  key: SortKey;
+  direction: SortDirection;
+}

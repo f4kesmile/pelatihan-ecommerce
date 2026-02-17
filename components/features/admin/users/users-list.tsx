@@ -3,14 +3,6 @@
 import { useState } from "react";
 import { Role } from "@prisma/client";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -26,10 +18,14 @@ import {
   Shield,
   User as UserIcon,
   Key,
+  Phone,
+  Calendar,
+  Crown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { updateUserRole } from "@/server/actions/user.actions";
 import { PermissionsDialog } from "./permissions-dialog";
+import { cn } from "@/lib/utils";
 
 interface User {
   id: string;
@@ -37,6 +33,7 @@ interface User {
   email: string;
   role: Role;
   avatarBase64: string | null;
+  phone: string | null;
   createdAt: Date;
 }
 
@@ -45,10 +42,15 @@ interface UsersListProps {
   currentUser: User | null;
 }
 
+const ROLE_OPTIONS: { label: string; value: Role; icon: typeof Shield }[] = [
+  { label: "User", value: "USER", icon: UserIcon },
+  { label: "Admin", value: "ADMIN", icon: Shield },
+  { label: "Super Admin", value: "SUPERADMIN", icon: Shield },
+];
+
 export function UsersList({ initialUsers, currentUser }: UsersListProps) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [loadingId, setLoadingId] = useState<string | null>(null);
-
   const [permissionUser, setPermissionUser] = useState<User | null>(null);
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
 
@@ -78,250 +80,253 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
     }
   };
 
-  const canEditUser = (targetUser: User) => {
-    if (!currentUser) return false;
-    if (currentUser.id === targetUser.id) return false;
-    if (targetUser.role === "SUPERADMIN" && currentUser.role !== "SUPERADMIN")
-      return false;
-    return true;
+  const getAvailableRoles = (targetUser: User): typeof ROLE_OPTIONS => {
+    return ROLE_OPTIONS.filter((opt) => {
+      if (opt.value === targetUser.role) return false;
+      if (opt.value === "SUPERADMIN" && currentUser?.role !== "SUPERADMIN")
+        return false;
+      return true;
+    });
   };
+
+  const isCurrentUser = (user: User) => currentUser?.id === user.id;
+
+  const RoleBadge = ({ role }: { role: Role }) => (
+    <Badge
+      variant={
+        role === "ADMIN" || role === "SUPERADMIN" ? "default" : "secondary"
+      }
+      className={cn(
+        "gap-1",
+        role === "SUPERADMIN" &&
+          "bg-yellow-500 hover:bg-yellow-600 text-white border-transparent",
+      )}
+    >
+      {role === "SUPERADMIN" ? (
+        <Crown className="h-3 w-3 fill-current" />
+      ) : role === "ADMIN" ? (
+        <Shield className="h-3 w-3" />
+      ) : (
+        <UserIcon className="h-3 w-3" />
+      )}
+      {role === "SUPERADMIN" ? "Super Admin" : role}
+    </Badge>
+  );
+
+  const YouBadge = () => (
+    <Badge
+      variant="outline"
+      className="gap-1 border-primary/30 text-primary text-[10px] ml-2 h-5"
+    >
+      You
+    </Badge>
+  );
 
   return (
     <div className="space-y-6">
-      {/* Mobile Cards View */}
+      {/* Mobile Cards View (Visible on small screens) */}
       <div className="block lg:hidden space-y-4">
-        {users.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <UserIcon className="h-12 w-12 text-muted-foreground mb-4 opacity-20" />
-              <p className="text-muted-foreground mb-4">No users found.</p>
-            </CardContent>
-          </Card>
-        ) : (
-          users.map((user) => (
-            <Card key={user.id} className="overflow-hidden">
-              <CardContent className="p-4 space-y-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={user.avatarBase64 || undefined} />
-                      <AvatarFallback>{user.fullName[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <div className="font-semibold truncate">
+        {users.map((user) => (
+          <Card
+            key={user.id}
+            className={cn(
+              "overflow-hidden transition-all",
+              isCurrentUser(user) ? "border-primary/50 shadow-md" : "",
+            )}
+          >
+            <CardContent className="p-4 space-y-4">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user.avatarBase64 || undefined} />
+                    <AvatarFallback>{user.fullName[0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <div className="flex items-center">
+                      <span className="font-semibold truncate">
                         {user.fullName}
-                      </div>
-                      <div className="text-xs text-muted-foreground truncate">
-                        {user.email}
-                      </div>
+                      </span>
+                      {isCurrentUser(user) && <YouBadge />}
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      {user.email}
                     </div>
                   </div>
-                  <Badge
-                    variant={
-                      user.role === "ADMIN" || user.role === "SUPERADMIN"
-                        ? "default"
-                        : "secondary"
-                    }
-                    className="gap-1 shrink-0"
-                  >
-                    {user.role === "ADMIN" || user.role === "SUPERADMIN" ? (
-                      <Shield className="h-3 w-3" />
-                    ) : (
-                      <UserIcon className="h-3 w-3" />
-                    )}
-                    {user.role === "SUPERADMIN" ? "S.Admin" : user.role}
-                  </Badge>
                 </div>
+                <RoleBadge role={user.role} />
+              </div>
 
-                <div className="bg-muted/30 p-3 rounded-lg flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Joined</span>
-                  <span className="font-medium">
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="bg-muted/30 p-2 rounded flex items-center gap-2">
+                  <Phone className="h-3 w-3 text-muted-foreground" />
+                  <span className="truncate">{user.phone || "-"}</span>
+                </div>
+                <div className="bg-muted/30 p-2 rounded flex items-center gap-2">
+                  <Calendar className="h-3 w-3 text-muted-foreground" />
+                  <span className="truncate">
                     {new Date(user.createdAt).toLocaleDateString("id-ID", {
                       dateStyle: "medium",
                     })}
                   </span>
                 </div>
+              </div>
 
-                {canEditUser(user) && (
-                  <div className="flex justify-end gap-2 pt-2 border-t">
-                    {/* Permission Button - Only for Super Admin to manage Admins */}
-                    {currentUser?.role === "SUPERADMIN" &&
+              {currentUser && currentUser.id !== user.id && (
+                <div className="flex justify-end gap-2 pt-2 border-t">
+                  {currentUser.role === "SUPERADMIN" &&
+                    user.role === "ADMIN" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleManagePermissions(user)}
+                      >
+                        <Key className="h-3 w-3 mr-2" /> Permissions
+                      </Button>
+                    )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={loadingId === user.id}
+                      >
+                        {loadingId === user.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin mr-2" />
+                        ) : (
+                          <Shield className="h-3 w-3 mr-2" />
+                        )}
+                        Change Role
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {getAvailableRoles(user).map((opt) => (
+                        <DropdownMenuItem
+                          key={opt.value}
+                          onClick={() => handleRoleChange(user.id, opt.value)}
+                        >
+                          <opt.icon className="h-3 w-3 mr-2" />
+                          Set as {opt.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop Grid Layout (Card looks like Table) */}
+      <div className="hidden lg:block bg-card border rounded-lg overflow-hidden">
+        {/* Header - Aligned Grid */}
+        <div className="grid grid-cols-[2.5fr_1.5fr_1fr_1fr_80px] gap-4 px-6 py-3 text-sm font-medium text-muted-foreground select-none border-b bg-muted/20">
+          <div>User</div>
+          <div>Role</div>
+          <div>Phone</div>
+          <div>Joined</div>
+          <div className="text-right">Actions</div>
+        </div>
+
+        {/* Rows - Individual Rows with Grid Layout */}
+        <div>
+          {users.map((user) => (
+            <div
+              key={user.id}
+              className={cn(
+                "grid grid-cols-[2.5fr_1.5fr_1fr_1fr_80px] gap-4 items-center px-6 py-4 border-b last:border-0 hover:bg-muted/30 transition-colors",
+                isCurrentUser(user) ? "bg-primary/5 hover:bg-primary/10" : "",
+              )}
+            >
+              {/* User Info */}
+              <div className="flex items-center gap-3 overflow-hidden">
+                <Avatar className="h-9 w-9 shrink-0">
+                  <AvatarImage src={user.avatarBase64 || undefined} />
+                  <AvatarFallback>{user.fullName[0]}</AvatarFallback>
+                </Avatar>
+                <div className="min-w-0 flex flex-col">
+                  <div className="flex items-center">
+                    <span className="font-semibold truncate text-sm">
+                      {user.fullName}
+                    </span>
+                    {isCurrentUser(user) && <YouBadge />}
+                  </div>
+                  <span className="text-xs text-muted-foreground truncate">
+                    {user.email}
+                  </span>
+                </div>
+              </div>
+
+              {/* Role */}
+              <div>
+                <RoleBadge role={user.role} />
+              </div>
+
+              {/* Phone */}
+              <div className="text-sm truncate text-muted-foreground">
+                {user.phone ? (
+                  <span className="font-mono text-foreground">
+                    {user.phone}
+                  </span>
+                ) : (
+                  <span className="italic opacity-50">-</span>
+                )}
+              </div>
+
+              {/* Joined */}
+              <div className="text-sm text-muted-foreground">
+                {new Date(user.createdAt).toLocaleDateString("id-ID", {
+                  dateStyle: "medium",
+                })}
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end gap-1">
+                {currentUser && currentUser.id !== user.id && (
+                  <>
+                    {currentUser.role === "SUPERADMIN" &&
                       user.role === "ADMIN" && (
                         <Button
-                          variant="outline"
-                          size="sm"
+                          variant="ghost"
+                          size="icon"
+                          title="Manage Permissions"
                           onClick={() => handleManagePermissions(user)}
                         >
-                          <Key className="h-3 w-3 mr-2" /> Permissions
+                          <Key className="h-4 w-4 text-muted-foreground" />
                         </Button>
                       )}
-
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          variant="outline"
-                          size="sm"
+                          variant="ghost"
+                          size="icon"
                           disabled={loadingId === user.id}
                         >
                           {loadingId === user.id ? (
-                            <Loader2 className="h-3 w-3 animate-spin mr-2" />
+                            <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
-                            <Shield className="h-3 w-3 mr-2" />
+                            <MoreHorizontal className="h-4 w-4" />
                           )}
-                          Change Role
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => handleRoleChange(user.id, "USER")}
-                        >
-                          Set as User
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleRoleChange(user.id, "ADMIN")}
-                        >
-                          Set as Admin
-                        </DropdownMenuItem>
-                        {currentUser?.role === "SUPERADMIN" && (
+                        {getAvailableRoles(user).map((opt) => (
                           <DropdownMenuItem
-                            onClick={() =>
-                              handleRoleChange(user.id, "SUPERADMIN")
-                            }
+                            key={opt.value}
+                            onClick={() => handleRoleChange(user.id, opt.value)}
                           >
-                            Set as Super Admin
+                            <opt.icon className="h-3 w-3 mr-2" />
+                            Set as {opt.label}
                           </DropdownMenuItem>
-                        )}
+                        ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </div>
+                  </>
                 )}
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
-
-      {/* Desktop Table View */}
-      <div className="hidden lg:block rounded-xl border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  No users found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="flex items-center gap-3">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src={user.avatarBase64 || undefined} />
-                      <AvatarFallback>{user.fullName[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col">
-                      <span className="font-medium">{user.fullName}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {user.email}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        user.role === "ADMIN" || user.role === "SUPERADMIN"
-                          ? "default"
-                          : "secondary"
-                      }
-                      className="gap-1"
-                    >
-                      {user.role === "ADMIN" || user.role === "SUPERADMIN" ? (
-                        <Shield className="h-3 w-3" />
-                      ) : (
-                        <UserIcon className="h-3 w-3" />
-                      )}
-                      {user.role}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(user.createdAt).toLocaleDateString("id-ID", {
-                      dateStyle: "medium",
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {/* Permission Button - Only for Super Admin to manage Admins */}
-                      {currentUser?.role === "SUPERADMIN" &&
-                        user.role === "ADMIN" && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            title="Manage Permissions"
-                            aria-label="Manage Permissions"
-                            onClick={() => handleManagePermissions(user)}
-                          >
-                            <Key className="h-4 w-4 text-muted-foreground" />
-                          </Button>
-                        )}
-
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            disabled={
-                              loadingId === user.id || !canEditUser(user)
-                            }
-                          >
-                            {loadingId === user.id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <MoreHorizontal className="h-4 w-4" />
-                            )}
-                            <span className="sr-only">Open menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => handleRoleChange(user.id, "USER")}
-                          >
-                            Set as User
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleRoleChange(user.id, "ADMIN")}
-                          >
-                            Set as Admin
-                          </DropdownMenuItem>
-                          {/* Only prevent showing SUPERADMIN option if not superadmin, though server checks too */}
-                          {currentUser?.role === "SUPERADMIN" && (
-                            <DropdownMenuItem
-                              onClick={() =>
-                                handleRoleChange(user.id, "SUPERADMIN")
-                              }
-                            >
-                              Set as Super Admin
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {permissionUser && (

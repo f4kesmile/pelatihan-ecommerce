@@ -1,9 +1,21 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Money } from "@/components/shared/money";
-import { Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ProductBuyDrawer } from "./product-buy-drawer";
+import { Star, Zap } from "lucide-react";
+
+interface Variant {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+}
 
 interface ProductCardProps {
+  id: string;
   name: string;
   slug: string;
   categoryName: string;
@@ -12,9 +24,11 @@ interface ProductCardProps {
   isPopular?: boolean;
   hideBadge?: boolean;
   headingLevel?: "h2" | "h3" | "h4";
+  variants?: Variant[];
 }
 
 export function ProductCard({
+  id,
   name,
   slug,
   categoryName,
@@ -23,19 +37,21 @@ export function ProductCard({
   isPopular,
   hideBadge,
   headingLevel,
+  variants = [],
 }: ProductCardProps) {
   const Heading = (headingLevel || "h3") as React.ElementType;
 
   return (
-    <Link href={`/products/${slug}`} className="group block h-full">
-      <div className="flex h-full flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md relative">
-        {isPopular && !hideBadge && (
-          <div className="absolute top-2 left-2 z-10">
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2 py-1 text-[10px] font-bold text-white shadow-sm backdrop-blur-[2px]">
-              <Star className="h-3 w-3 fill-white" /> POPULAR
-            </span>
-          </div>
-        )}
+    <div className="flex h-full flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md relative">
+      {isPopular && !hideBadge && (
+        <div className="absolute top-2 left-2 z-10">
+          <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2 py-1 text-[10px] font-bold text-white shadow-sm backdrop-blur-[2px]">
+            <Star className="h-3 w-3 fill-white" /> POPULAR
+          </span>
+        </div>
+      )}
+
+      <Link href={`/products/${slug}`} className="group block flex-1">
         <div className="aspect-square w-full overflow-hidden bg-muted relative">
           {image ? (
             <Image
@@ -65,7 +81,18 @@ export function ProductCard({
             />
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+
+      {variants.length > 0 && (
+        <div className="p-4 pt-0 md:hidden">
+          <ProductBuyDrawer product={{ id, name, slug, image, variants }}>
+            <Button size="sm" className="w-full">
+              <Zap className="mr-2 h-4 w-4" />
+              Beli Sekarang
+            </Button>
+          </ProductBuyDrawer>
+        </div>
+      )}
+    </div>
   );
 }
