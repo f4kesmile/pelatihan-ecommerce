@@ -404,7 +404,7 @@ const SidebarInset = React.forwardRef<
   <main
     ref={ref}
     className={cn(
-      "flex flex-1 flex-col min-h-screen bg-background overflow-hidden",
+      "flex flex-1 flex-col min-h-0 bg-background overflow-hidden",
       className,
     )}
     {...props}

@@ -118,7 +118,7 @@ export default async function OrdersPage() {
                           <div className="h-12 w-12 rounded bg-muted flex items-center justify-center overflow-hidden relative">
                             {item.product.images?.[0] ? (
                               <Image
-                                src={item.product.images[0].base64}
+                                src={`data:${item.product.images[0].mimeType || "image/png"};base64,${item.product.images[0].base64}`}
                                 alt={item.product.name}
                                 fill
                                 className="object-cover"

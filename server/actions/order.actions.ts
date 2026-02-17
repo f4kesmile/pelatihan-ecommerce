@@ -49,7 +49,18 @@ export async function getOrders(filters?: {
         user: {
           select: { fullName: true, email: true },
         },
-        items: true,
+        items: {
+          include: {
+            product: {
+              select: {
+                images: {
+                  select: { base64: true, mimeType: true },
+                  take: 1,
+                },
+              },
+            },
+          },
+        },
         testimonial: {
           select: {
             id: true,

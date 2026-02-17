@@ -34,6 +34,7 @@ import {
   ChevronRight,
   Package,
 } from "lucide-react";
+import Image from "next/image";
 import { toast } from "sonner";
 import {
   updateTestimonialStatus,
@@ -218,7 +219,16 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                             className="flex items-start gap-3 p-3"
                           >
                             <div className="h-10 w-10 flex-shrink-0 bg-muted rounded overflow-hidden relative">
-                              <Package className="h-5 w-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
+                              {orderItem.product?.images?.[0] ? (
+                                <Image
+                                  src={`data:${orderItem.product.images[0].mimeType};base64,${orderItem.product.images[0].base64}`}
+                                  alt={orderItem.productName}
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <Package className="h-5 w-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium line-clamp-1">
@@ -499,7 +509,16 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                                   }`}
                                 >
                                   <div className="h-10 w-10 flex-shrink-0 bg-muted rounded overflow-hidden relative">
-                                    <Package className="h-5 w-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
+                                    {orderItem.product?.images?.[0] ? (
+                                      <Image
+                                        src={`data:${orderItem.product.images[0].mimeType};base64,${orderItem.product.images[0].base64}`}
+                                        alt={orderItem.productName}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    ) : (
+                                      <Package className="h-5 w-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
+                                    )}
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium line-clamp-1">

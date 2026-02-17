@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Eye,
@@ -32,6 +33,9 @@ interface OrderItem {
   price: number;
   quantity: number;
   lineTotal: number;
+  product?: {
+    images: { base64: string; mimeType: string }[];
+  };
 }
 
 interface Order {
@@ -175,12 +179,26 @@ export function OrdersList({ orders }: OrdersListProps) {
                           key={item.id}
                           className="flex items-center justify-between text-sm"
                         >
-                          <div className="flex-1">
-                            <div className="font-medium">
-                              {item.productName}
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className="h-10 w-10 rounded bg-muted flex items-center justify-center overflow-hidden relative shrink-0">
+                              {item.product?.images?.[0] ? (
+                                <Image
+                                  src={`data:${item.product.images[0].mimeType};base64,${item.product.images[0].base64}`}
+                                  alt={item.productName}
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <Package className="h-5 w-5 text-muted-foreground" />
+                              )}
                             </div>
-                            <div className="text-muted-foreground text-xs">
-                              {item.variantName} × {item.quantity}
+                            <div className="flex-1">
+                              <div className="font-medium">
+                                {item.productName}
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                {item.variantName} × {item.quantity}
+                              </div>
                             </div>
                           </div>
                           <div className="font-medium">
@@ -301,6 +319,18 @@ export function OrdersList({ orders }: OrdersListProps) {
                                   className="flex items-center justify-between rounded-lg border bg-background px-4 py-3"
                                 >
                                   <div className="flex items-center gap-4">
+                                    <div className="h-10 w-10 rounded bg-muted flex items-center justify-center overflow-hidden relative shrink-0">
+                                      {item.product?.images?.[0] ? (
+                                        <Image
+                                          src={`data:${item.product.images[0].mimeType};base64,${item.product.images[0].base64}`}
+                                          alt={item.productName}
+                                          fill
+                                          className="object-cover"
+                                        />
+                                      ) : (
+                                        <Package className="h-5 w-5 text-muted-foreground" />
+                                      )}
+                                    </div>
                                     <span className="font-medium">
                                       {item.productName}
                                     </span>

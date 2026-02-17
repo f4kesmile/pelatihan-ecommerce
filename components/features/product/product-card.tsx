@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Money } from "@/components/shared/money";
 import { Button } from "@/components/ui/button";
 import { ProductBuyDrawer } from "./product-buy-drawer";
-import { Star, Zap } from "lucide-react";
+import { ShoppingBag, Star } from "lucide-react";
 
 interface Variant {
   id: string;
@@ -75,24 +75,33 @@ export function ProductCard({
           </Heading>
           <div className="mt-auto pt-2">
             <p className="text-xs text-muted-foreground mb-1">Mulai dari</p>
-            <Money
-              amount={minPrice}
-              className="text-lg font-bold text-primary"
-            />
+            <div className="flex items-center justify-between">
+              <Money
+                amount={minPrice}
+                className="text-lg font-bold text-primary"
+              />
+              {variants.length > 0 && (
+                <div
+                  className="md:hidden"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  <ProductBuyDrawer
+                    product={{ id, name, slug, image, variants }}
+                  >
+                    <Button size="sm" className="h-7 text-xs px-2.5">
+                      <ShoppingBag className="mr-1 h-3 w-3" />
+                      Beli
+                    </Button>
+                  </ProductBuyDrawer>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </Link>
-
-      {variants.length > 0 && (
-        <div className="p-4 pt-0 md:hidden">
-          <ProductBuyDrawer product={{ id, name, slug, image, variants }}>
-            <Button size="sm" className="w-full">
-              <Zap className="mr-2 h-4 w-4" />
-              Beli Sekarang
-            </Button>
-          </ProductBuyDrawer>
-        </div>
-      )}
     </div>
   );
 }

@@ -49,7 +49,7 @@ export interface TestimonialWithUser {
       quantity: number;
       unitPrice: number;
       product: {
-        images: string[];
+        images: { base64: string; mimeType: string }[];
       };
     }[];
   };
