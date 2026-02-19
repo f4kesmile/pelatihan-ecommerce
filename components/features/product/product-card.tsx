@@ -23,6 +23,7 @@ interface ProductCardProps {
   image: string | null;
   isPopular?: boolean;
   hideBadge?: boolean;
+  hideButton?: boolean;
   headingLevel?: "h2" | "h3" | "h4";
   variants?: Variant[];
 }
@@ -36,6 +37,7 @@ export function ProductCard({
   image,
   isPopular,
   hideBadge,
+  hideButton,
   headingLevel,
   variants = [],
 }: ProductCardProps) {
@@ -80,7 +82,7 @@ export function ProductCard({
                 amount={minPrice}
                 className="text-lg font-bold text-primary"
               />
-              {variants.length > 0 && (
+              {!hideButton && variants.length > 0 && (
                 <div
                   className="md:hidden"
                   onClick={(e) => {

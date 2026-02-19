@@ -61,6 +61,20 @@ export async function changePassword(data: { currentPassword: string; newPasswor
   const supabase = await createClient();
   
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || !user.email) {
+      return { error: "Not authenticated" };
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: data.currentPassword,
+    });
+
+    if (signInError) {
+      return { error: "Incorrect current password" };
+    }
+
     const { error } = await supabase.auth.updateUser({
       password: data.newPassword,
     });

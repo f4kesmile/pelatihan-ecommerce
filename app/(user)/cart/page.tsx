@@ -43,7 +43,6 @@ export default function CartPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-12">
-        {/* Cart Items List */}
         <div className="lg:col-span-8">
           <div className="rounded-lg border divide-y">
             {items.map((item) => (
@@ -51,7 +50,6 @@ export default function CartPage() {
                 key={item.id}
                 className="flex gap-2 p-4 pr-6 sm:gap-6 sm:pr-8"
               >
-                {/* Product Image */}
                 <div className="relative aspect-square h-20 w-20 sm:h-28 sm:w-28 flex-none overflow-hidden rounded-md border bg-muted">
                   {item.image ? (
                     <Image
@@ -67,7 +65,6 @@ export default function CartPage() {
                   )}
                 </div>
 
-                {/* Product Details */}
                 <div className="flex flex-1 flex-col justify-between">
                   <div className="grid gap-1">
                     <Link
@@ -136,7 +133,6 @@ export default function CartPage() {
           </div>
         </div>
 
-        {/* Summary Card */}
         <div className="lg:col-span-4">
           <div className="rounded-lg border bg-card text-card-foreground p-6 sticky top-24 shadow-sm">
             <h2 className="text-lg font-semibold mb-4">Order Summary</h2>

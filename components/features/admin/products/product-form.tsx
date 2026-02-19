@@ -123,7 +123,7 @@ export function ProductForm({
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const file = files[0]; // Process one file at a time for cropping
+    const file = files[0];
 
     if (file.size > 5 * 1024 * 1024) {
       toast.error(`Image ${file.name} is too large (max 5MB).`);
@@ -152,7 +152,7 @@ export function ProductForm({
     const approximateSize = Math.ceil((base64Data.length * 3) / 4);
 
     newImages.push({
-      name: `image-${Date.now()}.jpg`, // Generate a name
+      name: `image-${Date.now()}.jpg`,
       mimeType,
       base64: base64Data,
       size: approximateSize,
@@ -208,7 +208,6 @@ export function ProductForm({
             </TabsTrigger>
           </TabsList>
 
-          {/* TAB 1: BASIC INFO */}
           <TabsContent value="basic" className="mt-6">
             <div className="space-y-6 rounded-xl border p-6 bg-card">
               <h3 className="font-semibold text-xl">Basic Information</h3>
@@ -258,7 +257,6 @@ export function ProductForm({
                 )}
               />
 
-              {/* Category with Add New Button */}
               <FormField
                 control={form.control}
                 name="categoryId"
@@ -425,7 +423,6 @@ export function ProductForm({
             </div>
           </TabsContent>
 
-          {/* TAB 2: VARIANTS */}
           <TabsContent value="variants" className="mt-6">
             <div className="space-y-6 rounded-xl border p-6 bg-card">
               <div className="flex items-center justify-between">
@@ -559,7 +556,6 @@ export function ProductForm({
             </div>
           </TabsContent>
 
-          {/* TAB 3: IMAGES */}
           <TabsContent value="images" className="mt-6">
             <div className="space-y-6 rounded-xl border p-6 bg-card">
               <div>
@@ -628,7 +624,6 @@ export function ProductForm({
           </TabsContent>
         </Tabs>
 
-        {/* Submit Buttons */}
         <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
           <Button
             type="button"
@@ -646,7 +641,6 @@ export function ProductForm({
         </div>
       </form>
 
-      {/* Image Cropper Modal */}
       <ImageCropper
         imageSrc={currentImageSrc}
         isOpen={cropperOpen}

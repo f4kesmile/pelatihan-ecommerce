@@ -35,8 +35,7 @@ export function StoreSettingsPage({ initialData }: StoreSettingsPageProps) {
     heroSubheadline: initialData?.heroSubheadline ?? "",
     heroCtaText: initialData?.heroCtaText ?? "",
     heroCtaHref: initialData?.heroCtaHref ?? "",
-    heroProductsMode:
-      (initialData?.heroProductsMode as "RANDOM" | "MANUAL") ?? "RANDOM",
+    heroProductsMode: initialData?.heroProductsMode ?? "RANDOM",
     heroProductIds: initialData?.heroProductIds ?? [],
     heroProductConfigs: initialData?.heroProductConfigs ?? [],
     companyName: initialData?.companyName ?? "",

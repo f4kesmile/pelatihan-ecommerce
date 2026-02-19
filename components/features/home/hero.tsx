@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, TargetAndTransition } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { ShoppingBag, Star } from "lucide-react";
 import Image from "next/image";
@@ -27,7 +27,6 @@ const currentYear = new Date().getFullYear();
 export function Hero(props: HeroProps) {
   return (
     <section className="relative w-full overflow-hidden bg-background text-foreground animate-in fade-in duration-500">
-      {/* Mobile Wrapper: Keep min-h: 560px for consistency, but adjust button placement */}
       <div className="block md:hidden h-[100dvh] min-h-[560px] relative w-full overflow-hidden">
         <MobileLayout {...props} />
       </div>
@@ -89,8 +88,6 @@ function MobileLayout({
         </motion.div>
       </div>
 
-      {/* CTA Button: RESTORED to 'bottom: 12dvh' to avoid being cut off by browser address bar/safe area. */}
-      {/* The reduced 'min-h: 560px' above will still minimize the 'gap' to the next section correctly. */}
       <div className="absolute z-20 left-6 right-6" style={{ bottom: "12dvh" }}>
         <CTAButton text={ctaText} href={ctaHref} />
       </div>

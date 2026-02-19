@@ -33,7 +33,6 @@ export async function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="relative w-full flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
-        {/* Left: Mobile Menu & Logo */}
         <div className="flex items-center gap-4">
           <MobileNav userProfile={userProfile} />
           <Link href="/" className="flex items-center space-x-2">
@@ -41,12 +40,10 @@ export async function Navbar() {
           </Link>
         </div>
 
-        {/* Center: Desktop Nav */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex">
           <MainNav />
         </div>
 
-        {/* Right: Actions */}
         <nav className="flex items-center gap-2">
           {(userProfile?.role === "ADMIN" ||
             userProfile?.role === "SUPERADMIN") && (
@@ -73,7 +70,6 @@ export async function Navbar() {
           <ThemeToggle />
           <CartSheet />
 
-          {/* User Profile or Login Link */}
           {user ? (
             <UserNav
               user={{

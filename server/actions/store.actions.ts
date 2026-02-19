@@ -1,6 +1,7 @@
 "use server"
 
 import prisma from "@/lib/db/prisma"
+import { Prisma } from "@prisma/client"
 import { revalidatePath } from "next/cache"
 import { storeConfigSchema, StoreConfigFormValues } from "@/server/schemas/store.schema"
 
@@ -12,7 +13,7 @@ export async function getStoreConfig() {
   if (!config) {
      return null
   }
-  return config as unknown as (typeof config & { heroProductConfigs: any })
+  return config as unknown as (typeof config & { heroProductConfigs: StoreConfigFormValues["heroProductConfigs"] })
 }
 
 export async function updateStoreConfig(data: StoreConfigFormValues) {
@@ -26,7 +27,7 @@ export async function updateStoreConfig(data: StoreConfigFormValues) {
   // Ensure heroProductConfigs is treated as JSON
   const dataToSave = {
     ...validation.data,
-    heroProductConfigs: validation.data.heroProductConfigs as any
+    heroProductConfigs: validation.data.heroProductConfigs as Prisma.InputJsonValue
   }
 
   try {

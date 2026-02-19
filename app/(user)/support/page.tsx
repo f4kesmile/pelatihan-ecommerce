@@ -84,7 +84,6 @@ export default function SupportPage() {
   return (
     <div className="w-full px-4 md:px-6 lg:px-8 py-8">
       <div className="mx-auto w-full max-w-7xl">
-        {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-3">Support Center</h1>
           <p className="text-muted-foreground text-lg">
@@ -93,7 +92,6 @@ export default function SupportPage() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-12 items-stretch">
-          {/* FAQ Section */}
           <section className="h-full">
             <Card className="h-full">
               <CardHeader>
@@ -120,7 +118,6 @@ export default function SupportPage() {
             </Card>
           </section>
 
-          {/* Contact Form */}
           <section className="h-full">
             <Card className="h-full flex flex-col">
               <CardHeader>

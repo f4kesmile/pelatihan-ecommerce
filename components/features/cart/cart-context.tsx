@@ -32,15 +32,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const savedCart = localStorage.getItem("zinc-cart");
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart));
-      } catch (e) {
-        console.error("Failed to parse cart", e);
+    setTimeout(() => {
+      const savedCart = localStorage.getItem("zinc-cart");
+      if (savedCart) {
+        try {
+          const parsed = JSON.parse(savedCart);
+          setItems(parsed);
+        } catch (e) {
+          console.error("Failed to parse cart", e);
+        }
       }
-    }
-    setIsLoaded(true);
+      setIsLoaded(true);
+    }, 0);
   }, []);
 
   useEffect(() => {

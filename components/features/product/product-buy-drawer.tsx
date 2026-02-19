@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -17,6 +18,7 @@ import { Money } from "@/components/shared/money";
 import { useCart } from "@/components/features/cart/cart-context";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface Variant {
   id: string;
@@ -63,21 +65,17 @@ export function ProductBuyDrawer({ product, children }: ProductBuyDrawerProps) {
       toast.error("Pilih variant terlebih dahulu");
       return;
     }
-    for (let i = 0; i < quantity; i++) {
-      addItem({
-        id: selectedVariant.id,
-        productId: product.id,
-        name: product.name,
-        slug: product.slug,
-        image: product.image,
-        price: selectedVariant.price,
-        variantName: selectedVariant.name,
-        maxStock: selectedVariant.stock,
-      });
-    }
-    toast.success(
-      `${quantity}x ${selectedVariant.name} ditambahkan ke keranjang`,
-    );
+    addItem({
+      id: selectedVariant.id,
+      productId: product.id,
+      name: product.name,
+      slug: product.slug,
+      image: product.image,
+      price: selectedVariant.price,
+      variantName: selectedVariant.name,
+      maxStock: selectedVariant.stock,
+      quantity: quantity,
+    });
     setOpen(false);
   };
 
@@ -86,18 +84,17 @@ export function ProductBuyDrawer({ product, children }: ProductBuyDrawerProps) {
       toast.error("Pilih variant terlebih dahulu");
       return;
     }
-    for (let i = 0; i < quantity; i++) {
-      addItem({
-        id: selectedVariant.id,
-        productId: product.id,
-        name: product.name,
-        slug: product.slug,
-        image: product.image,
-        price: selectedVariant.price,
-        variantName: selectedVariant.name,
-        maxStock: selectedVariant.stock,
-      });
-    }
+    addItem({
+      id: selectedVariant.id,
+      productId: product.id,
+      name: product.name,
+      slug: product.slug,
+      image: product.image,
+      price: selectedVariant.price,
+      variantName: selectedVariant.name,
+      maxStock: selectedVariant.stock,
+      quantity: quantity,
+    });
     setOpen(false);
     router.push("/cart");
   };
@@ -152,15 +149,15 @@ export function ProductBuyDrawer({ product, children }: ProductBuyDrawerProps) {
                   key={variant.id}
                   disabled={variant.stock === 0}
                   onClick={() => handleVariantSelect(variant)}
-                  className={`
-                    rounded-md border px-1 py-1.5 text-center text-[11px] font-medium transition-all leading-tight
-                    ${
-                      selectedVariant?.id === variant.id
-                        ? "border-primary bg-primary/10 text-primary ring-1 ring-primary"
-                        : "border-border hover:bg-muted/50"
-                    }
-                    ${variant.stock === 0 ? "opacity-40 cursor-not-allowed line-through" : "cursor-pointer"}
-                  `}
+                  className={cn(
+                    "rounded-md border px-1 py-1.5 text-center text-[11px] font-medium transition-all leading-tight",
+                    selectedVariant?.id === variant.id
+                      ? "border-primary bg-primary/10 text-primary ring-1 ring-primary"
+                      : "border-border hover:bg-muted/50",
+                    variant.stock === 0
+                      ? "opacity-40 cursor-not-allowed line-through"
+                      : "cursor-pointer",
+                  )}
                 >
                   {variant.name}
                 </button>

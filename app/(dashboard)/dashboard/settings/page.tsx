@@ -16,6 +16,8 @@ export default async function SettingsPage() {
         shopeeUrl: config.shopeeUrl || undefined,
         tiktokUrl: config.tiktokUrl || undefined,
         websiteUrl: config.websiteUrl || undefined,
+        heroProductsMode:
+          (config.heroProductsMode as "RANDOM" | "MANUAL") || "RANDOM",
 
         // Privacy
         privacyTitle: config.privacyTitle || undefined,

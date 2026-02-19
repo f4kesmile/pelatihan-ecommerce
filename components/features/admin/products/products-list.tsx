@@ -13,19 +13,11 @@ import {
   Eye,
   Star,
   Flame,
-  ArrowUpDown,
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,42 +39,6 @@ import { StatusBadge } from "@/components/features/admin/products/product-status
 
 interface ProductsListProps {
   products: Product[];
-}
-
-function SortableHeader({
-  label,
-  sortKey,
-  currentSort,
-  onSort,
-  className,
-}: {
-  label: string;
-  sortKey: SortKey;
-  currentSort: SortState | null;
-  onSort: (key: SortKey) => void;
-  className?: string;
-}) {
-  const isActive = currentSort?.key === sortKey;
-
-  return (
-    <TableHead className={className}>
-      <button
-        className="inline-flex items-center gap-1 hover:text-foreground transition-colors -ml-2 px-2 py-1 rounded-md hover:bg-muted"
-        onClick={() => onSort(sortKey)}
-      >
-        {label}
-        {isActive ? (
-          currentSort.direction === "asc" ? (
-            <ArrowUp className="h-3.5 w-3.5" />
-          ) : (
-            <ArrowDown className="h-3.5 w-3.5" />
-          )
-        ) : (
-          <ArrowUpDown className="h-3.5 w-3.5 opacity-40" />
-        )}
-      </button>
-    </TableHead>
-  );
 }
 
 export function ProductsList({ products }: ProductsListProps) {
@@ -323,9 +279,7 @@ export function ProductsList({ products }: ProductsListProps) {
         )}
       </div>
 
-      {/* Desktop Grid Layout - Hybrid Table/Card Look */}
       <div className="hidden lg:block space-y-0 border rounded-md overflow-hidden bg-card">
-        {/* Header - Styled like TableHeader */}
         <div className="bg-muted/40 px-6 py-3 font-medium text-sm text-muted-foreground grid grid-cols-[50px_80px_3fr_100px_140px_100px_120px_80px_50px] gap-4 items-center border-b">
           <div />
           <div>Image</div>
@@ -404,7 +358,6 @@ export function ProductsList({ products }: ProductsListProps) {
           <div className="text-right">Actions</div>
         </div>
 
-        {/* Rows - Styled like TableRows */}
         <div className="divide-y">
           {sortedProducts.map((product) => {
             const mainImage = product.images[0];
@@ -426,7 +379,6 @@ export function ProductsList({ products }: ProductsListProps) {
                   isExpanded ? "bg-muted/30" : "hover:bg-muted/50",
                 )}
               >
-                {/* Product Main Row - Flat Table Look */}
                 <div
                   onClick={() => toggleRow(product.id)}
                   className="px-6 py-4 grid grid-cols-[50px_80px_3fr_100px_140px_100px_120px_80px_50px] gap-4 items-center cursor-pointer"
@@ -522,10 +474,8 @@ export function ProductsList({ products }: ProductsListProps) {
                   </div>
                 </div>
 
-                {/* Variants Expansion - Explicit Card Styling */}
                 {isExpanded && (
                   <div className="px-6 pb-6 pt-0 space-y-3">
-                    {/* Decorative connector */}
                     <div className="ml-[24px] h-4 border-l-2 border-dashed border-border/50" />
 
                     {product.variants.map((variant) => (
@@ -537,19 +487,13 @@ export function ProductsList({ products }: ProductsListProps) {
                             "opacity-60 bg-muted/10 grayscale",
                         )}
                       >
-                        {/* Card Connector Line */}
                         <div className="absolute -left-[26px] top-1/2 w-[26px] h-px border-t-2 border-dashed border-border/50" />
                         <div className="absolute -left-[26px] -top-[50px] bottom-1/2 w-0 border-l-2 border-dashed border-border/50" />
 
-                        {/* Checkbox Placeholder */}
-                        <div className="flex justify-center">
-                          {/* Dot / Icon could go here */}
-                        </div>
+                        <div className="flex justify-center"></div>
 
-                        {/* Image Placeholder */}
                         <div />
 
-                        {/* Name (Aligned) */}
                         <div className="flex items-center gap-2 -ml-4">
                           <span className="font-medium text-sm">
                             {variant.name}
@@ -561,15 +505,12 @@ export function ProductsList({ products }: ProductsListProps) {
                           )}
                         </div>
 
-                        {/* Status (Empty) */}
                         <div />
 
-                        {/* Price (Aligned) */}
                         <div className="text-sm font-medium text-muted-foreground">
                           <Money amount={variant.price} />
                         </div>
 
-                        {/* Stock (Aligned) */}
                         <div
                           className={cn(
                             "text-sm font-medium",
@@ -583,7 +524,6 @@ export function ProductsList({ products }: ProductsListProps) {
                           {variant.stock}
                         </div>
 
-                        {/* Empty Columns */}
                         <div className="col-span-3" />
                       </div>
                     ))}

@@ -43,7 +43,6 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
 
       <ReviewsTable data={testimonials || []} />
 
-      {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
         <div className="flex justify-center gap-2 pt-4 items-center">
           <Link

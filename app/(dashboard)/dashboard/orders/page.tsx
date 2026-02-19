@@ -30,7 +30,6 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         </div>
       </div>
 
-      {/* Status Filters */}
       <div className="flex gap-2 flex-wrap overflow-x-auto pb-2 sm:pb-0">
         <Link href="/dashboard/orders">
           <Button variant={!status ? "default" : "outline"} size="sm">
@@ -54,10 +53,8 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         ))}
       </div>
 
-      {/* Orders List Component */}
       <OrdersList orders={serializedOrders} />
 
-      {/* Pagination */}
       {pagination.totalPages > 1 && (
         <div className="flex justify-center gap-2 pt-4">
           {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(

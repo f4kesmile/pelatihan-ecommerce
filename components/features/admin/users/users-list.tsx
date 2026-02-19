@@ -124,7 +124,6 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
 
   return (
     <div className="space-y-6">
-      {/* Mobile Cards View (Visible on small screens) */}
       <div className="block lg:hidden space-y-4">
         {users.map((user) => (
           <Card
@@ -217,9 +216,7 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
         ))}
       </div>
 
-      {/* Desktop Grid Layout (Card looks like Table) */}
       <div className="hidden lg:block bg-card border rounded-lg overflow-hidden">
-        {/* Header - Aligned Grid */}
         <div className="grid grid-cols-[2.5fr_1.5fr_1fr_1fr_80px] gap-4 px-6 py-3 text-sm font-medium text-muted-foreground select-none border-b bg-muted/20">
           <div>User</div>
           <div>Role</div>
@@ -228,7 +225,6 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
           <div className="text-right">Actions</div>
         </div>
 
-        {/* Rows - Individual Rows with Grid Layout */}
         <div>
           {users.map((user) => (
             <div
@@ -238,7 +234,6 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
                 isCurrentUser(user) ? "bg-primary/5 hover:bg-primary/10" : "",
               )}
             >
-              {/* User Info */}
               <div className="flex items-center gap-3 overflow-hidden">
                 <Avatar className="h-9 w-9 shrink-0">
                   <AvatarImage src={user.avatarBase64 || undefined} />
@@ -257,12 +252,10 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
                 </div>
               </div>
 
-              {/* Role */}
               <div>
                 <RoleBadge role={user.role} />
               </div>
 
-              {/* Phone */}
               <div className="text-sm truncate text-muted-foreground">
                 {user.phone ? (
                   <span className="font-mono text-foreground">
@@ -273,14 +266,12 @@ export function UsersList({ initialUsers, currentUser }: UsersListProps) {
                 )}
               </div>
 
-              {/* Joined */}
               <div className="text-sm text-muted-foreground">
                 {new Date(user.createdAt).toLocaleDateString("id-ID", {
                   dateStyle: "medium",
                 })}
               </div>
 
-              {/* Actions */}
               <div className="flex justify-end gap-1">
                 {currentUser && currentUser.id !== user.id && (
                   <>

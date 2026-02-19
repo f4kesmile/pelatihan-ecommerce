@@ -110,7 +110,6 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
 
   return (
     <div className="space-y-6">
-      {/* Mobile Cards View */}
       <div className="block lg:hidden space-y-4">
         {data.length === 0 ? (
           <Card>
@@ -181,7 +180,6 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
                   </div>
                 </div>
 
-                {/* Mobile Expandable Order Details */}
                 <div>
                   <Button
                     variant="ghost"
@@ -319,7 +317,6 @@ export function TestimonialsList({ data }: TestimonialsListProps) {
         )}
       </div>
 
-      {/* Desktop Table View */}
       <div className="hidden lg:block rounded-xl border bg-card">
         <Table>
           <TableHeader>

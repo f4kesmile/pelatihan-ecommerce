@@ -10,7 +10,6 @@ import {
   ChevronDown,
   ChevronRight,
   Package,
-  CheckCircle,
   BadgeCheck,
 } from "lucide-react";
 import {
@@ -79,7 +78,6 @@ export function OrdersList({ orders }: OrdersListProps) {
 
   return (
     <div className="space-y-6">
-      {/* Mobile Cards View */}
       <div className="block lg:hidden space-y-4">
         {orders.length === 0 ? (
           <Card>
@@ -95,7 +93,6 @@ export function OrdersList({ orders }: OrdersListProps) {
             return (
               <Card key={order.id} className="overflow-hidden">
                 <CardContent className="p-0">
-                  {/* Order Info */}
                   <div
                     className="flex gap-4 p-4 cursor-pointer"
                     onClick={() => toggleRow(order.id)}
@@ -184,7 +181,6 @@ export function OrdersList({ orders }: OrdersListProps) {
                     </div>
                   </div>
 
-                  {/* Expanded Items */}
                   {isExpanded && (
                     <div className="border-t bg-muted/30 p-4 space-y-3">
                       <div className="text-xs font-medium text-muted-foreground mb-2">
@@ -231,7 +227,6 @@ export function OrdersList({ orders }: OrdersListProps) {
         )}
       </div>
 
-      {/* Desktop Table View */}
       <div className="hidden lg:block rounded-xl border bg-card">
         <Table>
           <TableHeader>
@@ -331,7 +326,6 @@ export function OrdersList({ orders }: OrdersListProps) {
                       </TableCell>
                     </TableRow>
 
-                    {/* Expanded Items Row */}
                     {isExpanded && (
                       <TableRow className="bg-muted/30 hover:bg-muted/30">
                         <TableCell colSpan={7} className="p-0">

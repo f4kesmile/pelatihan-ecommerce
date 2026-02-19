@@ -113,7 +113,6 @@ export function MagicReviewForm({
       </CardHeader>
 
       <CardContent className="space-y-8 p-6 sm:p-8">
-        {/* Order Items Preview */}
         <div className="space-y-3">
           <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Purchased Items
@@ -153,7 +152,6 @@ export function MagicReviewForm({
           </div>
         </div>
 
-        {/* Rating */}
         <div className="space-y-4 text-center py-2">
           <Label className="text-base font-medium">
             How was your experience?
@@ -220,7 +218,6 @@ export function MagicReviewForm({
           </div>
         </div>
 
-        {/* Message */}
         <div className="space-y-3">
           <Label htmlFor="message">Your Review</Label>
           <div className="relative">

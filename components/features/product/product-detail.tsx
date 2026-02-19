@@ -87,10 +87,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
   return (
     <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
-      {/* Left: Gallery */}
       <ProductGallery images={product.images} />
 
-      {/* Right: Info */}
       <div className="flex flex-col gap-6">
         <div>
           <Badge variant="secondary" className="mb-2">
@@ -112,13 +110,11 @@ export function ProductDetail({ product }: ProductDetailProps) {
           )}
         </div>
 
-        {/* Description - Now below price */}
         <div className="prose prose-sm text-muted-foreground dark:prose-invert">
           <h3 className="text-foreground font-medium mb-2">Description</h3>
           <p>{product.description || "No description available."}</p>
         </div>
 
-        {/* Variants - Below description */}
         <div className="space-y-4">
           <h3 className="text-sm font-medium">Variants</h3>
           <div className="flex flex-wrap gap-3">
@@ -146,7 +142,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </div>
         </div>
 
-        {/* Quantity Selector */}
         <div className="flex items-center gap-4">
           <h3 className="text-sm font-medium">Quantity</h3>
           <div className="flex items-center gap-2 border rounded-lg p-1">
@@ -177,7 +172,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
           )}
         </div>
 
-        {/* Buttons - At the bottom */}
         <div className="flex flex-col gap-3 mt-2">
           <div className="flex gap-3">
             <Button

@@ -18,7 +18,7 @@ interface NotificationToastProps {
     lowStockVariants: number;
   } | null;
   totalNotifications: number;
-  t: string | number; // Toast ID
+  t: string | number;
 }
 
 export function NotificationToast({
@@ -76,7 +76,6 @@ export function NotificationToast({
       animate="show"
       className="w-full max-w-sm bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-xl overflow-hidden"
     >
-      {/* Animated Header */}
       <motion.div
         variants={item}
         className="px-5 py-4 bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between"
@@ -108,7 +107,6 @@ export function NotificationToast({
         </motion.div>
       </motion.div>
 
-      {/* Animated List */}
       <div className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
         {notifications?.pendingOrders ? (
           <Link href="/dashboard/orders" onClick={() => toast.dismiss(t)}>
@@ -122,7 +120,9 @@ export function NotificationToast({
               }}
               whileTap={{ scale: 0.98 }}
               className="group flex items-start gap-4 p-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors cursor-pointer"
-              style={{ "--bg-hover": "rgba(0,0,0,0.02)" } as any}
+              style={
+                { "--bg-hover": "rgba(0,0,0,0.02)" } as React.CSSProperties
+              }
             >
               <motion.div
                 whileHover={{ rotate: 15, scale: 1.1 }}
@@ -168,7 +168,9 @@ export function NotificationToast({
               }}
               whileTap={{ scale: 0.98 }}
               className="group flex items-start gap-4 p-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors cursor-pointer"
-              style={{ "--bg-hover": "rgba(0,0,0,0.02)" } as any}
+              style={
+                { "--bg-hover": "rgba(0,0,0,0.02)" } as React.CSSProperties
+              }
             >
               <motion.div
                 whileHover={{ rotate: -15, scale: 1.1 }}

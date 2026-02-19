@@ -55,7 +55,6 @@ export function LoginForm({ storeName, storeLogo }: LoginFormProps) {
 
   return (
     <main className="w-full min-h-screen grid lg:grid-cols-2">
-      {/* Left Side (Desktop Visuals) */}
       <div className="hidden lg:flex flex-col justify-between bg-zinc-100 dark:bg-zinc-950 p-12 relative overflow-hidden text-foreground">
         <BackgroundEffects />
 
@@ -131,18 +130,14 @@ export function LoginForm({ storeName, storeLogo }: LoginFormProps) {
         </div>
       </div>
 
-      {/* Right Side (Form) */}
       <div className="relative flex items-center justify-center p-4 sm:p-8 bg-zinc-50 dark:bg-zinc-950 lg:bg-background overflow-hidden min-h-screen lg:min-h-0">
-        {/* Grid Background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
 
-        {/* Mobile: Removed Logo completely as requested */}
         <div className="absolute top-4 right-4 z-50">
           <ThemeToggle />
         </div>
 
         <div className="relative z-20 w-full max-w-[400px]">
-          {/* Card Container: 3D Hover & Full Width Feel */}
           <div className="group bg-white/80 dark:bg-zinc-900/50 backdrop-blur-md p-8 rounded-2xl border border-zinc-200 dark:border-white/10 shadow-xl dark:shadow-2xl lg:shadow-none transition-all duration-500 hover:scale-[1.02] hover:shadow-primary/10 hover:border-primary/20">
             <div className="space-y-6">
               <div className="space-y-2 text-center lg:text-left">

@@ -280,12 +280,10 @@ export function SettingsDialog({
             <TabsTrigger value="security">Security</TabsTrigger>
           </TabsList>
 
-          {/* Profile Tab */}
           <TabsContent
             value="profile"
             className="space-y-6 mt-4 min-h-[480px] animate-in fade-in-0 slide-in-from-left-2 duration-300"
           >
-            {/* Avatar Section */}
             <div className="space-y-4 pb-4 border-b">
               <div className="flex items-center justify-between">
                 <div>
@@ -342,7 +340,6 @@ export function SettingsDialog({
                 </div>
               ) : (
                 <div className="flex items-center gap-6 mt-4">
-                  {/* Avatar Preview - Always show current avatar or initials */}
                   <div className="relative group">
                     <div className="relative h-20 w-20 rounded-full overflow-hidden border-2 border-border bg-muted">
                       {avatarPreview ? (
@@ -371,7 +368,6 @@ export function SettingsDialog({
                     )}
                   </div>
 
-                  {/* Upload Controls */}
                   <div className="flex-1 space-y-3">
                     <div className="flex items-center gap-2">
                       <Button
@@ -495,7 +491,6 @@ export function SettingsDialog({
             </Form>
           </TabsContent>
 
-          {/* Security Tab */}
           <TabsContent
             value="security"
             className="space-y-6 mt-4 min-h-[480px] animate-in fade-in-0 slide-in-from-right-2 duration-300"

@@ -356,7 +356,6 @@ export function ReviewsTable({ data }: ReviewsTableProps) {
                                 }`}
                               >
                                 <div className="h-10 w-10 flex-shrink-0 bg-muted rounded overflow-hidden relative">
-                                  {/* Placeholder for image, or use Next Image if available in future */}
                                   <Package className="h-5 w-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
                                 </div>
                                 <div className="flex-1 min-w-0">

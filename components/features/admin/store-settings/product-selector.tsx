@@ -1,14 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Check,
-  ChevronsUpDown,
-  X,
-  Loader2,
-  Search,
-  ImageIcon,
-} from "lucide-react";
+import { Check, X, Loader2, Search, ImageIcon } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
 import Image from "next/image";
 
@@ -22,7 +15,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -157,7 +149,6 @@ export function ProductSelector({
 
   return (
     <div className="space-y-4">
-      {/* Selected Products Grid */}
       <div className="grid grid-cols-1 gap-4">
         {selectedProducts.map((product) => {
           const config = selectedConfigs.find(
@@ -171,7 +162,6 @@ export function ProductSelector({
               className="relative overflow-hidden group border-muted-foreground/20"
             >
               <CardContent className="p-4 flex gap-4 items-start">
-                {/* Selected Image Preview */}
                 <div className="relative w-24 h-24 rounded-md overflow-hidden bg-muted border shrink-0">
                   {activeImage ? (
                     <Image
@@ -202,7 +192,6 @@ export function ProductSelector({
                     </Button>
                   </div>
 
-                  {/* Image Variants */}
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground font-medium">
                       Select Hero Image:

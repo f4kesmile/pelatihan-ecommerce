@@ -49,11 +49,9 @@ export function TestimonialCard({
         className,
       )}
     >
-      {/* Decorative gradient background opacity */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
       <div className="relative space-y-4">
-        {/* Header: User & Rating */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 border">
@@ -74,7 +72,6 @@ export function TestimonialCard({
           </div>
         </div>
 
-        {/* Rating Stars */}
         <div className="flex text-amber-400">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
@@ -87,13 +84,11 @@ export function TestimonialCard({
           ))}
         </div>
 
-        {/* Content */}
         <p className="text-sm leading-relaxed text-muted-foreground italic relative z-10">
           &ldquo;{message}&rdquo;
         </p>
       </div>
 
-      {/* Footer: Product Info (if available) */}
       {productName && (
         <div className="mt-6 pt-4 border-t flex items-center gap-3 relative z-10">
           <div className="h-10 w-10 rounded-md bg-muted overflow-hidden border flex-shrink-0 relative">

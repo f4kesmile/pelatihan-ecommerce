@@ -112,7 +112,6 @@ export function ReviewModal({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Rating */}
           <div className="space-y-4 text-center">
             <Label className="sr-only">Rating</Label>
             <div className="flex justify-center gap-2">
@@ -168,7 +167,6 @@ export function ReviewModal({
             </div>
           </div>
 
-          {/* Message */}
           <div className="space-y-2">
             <Label htmlFor="message">Pesan Review</Label>
             <Textarea

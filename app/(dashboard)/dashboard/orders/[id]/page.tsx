@@ -65,7 +65,6 @@ export default async function OrderDetailPage({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Order Items */}
         <div className="lg:col-span-2 space-y-6">
           <div className="rounded-lg border p-6">
             <h3 className="font-semibold mb-4">Order Items</h3>
@@ -92,14 +91,12 @@ export default async function OrderDetailPage({
             </div>
           </div>
 
-          {/* Audit Log */}
           <div className="rounded-lg border p-6">
             <h3 className="font-semibold mb-4">Status History</h3>
             <OrderAuditLog logs={order.statusLogs} />
           </div>
         </div>
 
-        {/* Customer Info */}
         <div className="space-y-6">
           <div className="rounded-lg border p-6">
             <h3 className="font-semibold mb-4">Customer Details</h3>

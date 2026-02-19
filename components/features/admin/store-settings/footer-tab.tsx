@@ -45,7 +45,6 @@ export function FooterTab() {
           )}
         />
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Instagram */}
           <div className="rounded-lg border p-3 bg-muted/30">
             <div className="flex items-center gap-4 mb-2">
               <Instagram className="h-5 w-5 text-pink-600" />
@@ -87,7 +86,6 @@ export function FooterTab() {
             />
           </div>
 
-          {/* Facebook */}
           <div className="rounded-lg border p-3 bg-muted/30">
             <div className="flex items-center gap-4 mb-2">
               <Facebook className="h-5 w-5 text-blue-600" />
@@ -129,7 +127,6 @@ export function FooterTab() {
             />
           </div>
 
-          {/* Shopee */}
           <div className="rounded-lg border p-3 bg-muted/30">
             <div className="flex items-center gap-4 mb-2">
               <Shopee className="h-5 w-5 text-orange-500" />
@@ -171,7 +168,6 @@ export function FooterTab() {
             />
           </div>
 
-          {/* TikTok */}
           <div className="rounded-lg border p-3 bg-muted/30">
             <div className="flex items-center gap-4 mb-2">
               <TikTok className="h-5 w-5 text-black dark:text-white" />
@@ -213,7 +209,6 @@ export function FooterTab() {
             />
           </div>
 
-          {/* Website */}
           <div className="rounded-lg border p-3 bg-muted/30 col-span-full md:col-span-2">
             <div className="flex items-center gap-4 mb-2">
               <Globe className="h-5 w-5 text-green-600" />

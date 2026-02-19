@@ -58,7 +58,6 @@ export function ReviewSettingsForm({ initialData }: ReviewSettingsFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* General Settings */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">General Settings</h3>
           <Separator />
@@ -168,7 +167,6 @@ export function ReviewSettingsForm({ initialData }: ReviewSettingsFormProps) {
           />
         </div>
 
-        {/* Magic Link Settings */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Magic Link (WhatsApp)</h3>
           <Separator />
@@ -232,7 +230,6 @@ export function ReviewSettingsForm({ initialData }: ReviewSettingsFormProps) {
           />
         </div>
 
-        {/* Smart Popup Settings */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Smart Popup</h3>
           <Separator />
@@ -413,7 +410,6 @@ export function ReviewSettingsForm({ initialData }: ReviewSettingsFormProps) {
           />
         </div>
 
-        {/* My Orders Settings */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">My Orders CTA</h3>
           <Separator />
@@ -481,7 +477,6 @@ export function ReviewSettingsForm({ initialData }: ReviewSettingsFormProps) {
           />
         </div>
 
-        {/* Validation Settings */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Validation Rules</h3>
           <Separator />
@@ -546,7 +541,6 @@ export function ReviewSettingsForm({ initialData }: ReviewSettingsFormProps) {
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-end">
           <Button type="submit" disabled={isPending} size="lg">
             {isPending ? "Saving..." : "Save All Settings"}

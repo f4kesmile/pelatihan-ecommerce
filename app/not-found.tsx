@@ -6,7 +6,6 @@ export default function NotFound() {
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center bg-background p-4 text-center">
       <div className="space-y-6 max-w-md mx-auto">
-        {/* Visual Element */}
         <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
           <h1 className="relative text-[150px] font-black leading-none text-primary/10 select-none">
@@ -17,7 +16,6 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Content */}
         <div className="space-y-2 relative z-10">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Page not found
@@ -28,7 +26,6 @@ export default function NotFound() {
           </p>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 relative z-10">
           <Button asChild size="lg" className="gap-2">
             <Link href="/">

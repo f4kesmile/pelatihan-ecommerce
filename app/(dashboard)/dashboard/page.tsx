@@ -4,7 +4,6 @@ import { getDashboardStats } from "@/server/actions/dashboard.actions";
 import { Overview } from "@/components/features/admin/dashboard/overview";
 import { RecentSales } from "@/components/features/admin/dashboard/recent-sales";
 import { Money } from "@/components/shared/money";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default async function DashboardPage() {
   const { productCount, orderCount, totalRevenue, pendingTestimonials } =

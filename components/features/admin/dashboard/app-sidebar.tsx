@@ -15,7 +15,6 @@ import {
   LogOut,
   BadgeCheck,
   Bell,
-  ArrowRight,
 } from "lucide-react";
 import { UserProfile } from "@/types";
 import { SettingsDialog } from "@/components/features/user/settings-dialog";
@@ -38,7 +37,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -135,7 +133,6 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
 
-      {/* Main Content */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
@@ -174,7 +171,6 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Back to Store */}
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu>
@@ -191,7 +187,6 @@ export function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Footer with User */}
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
