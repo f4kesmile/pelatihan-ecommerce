@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { User, LayoutDashboard } from "lucide-react";
+import { User, LayoutGrid } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "./mobile-nav";
@@ -11,6 +11,13 @@ import { getUserProfile } from "@/server/actions/user.actions";
 
 import { createClient } from "@/lib/supabase/server";
 import { UserNav } from "@/components/features/auth/user-nav";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export async function Navbar() {
   const config = await getStoreConfig();
@@ -25,28 +32,43 @@ export async function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="w-full flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
-        {/* Mobile Menu */}
-        <MobileNav userProfile={userProfile} />
-
-        {/* Logo & Desktop Nav */}
-        <div className="flex items-center gap-6 lg:gap-8 flex-1">
+      <div className="relative w-full flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
+        {/* Left: Mobile Menu & Logo */}
+        <div className="flex items-center gap-4">
+          <MobileNav userProfile={userProfile} />
           <Link href="/" className="flex items-center space-x-2">
             <span className="font-bold text-lg">{storeName}</span>
           </Link>
+        </div>
+
+        {/* Center: Desktop Nav */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex">
           <MainNav />
         </div>
 
-        {/* Actions - Always at the far right */}
+        {/* Right: Actions */}
         <nav className="flex items-center gap-2">
           {(userProfile?.role === "ADMIN" ||
             userProfile?.role === "SUPERADMIN") && (
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="hidden md:flex">
-                <LayoutDashboard className="mr-2 h-4 w-4" />
-                Dashboard
-              </Button>
-            </Link>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/dashboard">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="hidden md:flex"
+                    >
+                      <LayoutGrid className="h-5 w-5" />
+                      <span className="sr-only">Dashboard</span>
+                    </Button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Admin Dashboard</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           <ThemeToggle />
           <CartSheet />

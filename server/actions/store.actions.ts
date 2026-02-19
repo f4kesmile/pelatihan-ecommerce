@@ -12,14 +12,21 @@ export async function getStoreConfig() {
   if (!config) {
      return null
   }
-  return config
+  return config as unknown as (typeof config & { heroProductConfigs: any })
 }
 
 export async function updateStoreConfig(data: StoreConfigFormValues) {
   const validation = storeConfigSchema.safeParse(data)
 
   if (!validation.success) {
+    console.error("Validation error:", validation.error.format());
     return { error: "Invalid data" }
+  }
+
+  // Ensure heroProductConfigs is treated as JSON
+  const dataToSave = {
+    ...validation.data,
+    heroProductConfigs: validation.data.heroProductConfigs as any
   }
 
   try {
@@ -28,11 +35,11 @@ export async function updateStoreConfig(data: StoreConfigFormValues) {
     if (existing) {
       await prisma.storeConfig.update({
         where: { id: existing.id },
-        data: validation.data,
+        data: dataToSave,
       })
     } else {
       await prisma.storeConfig.create({
-        data: validation.data,
+        data: dataToSave,
       })
     }
 

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { LogOut, Settings, ShoppingBag } from "lucide-react";
+import { LogOut, Settings, ShoppingBag, LayoutDashboard } from "lucide-react";
 import { logout } from "@/server/actions/auth.actions";
 import { SettingsDialog } from "@/components/features/user/settings-dialog";
 
@@ -27,6 +27,7 @@ interface UserNavProps {
     city?: string | null;
     address?: string | null;
     avatarBase64?: string | null;
+    role?: "USER" | "ADMIN" | "SUPERADMIN" | string | null;
   } | null;
 }
 
@@ -86,6 +87,15 @@ export function UserNav({ user, userProfile }: UserNavProps) {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
+          {(userProfile?.role === "ADMIN" ||
+            userProfile?.role === "SUPERADMIN") && (
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/dashboard">
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Dashboard
+              </Link>
+            </DropdownMenuItem>
+          )}
           {userProfile && (
             <DropdownMenuItem
               onClick={() => setIsSettingsOpen(true)}

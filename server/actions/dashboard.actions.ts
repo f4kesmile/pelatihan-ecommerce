@@ -223,3 +223,30 @@ export async function getRecentSales(range: TimeRange) {
     return [];
   }
 }
+
+export async function getAdminNotifications() {
+  try {
+    const [pendingOrders, lowStockVariants] = await Promise.all([
+      prisma.order.count({
+        where: { status: "PENDING" },
+      }),
+      prisma.productVariant.count({
+        where: {
+          stock: { lte: 5 },
+          isActive: true,
+        },
+      }),
+    ]);
+
+    return {
+      pendingOrders,
+      lowStockVariants,
+    };
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    return {
+      pendingOrders: 0,
+      lowStockVariants: 0,
+    };
+  }
+}

@@ -25,6 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import { Loader2, Save, Globe } from "lucide-react";
 import { Shopee, TikTok, Instagram, Facebook } from "@/components/shared/icons";
 import { useRouter } from "next/navigation";
+import { HeroTab } from "./hero-tab";
 
 interface StoreSettingsFormProps {
   initialData?: StoreConfigFormValues;
@@ -43,6 +44,8 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
       heroSubheadline: "",
       heroCtaText: "",
       heroCtaHref: "",
+      heroProductsMode: "RANDOM",
+      heroProductIds: [],
       companyName: "",
       companyAbout: "",
       companyAddress: "",
@@ -115,61 +118,8 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
               )}
             />
             <hr />
-            <h3 className="text-lg font-semibold">Hero Section</h3>
-            <FormField
-              control={form.control}
-              name="heroHeadline"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Headline</FormLabel>
-                  <FormControl>
-                    <Input disabled={loading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="heroSubheadline"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Subheadline</FormLabel>
-                  <FormControl>
-                    <Textarea disabled={loading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="heroCtaText"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Teks Tombol Utama (CTA)</FormLabel>
-                    <FormControl>
-                      <Input disabled={loading} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="heroCtaHref"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Link Tombol Utama (CTA)</FormLabel>
-                    <FormControl>
-                      <Input disabled={loading} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <hr />
+            <HeroTab />
           </div>
 
           {/* Contact & Technical */}

@@ -1,24 +1,17 @@
-import { Hero } from "@/components/features/home/hero";
+import { HeroSection } from "@/components/features/home/hero-section";
 import { getPopularProductsUseCase } from "@/server/usecases/product/get-popular-products.usecase";
 import { ProductCard } from "@/components/features/product/product-card";
-import { getStoreConfig } from "@/server/actions/store.actions";
 import { getApprovedTestimonials } from "@/server/actions/testimonial.actions";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 
 export default async function LandingPage() {
-  const config = await getStoreConfig();
   const popularProducts = await getPopularProductsUseCase(12);
   const testimonials = await getApprovedTestimonials(10);
 
   return (
     <div className="flex flex-col gap-16 pb-16">
       <div className="mx-auto max-w-7xl w-full">
-        <Hero
-          headline={config?.heroHeadline}
-          subheadline={config?.heroSubheadline}
-          ctaText={config?.heroCtaText}
-          ctaHref={config?.heroCtaHref}
-        />
+        <HeroSection />
       </div>
 
       <section className="w-full px-4 md:px-6 lg:px-8 space-y-8">

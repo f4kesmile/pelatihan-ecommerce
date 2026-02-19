@@ -17,6 +17,10 @@ interface DashboardLayoutProps {
   user?: Partial<UserProfile>;
   storeName?: string;
   storeLogo?: string | null;
+  notifications?: {
+    pendingOrders: number;
+    lowStockVariants: number;
+  };
 }
 
 export function DashboardLayout({
@@ -25,6 +29,7 @@ export function DashboardLayout({
   user,
   storeName,
   storeLogo,
+  notifications,
 }: DashboardLayoutProps) {
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
@@ -36,7 +41,12 @@ export function DashboardLayout({
   }, []);
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <AppSidebar user={user} storeName={storeName} storeLogo={storeLogo} />
+      <AppSidebar
+        user={user}
+        storeName={storeName}
+        storeLogo={storeLogo}
+        notifications={notifications}
+      />
       <SidebarInset>
         <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
           <SidebarTrigger aria-label="Toggle Sidebar" />

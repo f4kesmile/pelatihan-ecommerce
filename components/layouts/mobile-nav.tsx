@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, LayoutDashboard } from "lucide-react";
+import { Menu, LayoutDashboard, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -42,7 +42,7 @@ export function MobileNav({ userProfile }: MobileNavProps) {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left">
+      <SheetContent side="left" className="flex flex-col">
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
         <nav className="flex flex-col gap-4 mt-8">
           <Link
@@ -78,13 +78,21 @@ export function MobileNav({ userProfile }: MobileNavProps) {
             <Link
               href="/dashboard"
               onClick={() => setOpen(false)}
-              className="text-lg font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
+              className="text-lg font-medium text-primary hover:text-primary/80 transition-colors"
             >
-              <LayoutDashboard className="h-4 w-4" />
               Dashboard
             </Link>
           )}
         </nav>
+
+        <div className="mt-auto mb-8">
+          <Link href="/support" onClick={() => setOpen(false)}>
+            <Button variant="outline" className="w-full rounded-full border-2">
+              <Phone className="mr-2 h-4 w-4" />
+              Hubungi Kami
+            </Button>
+          </Link>
+        </div>
       </SheetContent>
     </Sheet>
   );

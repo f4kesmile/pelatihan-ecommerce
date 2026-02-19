@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   description: "Admin Management Panel",
 };
 
+import { getAdminNotifications } from "@/server/actions/dashboard.actions";
+
+// ...
+
 export default async function AdminLayout({
   children,
 }: {
@@ -19,6 +23,7 @@ export default async function AdminLayout({
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
   const user = await getUserProfile();
   const storeConfig = await getStoreConfig();
+  const notifications = await getAdminNotifications();
 
   if (!user) {
     redirect("/login");
@@ -36,6 +41,7 @@ export default async function AdminLayout({
       user={serializedUser}
       storeName={storeConfig?.storeName}
       storeLogo={storeConfig?.logoBase64}
+      notifications={notifications}
     >
       {children}
     </DashboardLayout>

@@ -380,6 +380,10 @@ model StoreConfig {
   heroCtaText     String
   heroCtaHref     String
 
+  heroProductsMode   String   @default("RANDOM") // "RANDOM" | "MANUAL"
+  heroProductIds     String[] // IDs of selected products
+  heroProductConfigs Json? // Store { productId: string, image?: string }[]
+
   companyName    String
   companyAbout   String
   companyAddress String?

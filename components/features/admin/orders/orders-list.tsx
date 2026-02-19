@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Package,
   CheckCircle,
+  BadgeCheck,
 } from "lucide-react";
 import {
   Table,
@@ -25,6 +26,12 @@ import { Money } from "@/components/shared/money";
 import { Card, CardContent } from "@/components/ui/card";
 import { OrderStatusBadge } from "./order-status-badge";
 import { OrderStatus } from "@prisma/client";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface OrderItem {
   id: string;
@@ -96,8 +103,23 @@ export function OrdersList({ orders }: OrdersListProps) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <h3 className="font-semibold text-base font-mono">
+                          <h3 className="font-semibold text-base font-mono flex items-center gap-1.5">
                             #{order.orderNumber}
+                            {order.testimonial?.status === "APPROVED" && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <BadgeCheck
+                                      className="h-4 w-4 text-blue-500 fill-blue-100 dark:fill-blue-900/30 cursor-help"
+                                      aria-label="Reviewed"
+                                    />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Order Reviewed by Customer</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
                           </h3>
                           <div className="text-sm text-muted-foreground mt-0.5">
                             {order.buyerName}
@@ -119,12 +141,6 @@ export function OrdersList({ orders }: OrdersListProps) {
                           status={order.status}
                           className="text-xs px-2 py-0.5"
                         />
-                        {order.testimonial?.status === "APPROVED" && (
-                          <div className="flex items-center gap-1 text-[10px] font-medium text-green-800 bg-green-100 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800 px-1.5 py-0.5 rounded-full">
-                            <CheckCircle className="h-3 w-3" />
-                            Reviewed
-                          </div>
-                        )}
                       </div>
 
                       <div className="flex items-center justify-between mt-4">
@@ -257,7 +273,24 @@ export function OrdersList({ orders }: OrdersListProps) {
                         )}
                       </TableCell>
                       <TableCell className="font-mono font-medium">
-                        {order.orderNumber}
+                        <div className="flex items-center gap-1.5">
+                          {order.orderNumber}
+                          {order.testimonial?.status === "APPROVED" && (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <BadgeCheck
+                                    className="h-4 w-4 text-blue-500 fill-blue-100 dark:fill-blue-900/30 cursor-help"
+                                    aria-label="Reviewed"
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Order Reviewed by Customer</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                        </div>
                         <div className="text-xs text-muted-foreground lg:hidden">
                           {order.items.length} items
                         </div>
@@ -271,12 +304,6 @@ export function OrdersList({ orders }: OrdersListProps) {
                       <TableCell>
                         <div className="flex flex-col gap-1 items-start">
                           <OrderStatusBadge status={order.status} />
-                          {order.testimonial?.status === "APPROVED" && (
-                            <div className="flex items-center gap-1 text-[10px] font-medium text-green-800 bg-green-100 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800 px-1.5 py-0.5 rounded-full">
-                              <CheckCircle className="h-3 w-3" />
-                              Reviewed
-                            </div>
-                          )}
                         </div>
                       </TableCell>
                       <TableCell className="font-medium">

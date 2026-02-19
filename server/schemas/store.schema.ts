@@ -9,6 +9,13 @@ export const storeConfigSchema = z.object({
   heroCtaText: z.string().min(1, "CTA Text is required"),
   heroCtaHref: z.string().min(1, "CTA Link is required"),
 
+  heroProductsMode: z.enum(["RANDOM", "MANUAL"]).default("RANDOM"),
+  heroProductIds: z.array(z.string()).default([]),
+  heroProductConfigs: z.array(z.object({
+    productId: z.string(),
+    image: z.string().optional(),
+  })).optional().default([]),
+
   companyName: z.string().min(1, "Company name is required"),
   companyAbout: z.string().min(1, "About text is required"),
   companyAddress: z.string().optional(),
