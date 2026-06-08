@@ -14,9 +14,12 @@ export const InfiniteMovingCards = ({
   items: {
     id: string;
     name: string;
+    avatar?: string | null;
     rating: number;
     message: string;
     date: Date;
+    productName?: string;
+    productImage?: string | null;
   }[];
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
@@ -26,30 +29,9 @@ export const InfiniteMovingCards = ({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollerRef = React.useRef<HTMLUListElement>(null);
 
-  useEffect(() => {
-    addAnimation();
-  }, []);
-
   const [start, setStart] = useState(false);
 
-  function addAnimation() {
-    if (containerRef.current && scrollerRef.current) {
-      const scrollerContent = Array.from(scrollerRef.current.children);
-
-      scrollerContent.forEach((item) => {
-        const duplicatedItem = item.cloneNode(true);
-        if (scrollerRef.current) {
-          scrollerRef.current.appendChild(duplicatedItem);
-        }
-      });
-
-      getDirection();
-      getSpeed();
-      setStart(true);
-    }
-  }
-
-  const getDirection = () => {
+  const getDirection = React.useCallback(() => {
     if (containerRef.current) {
       if (direction === "left") {
         containerRef.current.style.setProperty(
@@ -63,9 +45,9 @@ export const InfiniteMovingCards = ({
         );
       }
     }
-  };
+  }, [direction]);
 
-  const getSpeed = () => {
+  const getSpeed = React.useCallback(() => {
     if (containerRef.current) {
       if (speed === "fast") {
         containerRef.current.style.setProperty("--animation-duration", "20s");
@@ -75,7 +57,29 @@ export const InfiniteMovingCards = ({
         containerRef.current.style.setProperty("--animation-duration", "80s");
       }
     }
-  };
+  }, [speed]);
+
+  const addAnimation = React.useCallback(() => {
+    if (containerRef.current && scrollerRef.current) {
+      const scrollerContent = Array.from(scrollerRef.current.children);
+
+      scrollerContent.forEach((item) => {
+        const duplicatedItem = item.cloneNode(true);
+        if (scrollerRef.current) {
+          scrollerRef.current.appendChild(duplicatedItem);
+        }
+      });
+
+      getDirection();
+      getSpeed();
+    }
+  }, [getDirection, getSpeed]);
+
+  useEffect(() => {
+    addAnimation();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setStart(true);
+  }, [addAnimation]);
 
   return (
     <div
@@ -100,9 +104,12 @@ export const InfiniteMovingCards = ({
           >
             <TestimonialCard
               name={item.name}
+              avatar={item.avatar}
               rating={item.rating}
               message={item.message}
               date={item.date}
+              productName={item.productName}
+              productImage={item.productImage}
             />
           </li>
         ))}

@@ -14,6 +14,5 @@ export const toast = {
   warning: (message: string, description?: string) => {
     sonnerToast.warning(message, { description })
   },
-  // expose raw sonner for custom needs
   raw: sonnerToast,
 }

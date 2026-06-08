@@ -1,51 +1,118 @@
 import { Star } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface TestimonialCardProps {
   name: string;
+  avatar?: string | null;
   rating: number;
   message: string;
   date: Date;
+  productName?: string;
+  productImage?: string | null;
   className?: string;
 }
 
 export function TestimonialCard({
   name,
+  avatar,
   rating,
   message,
   date,
+  productName,
+  productImage,
   className,
 }: TestimonialCardProps) {
+  const getSafeImageSrc = (src?: string | null) => {
+    if (!src) return undefined;
+
+    if (src.startsWith("http") || src.startsWith("data:")) {
+      return src;
+    }
+
+    if (
+      src.startsWith("/images/") ||
+      src.startsWith("/icons/") ||
+      src.startsWith("/assets/")
+    ) {
+      return src;
+    }
+
+    return `data:image/jpeg;base64,${src}`;
+  };
+
   return (
     <div
       className={cn(
-        "rounded-lg border bg-card p-6 shadow-sm h-full flex flex-col",
+        "rounded-xl border bg-card p-6 shadow-sm h-full flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all",
         className,
       )}
     >
-      <div className="flex items-center gap-1 mb-3">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Star
-            key={i}
-            className={cn(
-              "h-4 w-4 transition-colors",
-              i < rating
-                ? "fill-amber-400 text-amber-400"
-                : "fill-muted-foreground/20 text-muted-foreground/40 dark:fill-muted-foreground/30 dark:text-muted-foreground/50",
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+      <div className="relative space-y-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10 border">
+              <AvatarImage src={getSafeImageSrc(avatar)} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {name.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-sm font-semibold leading-none">{name}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {new Date(date).toLocaleDateString("id-ID", {
+                  year: "numeric",
+                  month: "short",
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex text-amber-400">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star
+              key={i}
+              className={cn(
+                "h-4 w-4",
+                i < rating ? "fill-current" : "text-muted/20 fill-none",
+              )}
+            />
+          ))}
+        </div>
+
+        <p className="text-sm leading-relaxed text-muted-foreground italic relative z-10">
+          &ldquo;{message}&rdquo;
+        </p>
+      </div>
+
+      {productName && (
+        <div className="mt-6 pt-4 border-t flex items-center gap-3 relative z-10">
+          <div className="h-10 w-10 rounded-md bg-muted overflow-hidden border flex-shrink-0 relative">
+            {getSafeImageSrc(productImage) ? (
+              <Image
+                src={getSafeImageSrc(productImage)!}
+                alt={productName}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center bg-muted">
+                <Star className="h-4 w-4 text-muted-foreground/50" />
+              </div>
             )}
-          />
-        ))}
-      </div>
-      <p className="text-sm mb-4 leading-relaxed flex-1">{message}</p>
-      <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
-        <span className="font-medium">{name}</span>
-        <span>
-          {new Date(date).toLocaleDateString("id-ID", {
-            year: "numeric",
-            month: "short",
-          })}
-        </span>
-      </div>
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground">Purchased</p>
+            <p className="text-xs font-medium truncate" title={productName}>
+              {productName}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

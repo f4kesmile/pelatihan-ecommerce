@@ -12,14 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Instagram,
-  Facebook,
-  Twitter,
-  Music2,
-  Globe,
-  Share2,
-} from "lucide-react";
+import { Globe, Share2 } from "lucide-react";
+import { Instagram, Facebook, Shopee, TikTok } from "@/components/shared/icons";
 
 export function FooterTab() {
   const form = useFormContext<StoreConfigFormValues>();
@@ -51,7 +45,6 @@ export function FooterTab() {
           )}
         />
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Instagram */}
           <div className="rounded-lg border p-3 bg-muted/30">
             <div className="flex items-center gap-4 mb-2">
               <Instagram className="h-5 w-5 text-pink-600" />
@@ -64,6 +57,7 @@ export function FooterTab() {
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        aria-label="Toggle Instagram display"
                       />
                     </FormControl>
                     <FormLabel className="font-normal cursor-pointer">
@@ -92,7 +86,6 @@ export function FooterTab() {
             />
           </div>
 
-          {/* Facebook */}
           <div className="rounded-lg border p-3 bg-muted/30">
             <div className="flex items-center gap-4 mb-2">
               <Facebook className="h-5 w-5 text-blue-600" />
@@ -105,6 +98,7 @@ export function FooterTab() {
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        aria-label="Toggle Facebook display"
                       />
                     </FormControl>
                     <FormLabel className="font-normal cursor-pointer">
@@ -133,19 +127,19 @@ export function FooterTab() {
             />
           </div>
 
-          {/* Twitter */}
           <div className="rounded-lg border p-3 bg-muted/30">
             <div className="flex items-center gap-4 mb-2">
-              <Twitter className="h-5 w-5 text-sky-500" />
+              <Shopee className="h-5 w-5 text-orange-500" />
               <FormField
                 control={form.control}
-                name="showTwitter"
+                name="showShopee"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        aria-label="Toggle Shopee display"
                       />
                     </FormControl>
                     <FormLabel className="font-normal cursor-pointer">
@@ -157,13 +151,13 @@ export function FooterTab() {
             </div>
             <FormField
               control={form.control}
-              name="twitterUrl"
+              name="shopeeUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="https://twitter.com/yourstore"
-                      disabled={!form.watch("showTwitter")}
+                      placeholder="https://shopee.co.id/yourstore"
+                      disabled={!form.watch("showShopee")}
                       value={field.value || ""}
                       onChange={field.onChange}
                     />
@@ -174,10 +168,9 @@ export function FooterTab() {
             />
           </div>
 
-          {/* TikTok */}
           <div className="rounded-lg border p-3 bg-muted/30">
             <div className="flex items-center gap-4 mb-2">
-              <Music2 className="h-5 w-5 text-pink-500" />
+              <TikTok className="h-5 w-5 text-black dark:text-white" />
               <FormField
                 control={form.control}
                 name="showTiktok"
@@ -187,6 +180,7 @@ export function FooterTab() {
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        aria-label="Toggle TikTok display"
                       />
                     </FormControl>
                     <FormLabel className="font-normal cursor-pointer">
@@ -215,7 +209,6 @@ export function FooterTab() {
             />
           </div>
 
-          {/* Website */}
           <div className="rounded-lg border p-3 bg-muted/30 col-span-full md:col-span-2">
             <div className="flex items-center gap-4 mb-2">
               <Globe className="h-5 w-5 text-green-600" />
@@ -228,6 +221,7 @@ export function FooterTab() {
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        aria-label="Toggle Website display"
                       />
                     </FormControl>
                     <FormLabel className="font-normal cursor-pointer">

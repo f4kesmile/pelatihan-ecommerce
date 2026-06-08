@@ -4,8 +4,6 @@ export async function getProductDetailUseCase(slug: string) {
   const product = await productRepo.findBySlug(slug)
 
   if (!product) return null
-
-  // Ensure only active variants are shown (repo already filters, but double check logic)
   const variants = product.variants.map(v => ({
     id: v.id,
     name: v.name,
@@ -19,8 +17,6 @@ export async function getProductDetailUseCase(slug: string) {
     src: `data:${img.mimeType};base64,${img.base64}`,
     alt: product.name
   }))
-
-  // Determine min price
   const minPrice = variants.length > 0 
     ? Math.min(...variants.map(v => v.price))
     : 0

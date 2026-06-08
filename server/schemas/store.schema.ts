@@ -9,6 +9,13 @@ export const storeConfigSchema = z.object({
   heroCtaText: z.string().min(1, "CTA Text is required"),
   heroCtaHref: z.string().min(1, "CTA Link is required"),
 
+  heroProductsMode: z.enum(["RANDOM", "MANUAL"]).default("RANDOM"),
+  heroProductIds: z.array(z.string()).default([]),
+  heroProductConfigs: z.array(z.object({
+    productId: z.string(),
+    image: z.string().optional(),
+  })).optional().default([]),
+
   companyName: z.string().min(1, "Company name is required"),
   companyAbout: z.string().min(1, "About text is required"),
   companyAddress: z.string().optional(),
@@ -29,16 +36,14 @@ export const storeConfigSchema = z.object({
   facebookUrl: z.string().optional().nullable(),
   showFacebook: z.boolean(),
 
-  twitterUrl: z.string().optional().nullable(),
-  showTwitter: z.boolean(),
+  shopeeUrl: z.string().optional().nullable(),
+  showShopee: z.boolean(),
 
   tiktokUrl: z.string().optional().nullable(),
   showTiktok: z.boolean(),
 
   websiteUrl: z.string().optional().nullable(),
   showWebsite: z.boolean(),
-
-  // Footer Config
   footerSocialText: z.string().optional().nullable(),
 
   supportLinkText: z.string().optional().nullable(),

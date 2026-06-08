@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   storeConfigSchema,
@@ -10,7 +10,7 @@ import { updateStoreConfig } from "@/server/actions/store.actions";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -28,35 +28,53 @@ export function StoreSettingsPage({ initialData }: StoreSettingsPageProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
+  const defaultValues: StoreConfigFormValues = {
+    storeName: initialData?.storeName ?? "",
+    storeCity: initialData?.storeCity ?? "",
+    heroHeadline: initialData?.heroHeadline ?? "",
+    heroSubheadline: initialData?.heroSubheadline ?? "",
+    heroCtaText: initialData?.heroCtaText ?? "",
+    heroCtaHref: initialData?.heroCtaHref ?? "",
+    heroProductsMode: initialData?.heroProductsMode ?? "RANDOM",
+    heroProductIds: initialData?.heroProductIds ?? [],
+    heroProductConfigs: initialData?.heroProductConfigs ?? [],
+    companyName: initialData?.companyName ?? "",
+    companyAbout: initialData?.companyAbout ?? "",
+    companyAddress: initialData?.companyAddress ?? undefined,
+    supportEmail: initialData?.supportEmail ?? "",
+    whatsappSupport: initialData?.whatsappSupport ?? "",
+    whatsappAdmin: initialData?.whatsappAdmin ?? "",
+    whatsappTemplate: initialData?.whatsappTemplate ?? "",
+    termsTitle: initialData?.termsTitle ?? "",
+    termsContent: initialData?.termsContent ?? "",
+    instagramUrl: initialData?.instagramUrl ?? undefined,
+    showInstagram: initialData?.showInstagram ?? false,
+    facebookUrl: initialData?.facebookUrl ?? undefined,
+    showFacebook: initialData?.showFacebook ?? false,
+    shopeeUrl: initialData?.shopeeUrl ?? undefined,
+    showShopee: initialData?.showShopee ?? false,
+    tiktokUrl: initialData?.tiktokUrl ?? undefined,
+    showTiktok: initialData?.showTiktok ?? false,
+    websiteUrl: initialData?.websiteUrl ?? undefined,
+    showWebsite: initialData?.showWebsite ?? false,
+    supportLinkText: initialData?.supportLinkText ?? undefined,
+    supportLinkHref: initialData?.supportLinkHref ?? undefined,
+    faqLinkText: initialData?.faqLinkText ?? undefined,
+    faqLinkHref: initialData?.faqLinkHref ?? undefined,
+    termsLinkText: initialData?.termsLinkText ?? undefined,
+    termsLinkHref: initialData?.termsLinkHref ?? undefined,
+    privacyLinkText: initialData?.privacyLinkText ?? undefined,
+    privacyLinkHref: initialData?.privacyLinkHref ?? undefined,
+    footerSocialText: initialData?.footerSocialText ?? undefined,
+    privacyTitle: initialData?.privacyTitle ?? undefined,
+    privacyContent: initialData?.privacyContent ?? undefined,
+  } as StoreConfigFormValues;
+
   const form = useForm<StoreConfigFormValues>({
-    resolver: zodResolver(storeConfigSchema),
-    defaultValues: initialData || {
-      storeName: "",
-      storeCity: "",
-      heroHeadline: "",
-      heroSubheadline: "",
-      heroCtaText: "",
-      heroCtaHref: "",
-      companyName: "",
-      companyAbout: "",
-      companyAddress: "",
-      supportEmail: "",
-      whatsappSupport: "",
-      whatsappAdmin: "",
-      whatsappTemplate: "",
-      termsTitle: "",
-      termsContent: "",
-      instagramUrl: "",
-      showInstagram: false,
-      facebookUrl: "",
-      showFacebook: false,
-      twitterUrl: "",
-      showTwitter: false,
-      tiktokUrl: "",
-      showTiktok: false,
-      websiteUrl: "",
-      showWebsite: false,
-    },
+    resolver: zodResolver(
+      storeConfigSchema,
+    ) as unknown as Resolver<StoreConfigFormValues>,
+    defaultValues,
   });
 
   const onSubmit = async (data: StoreConfigFormValues) => {
@@ -66,12 +84,22 @@ export function StoreSettingsPage({ initialData }: StoreSettingsPageProps) {
       if (res.error) throw new Error(res.error);
       toast.success("Settings updated successfully");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update settings");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update settings";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <div className="space-y-6">

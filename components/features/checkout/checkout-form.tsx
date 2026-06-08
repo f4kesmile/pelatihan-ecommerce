@@ -22,6 +22,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { createOrder } from "@/server/actions/order.actions";
+import { useState } from "react";
 
 interface CheckoutFormProps {
   whatsappNumber?: string;
@@ -42,31 +44,56 @@ export function CheckoutForm({ whatsappNumber, template }: CheckoutFormProps) {
     },
   });
 
-  function onSubmit(data: CheckoutFormValues) {
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(data: CheckoutFormValues) {
     if (items.length === 0) {
       toast.error("Your cart is empty");
       return;
     }
 
-    const waLink = createWhatsAppOrderLink({
-      items,
-      subtotal,
-      customer: data,
-      adminNumber: whatsappNumber,
-      template,
-    });
+    setLoading(true);
+    try {
+      const result = await createOrder({
+        customer: data,
+        items: items.map((item) => ({
+          productId: item.productId,
+          variantId: item.id,
+          productName: item.name,
+          variantName: item.variantName,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image || undefined,
+        })),
+        subtotal: subtotal,
+      });
 
-    // Clear cart after successful order logic initiated
-    // (In a real app, we might wait for confirmation, but for WA flow this is common)
-    clearCart();
+      if (result.error) {
+        toast.error(result.error);
+        setLoading(false);
+        return;
+      }
 
-    toast.success("Order prepared! Redirecting to WhatsApp...");
+      const waLink = createWhatsAppOrderLink({
+        items,
+        subtotal,
+        customer: data,
+        adminNumber: whatsappNumber,
+        template,
+        orderNumber: result.orderNumber,
+      });
 
-    // Slight delay to allow toast to show
-    setTimeout(() => {
-      window.open(waLink, "_blank");
-      router.push("/"); // Redirect home
-    }, 1500);
+      clearCart();
+      toast.success("Order created! Redirecting to WhatsApp...");
+
+      setTimeout(() => {
+        window.open(waLink, "_blank");
+        router.push("/orders");
+      }, 1500);
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+      setLoading(false);
+    }
   }
 
   return (
@@ -93,7 +120,6 @@ export function CheckoutForm({ whatsappNumber, template }: CheckoutFormProps) {
             <FormItem>
               <FormLabel>WhatsApp Number</FormLabel>
               <FormControl>
-                {/* Enforce numeric input if needed, controlled by Shadcn Input props or regex */}
                 <Input placeholder="08123456789" type="tel" {...field} />
               </FormControl>
               <FormDescription>
@@ -136,8 +162,8 @@ export function CheckoutForm({ whatsappNumber, template }: CheckoutFormProps) {
           )}
         />
 
-        <Button type="submit" size="lg" className="w-full">
-          Place Order on WhatsApp
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>
+          {loading ? "Processing..." : "Place Order on WhatsApp"}
         </Button>
       </form>
     </Form>

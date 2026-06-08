@@ -1,0 +1,48 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Next.js
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment (NEVER include secrets in Docker image!)
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# Misc
+README.md
+docs/
+*.md
+!prisma/*.md
+
+# Testing
+coverage
+.nyc_output
+
+# Debug
+*.log
+error.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Typescript build info
+tsconfig.tsbuildinfo
+
+# Prisma (we'll copy these separately)
+# prisma/migrations  <- Keep this for migrate deploy

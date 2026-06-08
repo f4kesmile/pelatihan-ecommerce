@@ -4,7 +4,6 @@ import { StoreSettingsPage } from "@/components/features/admin/store-settings/st
 export default async function SettingsPage() {
   const config = await getStoreConfig();
 
-  // Explicitly cast to undefined if null/empty and sanitize nulls
   const initialData = config
     ? {
         ...config,
@@ -14,9 +13,11 @@ export default async function SettingsPage() {
         logoSize: config.logoSize || undefined,
         instagramUrl: config.instagramUrl || undefined,
         facebookUrl: config.facebookUrl || undefined,
-        twitterUrl: config.twitterUrl || undefined,
+        shopeeUrl: config.shopeeUrl || undefined,
         tiktokUrl: config.tiktokUrl || undefined,
         websiteUrl: config.websiteUrl || undefined,
+        heroProductsMode:
+          (config.heroProductsMode as "RANDOM" | "MANUAL") || "RANDOM",
 
         // Privacy
         privacyTitle: config.privacyTitle || undefined,

@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export type CartItem = {
-  id: string; // variantId
+  id: string;
   productId: string;
   name: string;
   slug: string;
@@ -29,27 +29,28 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem("zinc-cart");
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart));
-      } catch (e) {
-        console.error("Failed to parse cart", e);
+    setTimeout(() => {
+      const savedCart = localStorage.getItem("zinc-cart");
+      if (savedCart) {
+        try {
+          const parsed = JSON.parse(savedCart);
+          setItems(parsed);
+        } catch (e) {
+          console.error("Failed to parse cart", e);
+        }
       }
-    }
-    setIsInitialized(true);
+      setIsLoaded(true);
+    }, 0);
   }, []);
 
-  // Save to localStorage on change
   useEffect(() => {
-    if (isInitialized) {
+    if (isLoaded) {
       localStorage.setItem("zinc-cart", JSON.stringify(items));
     }
-  }, [items, isInitialized]);
+  }, [items, isLoaded]);
 
   const addItem = (
     newItem: Omit<CartItem, "quantity"> & { quantity?: number },
@@ -113,9 +114,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     0,
   );
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
-
-  // Avoid hydration mismatch by not rendering items until initialized
-  // OR just accept that it might be empty on server render (recommended for simple localStorage)
 
   return (
     <CartContext.Provider

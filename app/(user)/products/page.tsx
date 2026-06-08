@@ -66,14 +66,14 @@ export default async function ProductsPage({
             </div>
             <h3 className="text-lg font-semibold">No products found</h3>
             <p className="text-sm text-muted-foreground max-w-sm mt-1">
-              We couldn't find any products matching your criteria. Try
+              We couldn&apos;t find any products matching your criteria. Try
               adjusting your filters or search terms.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {products.map((product) => (
-              <ProductCard key={product.id} {...product} />
+              <ProductCard key={product.id} {...product} headingLevel="h2" />
             ))}
           </div>
         )}

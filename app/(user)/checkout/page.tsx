@@ -19,7 +19,12 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     getStoreConfig().then((data) => {
-      if (data) setConfig(data as any);
+      if (data) {
+        setConfig({
+          whatsappAdmin: data.whatsappAdmin || "",
+          whatsappTemplate: data.whatsappTemplate || "",
+        });
+      }
     });
   }, []);
 
@@ -42,7 +47,6 @@ export default function CheckoutPage() {
       </h1>
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-        {/* Order Summary */}
         <div>
           <div className="rounded-lg border bg-muted/30 p-6">
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
@@ -87,14 +91,13 @@ export default function CheckoutPage() {
             </div>
 
             <p className="text-xs text-muted-foreground mt-6 leading-relaxed">
-              * By clicking "Place Order", you will be redirected to WhatsApp to
-              send your order details directly to our admin. Payment and
-              delivery will be coordinated there.
+              * By clicking &quot;Place Order&quot;, you will be redirected to
+              WhatsApp to send your order details directly to our admin. Payment
+              and delivery will be coordinated there.
             </p>
           </div>
         </div>
 
-        {/* Checkout Form */}
         <div>
           <div className="rounded-lg border p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6">Customer Details</h2>

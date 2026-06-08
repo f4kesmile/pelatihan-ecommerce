@@ -27,7 +27,6 @@ export function ProductGallery({ images }: ProductGalleryProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Main Image */}
       <div className="aspect-square w-full overflow-hidden rounded-lg border bg-background relative">
         <Image
           src={selectedImage?.src || images[0].src}
@@ -39,7 +38,6 @@ export function ProductGallery({ images }: ProductGalleryProps) {
         />
       </div>
 
-      {/* Thumbnails */}
       {images.length > 1 && (
         <div className="flex gap-4 overflow-auto pb-2">
           {images.map((image) => (

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { getAllTestimonials } from "@/server/actions/testimonial-admin.actions";
-import { TestimonialsList } from "@/components/features/admin/testimonials-list";
+import { TestimonialsList } from "@/components/features/admin/testimonials/testimonials-list";
 
 export const metadata: Metadata = {
   title: "Testimonials | Dashboard",
@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 export default async function TestimonialsPage() {
   const testimonials = await getAllTestimonials();
 
-  // Serialize dates to avoid warnings/error passing to Client Component
   const serializedTestimonials = JSON.parse(JSON.stringify(testimonials));
 
   return (

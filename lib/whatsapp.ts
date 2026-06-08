@@ -11,13 +11,16 @@ interface CreateWhatsAppMessageParams {
   }
   adminNumber?: string
   template?: string
+  orderNumber?: string
 }
 
-export function createWhatsAppOrderLink({ items, subtotal, customer, adminNumber, template }: CreateWhatsAppMessageParams) {
+export function createWhatsAppOrderLink({ items, subtotal, customer, adminNumber, template, orderNumber }: CreateWhatsAppMessageParams) {
   const phoneNumber = adminNumber || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "628123456789" 
 
   let greeting = template || "Halo Kak, saya mau pesan di Zinc Store:"
   greeting = greeting.replace("{customerName}", customer.name)
+  greeting = greeting.replace("{orderNumber}", orderNumber || "-")
+
   
   const itemsList = items
     .map((item, index) => {

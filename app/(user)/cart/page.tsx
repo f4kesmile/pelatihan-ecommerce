@@ -13,13 +13,13 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="container flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
+      <div className="container flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center min-w-full">
         <div className="rounded-full bg-muted p-8">
           <ShoppingBag className="h-12 w-12 text-muted-foreground" />
         </div>
         <h1 className="text-2xl font-bold">Your cart is empty</h1>
         <p className="text-muted-foreground max-w-sm">
-          Looks like you haven't added anything to your cart yet.
+          Looks like you haven&apos;t added anything to your cart yet.
         </p>
         <Button asChild className="mt-4">
           <Link href="/products">Start Shopping</Link>
@@ -43,7 +43,6 @@ export default function CartPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-12">
-        {/* Cart Items List */}
         <div className="lg:col-span-8">
           <div className="rounded-lg border divide-y">
             {items.map((item) => (
@@ -51,7 +50,6 @@ export default function CartPage() {
                 key={item.id}
                 className="flex gap-2 p-4 pr-6 sm:gap-6 sm:pr-8"
               >
-                {/* Product Image */}
                 <div className="relative aspect-square h-20 w-20 sm:h-28 sm:w-28 flex-none overflow-hidden rounded-md border bg-muted">
                   {item.image ? (
                     <Image
@@ -67,7 +65,6 @@ export default function CartPage() {
                   )}
                 </div>
 
-                {/* Product Details */}
                 <div className="flex flex-1 flex-col justify-between">
                   <div className="grid gap-1">
                     <Link
@@ -81,9 +78,9 @@ export default function CartPage() {
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between mt-4">
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-y-3 gap-x-2">
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center border rounded-md">
+                      <div className="flex items-center rounded-md border">
                         <Button
                           variant="ghost"
                           size="icon"
@@ -110,12 +107,12 @@ export default function CartPage() {
                           <Plus className="h-3 w-3" />
                         </Button>
                       </div>
-                      <span className="text-xs text-muted-foreground ml-2">
+                      <span className="text-xs text-muted-foreground hidden sm:inline-block">
                         (Max: {item.maxStock})
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4 ml-auto sm:ml-0">
                       <Money
                         amount={item.price * item.quantity}
                         className="font-medium"
@@ -136,7 +133,6 @@ export default function CartPage() {
           </div>
         </div>
 
-        {/* Summary Card */}
         <div className="lg:col-span-4">
           <div className="rounded-lg border bg-card text-card-foreground p-6 sticky top-24 shadow-sm">
             <h2 className="text-lg font-semibold mb-4">Order Summary</h2>

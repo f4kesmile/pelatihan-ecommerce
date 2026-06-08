@@ -1,25 +1,13 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Package, ShoppingCart, DollarSign, MessageSquare } from "lucide-react";
 import { getDashboardStats } from "@/server/actions/dashboard.actions";
-import { Overview } from "@/components/features/admin/overview";
-import { RecentSales } from "@/components/features/admin/recent-sales";
+import { Overview } from "@/components/features/admin/dashboard/overview";
+import { RecentSales } from "@/components/features/admin/dashboard/recent-sales";
 import { Money } from "@/components/shared/money";
 
 export default async function DashboardPage() {
-  const {
-    productCount,
-    orderCount,
-    totalRevenue,
-    pendingTestimonials,
-    recentOrders,
-    monthlyRevenue,
-  } = await getDashboardStats();
+  const { productCount, orderCount, totalRevenue, pendingTestimonials } =
+    await getDashboardStats();
 
   return (
     <div className="space-y-8">
@@ -76,27 +64,21 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Overview</CardTitle>
-            <CardDescription>
-              Monthly revenue overview (Mock Data)
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <Overview data={monthlyRevenue} />
-          </CardContent>
-        </Card>
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Recent Sales</CardTitle>
-            <CardDescription>
-              You made {recentOrders.length} sales recently.
-            </CardDescription>
+      <div className="grid gap-4 lg:grid-cols-7">
+        <Card className="lg:col-span-4">
+          <CardHeader className="pb-2">
+            <CardTitle>Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <RecentSales data={recentOrders} />
+            <Overview />
+          </CardContent>
+        </Card>
+        <Card className="lg:col-span-3">
+          <CardHeader className="pb-2">
+            <CardTitle>Recent Sales</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RecentSales />
           </CardContent>
         </Card>
       </div>

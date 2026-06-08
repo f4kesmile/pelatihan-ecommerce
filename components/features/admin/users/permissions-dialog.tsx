@@ -30,11 +30,11 @@ interface PermissionsDialogProps {
 }
 
 const AVAILABLE_PERMISSIONS = [
-  { key: "manage:dashboard", label: "Access Dashboard (View)" },
-  { key: "manage:products", label: "Manage Products (Create/Edit/Delete)" },
-  { key: "manage:orders", label: "Manage Orders (Status Updates)" },
-  { key: "manage:users", label: "Manage Users (View Only)" },
-  { key: "manage:settings", label: "Manage Store Settings" },
+  { key: "manage_dashboard", label: "Access Dashboard (View)" },
+  { key: "manage_products", label: "Manage Products (Create/Edit/Delete)" },
+  { key: "manage_orders", label: "Manage Orders (Status Updates)" },
+  { key: "manage_users", label: "Manage Users (View Only)" },
+  { key: "manage_settings", label: "Manage Store Settings" },
 ];
 
 export function PermissionsDialog({
@@ -47,24 +47,24 @@ export function PermissionsDialog({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    const loadPermissions = async () => {
+      setLoading(true);
+      try {
+        const res = await getUserPermissions(user.id);
+        if (res.success && res.permissions) {
+          setPermissions(res.permissions);
+        }
+      } catch {
+        toast.error("Failed to load permissions");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (open) {
       loadPermissions();
     }
   }, [open, user.id]);
-
-  const loadPermissions = async () => {
-    setLoading(true);
-    try {
-      const res = await getUserPermissions(user.id);
-      if (res.success && res.permissions) {
-        setPermissions(res.permissions);
-      }
-    } catch (error) {
-      toast.error("Failed to load permissions");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleToggle = (key: string) => {
     setPermissions((prev) =>
@@ -82,7 +82,7 @@ export function PermissionsDialog({
       } else {
         toast.error(res.error || "Failed to update permissions");
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred");
     } finally {
       setSaving(false);
@@ -120,6 +120,7 @@ export function PermissionsDialog({
                     id={perm.key}
                     checked={permissions.includes(perm.key)}
                     onCheckedChange={() => handleToggle(perm.key)}
+                    aria-label={perm.label}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label

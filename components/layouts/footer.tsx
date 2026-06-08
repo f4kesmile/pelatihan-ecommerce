@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Instagram, Facebook, Twitter, Globe, Music2 } from "lucide-react";
+import { Globe } from "lucide-react";
+import { Shopee, TikTok, Instagram, Facebook } from "@/components/shared/icons";
 import { getStoreConfig } from "@/server/actions/store.actions";
 
 export async function Footer() {
@@ -8,6 +9,7 @@ export async function Footer() {
   return (
     <footer className="border-t bg-background">
       <div className="container px-4 md:px-6 lg:px-8 py-12">
+        <h2 className="sr-only">Footer</h2>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3">
             <h3 className="text-lg font-semibold tracking-tight">Our Store</h3>
@@ -30,7 +32,7 @@ export async function Footer() {
               </li>
               <li>
                 <Link
-                  href={config?.faqLinkHref || "/faq"}
+                  href={config?.faqLinkHref || "/support"}
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {config?.faqLinkText || "FAQ"}
@@ -92,16 +94,16 @@ export async function Footer() {
                   <span className="sr-only">Facebook</span>
                 </a>
               )}
-              {config?.showTwitter && config?.twitterUrl && (
+              {config?.showShopee && config?.shopeeUrl && (
                 <a
-                  href={config.twitterUrl}
+                  href={config.shopeeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-sky-500 transition-colors"
-                  title="Twitter"
+                  className="text-muted-foreground hover:text-orange-500 transition-colors"
+                  title="Shopee"
                 >
-                  <Twitter className="h-5 w-5" />
-                  <span className="sr-only">Twitter</span>
+                  <Shopee className="h-5 w-5" />
+                  <span className="sr-only">Shopee</span>
                 </a>
               )}
               {config?.showTiktok && config?.tiktokUrl && (
@@ -109,10 +111,10 @@ export async function Footer() {
                   href={config.tiktokUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-pink-500 transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                   title="TikTok"
                 >
-                  <Music2 className="h-5 w-5" />
+                  <TikTok className="h-5 w-5" />
                   <span className="sr-only">TikTok</span>
                 </a>
               )}

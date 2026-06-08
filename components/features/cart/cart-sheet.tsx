@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { useCart } from "./cart-context";
+import { useCart } from "@/components/features/cart/cart-context";
 import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
 import { Money } from "@/components/shared/money";
 import Link from "next/link";

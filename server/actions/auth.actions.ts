@@ -44,7 +44,24 @@ export async function signup(formData: FormData) {
     return { error: error.message };
   }
 
-  // If email confirmation is disabled in Supabase, the user is logged in immediately
+  if (data?.user) {
+    try {
+       const prisma = (await import("@/lib/db/prisma")).default;
+
+      await prisma.userProfile.create({
+        data: {
+          id: data.user.id,
+          supabaseUserId: data.user.id,
+          email: email,
+          fullName: fullName,
+          role: "USER",
+        },
+      });
+    } catch (err) {
+      console.error("Failed to create user profile:", err);
+    }
+  }
+
   if (data?.session) {
     redirect("/");
   }

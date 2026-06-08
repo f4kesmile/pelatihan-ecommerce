@@ -8,7 +8,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Accordion,
@@ -85,7 +84,6 @@ export default function SupportPage() {
   return (
     <div className="w-full px-4 md:px-6 lg:px-8 py-8">
       <div className="mx-auto w-full max-w-7xl">
-        {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-3">Support Center</h1>
           <p className="text-muted-foreground text-lg">
@@ -94,13 +92,12 @@ export default function SupportPage() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-12 items-stretch">
-          {/* FAQ Section */}
           <section className="h-full">
             <Card className="h-full">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <HelpCircle className="h-6 w-6 text-primary" />
-                  <CardTitle className="text-2xl font-bold">FAQ</CardTitle>
+                  <h2 className="text-2xl font-bold">FAQ</h2>
                 </div>
                 <CardDescription>Commonly asked questions</CardDescription>
               </CardHeader>
@@ -121,16 +118,17 @@ export default function SupportPage() {
             </Card>
           </section>
 
-          {/* Contact Form */}
           <section className="h-full">
             <Card className="h-full flex flex-col">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <div className="flex items-center gap-2 space-y-1.5 p-6 pb-0">
                   <Mail className="h-5 w-5" />
-                  Still need help?
-                </CardTitle>
+                  <h2 className="font-semibold leading-none tracking-tight">
+                    Still need help?
+                  </h2>
+                </div>
                 <CardDescription>
-                  Send us a message and we'll get back to you shortly
+                  Send us a message and we&apos;ll get back to you shortly
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col">

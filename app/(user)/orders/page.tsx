@@ -1,9 +1,12 @@
 import { getUserOrders } from "@/server/actions/order.actions";
+import { getReviewSettingsWithDefaults } from "@/server/actions/review-settings.actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Money } from "@/components/shared/money";
 import { Package, Clock, CheckCircle, XCircle, Truck } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { OrderReviewCTA } from "@/components/features/testimonial/order-review-cta";
 
 const statusConfig: Record<
   string,
@@ -22,7 +25,12 @@ const statusConfig: Record<
 };
 
 export default async function OrdersPage() {
-  const { orders, error } = await getUserOrders();
+  const [{ orders, error }, settingsResult] = await Promise.all([
+    getUserOrders(),
+    getReviewSettingsWithDefaults(),
+  ]);
+
+  const settings = settingsResult.success ? settingsResult.data : null;
 
   if (error) {
     return (
@@ -62,8 +70,18 @@ export default async function OrdersPage() {
             {orders.map((order) => {
               const config = statusConfig[order.status] || statusConfig.PENDING;
               const StatusIcon = config.icon;
+              const isReviewed =
+                order.testimonial && order.testimonial.status === "APPROVED";
+
               return (
-                <Card key={order.id}>
+                <Card
+                  key={order.id}
+                  className={`transition-colors ${
+                    isReviewed
+                      ? "border-green-200 bg-green-50/40 dark:bg-green-900/10 dark:border-green-800"
+                      : "hover:border-primary/50"
+                  }`}
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div className="space-y-1">
@@ -97,12 +115,13 @@ export default async function OrdersPage() {
                           key={idx}
                           className="flex items-center gap-3 text-sm"
                         >
-                          <div className="h-12 w-12 rounded bg-muted flex items-center justify-center overflow-hidden">
+                          <div className="h-12 w-12 rounded bg-muted flex items-center justify-center overflow-hidden relative">
                             {item.product.images?.[0] ? (
-                              <img
-                                src={item.product.images[0].base64}
+                              <Image
+                                src={`data:${item.product.images[0].mimeType || "image/png"};base64,${item.product.images[0].base64}`}
                                 alt={item.product.name}
-                                className="h-full w-full object-cover"
+                                fill
+                                className="object-cover"
                               />
                             ) : (
                               <Package className="h-5 w-5 text-muted-foreground" />
@@ -139,6 +158,23 @@ export default async function OrdersPage() {
                         className="text-lg font-bold"
                       />
                     </div>
+
+                    {settings &&
+                      settings.reviewsEnabled &&
+                      settings.myOrdersReviewEnabled && (
+                        <OrderReviewCTA
+                          orderId={order.id}
+                          orderNumber={order.orderNumber}
+                          orderStatus={order.status}
+                          orderDate={order.createdAt}
+                          testimonial={order.testimonial}
+                          reviewWindowDays={settings.reviewWindowDays}
+                          requireOrderSucceeded={settings.requireOrderSucceeded}
+                          allowResubmitOnRejected={
+                            settings.allowResubmitOnRejected
+                          }
+                        />
+                      )}
                   </CardContent>
                 </Card>
               );

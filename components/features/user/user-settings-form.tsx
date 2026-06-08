@@ -76,7 +76,7 @@ export function UserSettingsForm({ initialData }: UserSettingsFormProps) {
         form.setValue("avatarSize", file.size);
       };
       reader.readAsDataURL(file);
-    } catch (error) {
+    } catch {
       toast.error("Failed to process image");
     }
   };
@@ -108,7 +108,6 @@ export function UserSettingsForm({ initialData }: UserSettingsFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Avatar Upload */}
         <div className="space-y-4">
           <Label>Profile Picture</Label>
           <div className="flex items-center gap-6">

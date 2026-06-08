@@ -23,6 +23,7 @@ export async function getUserOrders() {
           variant: { select: { name: true } },
         },
       },
+      testimonial: true,
     },
     orderBy: { createdAt: "desc" },
   })
@@ -48,7 +49,24 @@ export async function getOrders(filters?: {
         user: {
           select: { fullName: true, email: true },
         },
-        items: true,
+        items: {
+          include: {
+            product: {
+              select: {
+                images: {
+                  select: { base64: true, mimeType: true },
+                  take: 1,
+                },
+              },
+            },
+          },
+        },
+        testimonial: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
       skip,
@@ -109,7 +127,6 @@ export async function updateOrderStatus(input: UpdateOrderStatusInput) {
       return { error: "Order not found" }
     }
 
-    // Update order and create audit log in a transaction
     await prisma.$transaction([
       prisma.order.update({
         where: { id: orderId },
@@ -120,7 +137,7 @@ export async function updateOrderStatus(input: UpdateOrderStatusInput) {
           orderId,
           from: currentOrder.status,
           to: status,
-          changedBy: "admin", // TODO: Replace with actual admin user ID when auth is implemented
+          changedBy: "admin",
           note: note || null,
         },
       }),
@@ -133,5 +150,90 @@ export async function updateOrderStatus(input: UpdateOrderStatusInput) {
   } catch (error) {
     console.error("Failed to update order status:", error)
     return { error: "Failed to update order status" }
+  }
+}
+
+interface CreateOrderParams {
+  customer: {
+    name: string;
+    phone: string;
+    address: string;
+    notes?: string;
+  };
+  items: {
+    productId: string;
+    variantId: string;
+    productName: string;
+    variantName: string;
+    price: number;
+    quantity: number;
+    image?: string;
+  }[];
+  subtotal: number;
+}
+
+export async function createOrder(data: CreateOrderParams) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "You must be logged in to place an order" };
+  }
+
+  // Get User Profile ID
+  const userProfile = await prisma.userProfile.findUnique({
+    where: { supabaseUserId: user.id },
+  });
+
+  if (!userProfile) {
+    return { error: "User profile not found. Please complete your profile." };
+  }
+
+  try {
+    // Generate Order Number: ORD-YYYYMMDD-XXXX (4 random digits)
+    const date = new Date();
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
+    const random = Math.floor(1000 + Math.random() * 9000);
+    const orderNumber = `ORD-${dateStr}-${random}`;
+
+    const newOrder = await prisma.order.create({
+      data: {
+        orderNumber,
+        userId: userProfile.id,
+        status: "PENDING",
+        buyerName: data.customer.name,
+        buyerPhone: data.customer.phone,
+        buyerAddress: data.customer.address,
+        buyerNote: data.customer.notes,
+        subtotal: data.subtotal,
+        items: {
+          create: data.items.map((item) => ({
+            productId: item.productId,
+            variantId: item.variantId,
+            productName: item.productName,
+            variantName: item.variantName,
+            unitPrice: item.price,
+            quantity: item.quantity,
+            lineTotal: item.price * item.quantity,
+          })),
+        },
+        statusLogs: {
+          create: {
+            from: "PENDING",
+            to: "PENDING",
+            changedBy: "system",
+            note: "Order created",
+          },
+        },
+      },
+    });
+
+    revalidatePath("/dashboard/orders");
+    return { success: true, orderId: newOrder.id, orderNumber: newOrder.orderNumber };
+  } catch (error) {
+    console.error("Failed to create order:", error);
+    return { error: "Failed to create order. Please try again." };
   }
 }

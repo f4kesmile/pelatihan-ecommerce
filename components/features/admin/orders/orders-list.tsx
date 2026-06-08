@@ -3,13 +3,14 @@
 import * as React from "react";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Eye,
   ChevronDown,
   ChevronRight,
   Package,
-  ArrowUpRight,
+  BadgeCheck,
 } from "lucide-react";
 import {
   Table,
@@ -20,10 +21,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Money } from "@/components/shared/money";
-import { cn } from "@/lib/utils";
+
 import { Card, CardContent } from "@/components/ui/card";
-import { OrderStatusBadge } from "@/components/features/admin/order-status-badge";
+import { OrderStatusBadge } from "./order-status-badge";
 import { OrderStatus } from "@prisma/client";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface OrderItem {
   id: string;
@@ -32,6 +39,9 @@ interface OrderItem {
   price: number;
   quantity: number;
   lineTotal: number;
+  product?: {
+    images: { base64: string; mimeType: string }[];
+  };
 }
 
 interface Order {
@@ -43,6 +53,10 @@ interface Order {
   subtotal: number;
   createdAt: Date;
   items: OrderItem[];
+  testimonial?: {
+    id: string;
+    status: string;
+  } | null;
 }
 
 interface OrdersListProps {
@@ -64,7 +78,6 @@ export function OrdersList({ orders }: OrdersListProps) {
 
   return (
     <div className="space-y-6">
-      {/* Mobile Cards View */}
       <div className="block lg:hidden space-y-4">
         {orders.length === 0 ? (
           <Card>
@@ -80,7 +93,6 @@ export function OrdersList({ orders }: OrdersListProps) {
             return (
               <Card key={order.id} className="overflow-hidden">
                 <CardContent className="p-0">
-                  {/* Order Info */}
                   <div
                     className="flex gap-4 p-4 cursor-pointer"
                     onClick={() => toggleRow(order.id)}
@@ -88,8 +100,23 @@ export function OrdersList({ orders }: OrdersListProps) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <h3 className="font-semibold text-base font-mono">
+                          <h3 className="font-semibold text-base font-mono flex items-center gap-1.5">
                             #{order.orderNumber}
+                            {order.testimonial?.status === "APPROVED" && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <BadgeCheck
+                                      className="h-4 w-4 text-blue-500 fill-blue-100 dark:fill-blue-900/30 cursor-help"
+                                      aria-label="Reviewed"
+                                    />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Order Reviewed by Customer</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
                           </h3>
                           <div className="text-sm text-muted-foreground mt-0.5">
                             {order.buyerName}
@@ -119,7 +146,10 @@ export function OrdersList({ orders }: OrdersListProps) {
                         </div>
                         <div className="flex gap-2">
                           <Button asChild size="sm" variant="outline">
-                            <Link href={`/dashboard/orders/${order.id}`}>
+                            <Link
+                              href={`/dashboard/orders/${order.id}`}
+                              aria-label={`View order #${order.orderNumber}`}
+                            >
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
@@ -151,7 +181,6 @@ export function OrdersList({ orders }: OrdersListProps) {
                     </div>
                   </div>
 
-                  {/* Expanded Items */}
                   {isExpanded && (
                     <div className="border-t bg-muted/30 p-4 space-y-3">
                       <div className="text-xs font-medium text-muted-foreground mb-2">
@@ -162,12 +191,26 @@ export function OrdersList({ orders }: OrdersListProps) {
                           key={item.id}
                           className="flex items-center justify-between text-sm"
                         >
-                          <div className="flex-1">
-                            <div className="font-medium">
-                              {item.productName}
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className="h-10 w-10 rounded bg-muted flex items-center justify-center overflow-hidden relative shrink-0">
+                              {item.product?.images?.[0] ? (
+                                <Image
+                                  src={`data:${item.product.images[0].mimeType};base64,${item.product.images[0].base64}`}
+                                  alt={item.productName}
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <Package className="h-5 w-5 text-muted-foreground" />
+                              )}
                             </div>
-                            <div className="text-muted-foreground text-xs">
-                              {item.variantName} × {item.quantity}
+                            <div className="flex-1">
+                              <div className="font-medium">
+                                {item.productName}
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                {item.variantName} × {item.quantity}
+                              </div>
                             </div>
                           </div>
                           <div className="font-medium">
@@ -184,7 +227,6 @@ export function OrdersList({ orders }: OrdersListProps) {
         )}
       </div>
 
-      {/* Desktop Table View */}
       <div className="hidden lg:block rounded-xl border bg-card">
         <Table>
           <TableHeader>
@@ -226,7 +268,24 @@ export function OrdersList({ orders }: OrdersListProps) {
                         )}
                       </TableCell>
                       <TableCell className="font-mono font-medium">
-                        {order.orderNumber}
+                        <div className="flex items-center gap-1.5">
+                          {order.orderNumber}
+                          {order.testimonial?.status === "APPROVED" && (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <BadgeCheck
+                                    className="h-4 w-4 text-blue-500 fill-blue-100 dark:fill-blue-900/30 cursor-help"
+                                    aria-label="Reviewed"
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Order Reviewed by Customer</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                        </div>
                         <div className="text-xs text-muted-foreground lg:hidden">
                           {order.items.length} items
                         </div>
@@ -238,7 +297,9 @@ export function OrdersList({ orders }: OrdersListProps) {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <OrderStatusBadge status={order.status} />
+                        <div className="flex flex-col gap-1 items-start">
+                          <OrderStatusBadge status={order.status} />
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">
                         <Money amount={order.subtotal} />
@@ -254,7 +315,10 @@ export function OrdersList({ orders }: OrdersListProps) {
                             size="icon"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <Link href={`/dashboard/orders/${order.id}`}>
+                            <Link
+                              href={`/dashboard/orders/${order.id}`}
+                              aria-label={`View order #${order.orderNumber}`}
+                            >
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
@@ -262,7 +326,6 @@ export function OrdersList({ orders }: OrdersListProps) {
                       </TableCell>
                     </TableRow>
 
-                    {/* Expanded Items Row */}
                     {isExpanded && (
                       <TableRow className="bg-muted/30 hover:bg-muted/30">
                         <TableCell colSpan={7} className="p-0">
@@ -277,6 +340,18 @@ export function OrdersList({ orders }: OrdersListProps) {
                                   className="flex items-center justify-between rounded-lg border bg-background px-4 py-3"
                                 >
                                   <div className="flex items-center gap-4">
+                                    <div className="h-10 w-10 rounded bg-muted flex items-center justify-center overflow-hidden relative shrink-0">
+                                      {item.product?.images?.[0] ? (
+                                        <Image
+                                          src={`data:${item.product.images[0].mimeType};base64,${item.product.images[0].base64}`}
+                                          alt={item.productName}
+                                          fill
+                                          className="object-cover"
+                                        />
+                                      ) : (
+                                        <Package className="h-5 w-5 text-muted-foreground" />
+                                      )}
+                                    </div>
                                     <span className="font-medium">
                                       {item.productName}
                                     </span>

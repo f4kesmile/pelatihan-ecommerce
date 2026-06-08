@@ -6,7 +6,7 @@ import { PanelLeft } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import {
   Tooltip,
   TooltipContent,
@@ -96,7 +96,6 @@ const SidebarProvider = React.forwardRef<
       return isMobile ? setOpenMobile((o) => !o) : setOpen((o) => !o);
     }, [isMobile, setOpen]);
 
-    // Keyboard shortcut
     React.useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
         if (
@@ -111,7 +110,7 @@ const SidebarProvider = React.forwardRef<
       return () => window.removeEventListener("keydown", handleKeyDown);
     }, [toggleSidebar]);
 
-    const state = open ? "expanded" : "collapsed";
+    const state = open || isMobile ? "expanded" : "collapsed";
 
     const contextValue = React.useMemo<SidebarContext>(
       () => ({
@@ -172,7 +171,6 @@ const Sidebar = React.forwardRef<
   ) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
-    // Mobile: use Sheet
     if (isMobile) {
       return (
         <Sheet open={openMobile} onOpenChange={setOpenMobile}>
@@ -183,13 +181,13 @@ const Sidebar = React.forwardRef<
               { "--sidebar-width": SIDEBAR_WIDTH_MOBILE } as React.CSSProperties
             }
           >
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
         </Sheet>
       );
     }
 
-    // Desktop: STATIC sidebar (BUKAN FIXED!)
     return (
       <aside
         ref={ref}
@@ -406,7 +404,7 @@ const SidebarInset = React.forwardRef<
   <main
     ref={ref}
     className={cn(
-      "flex flex-1 flex-col min-h-screen bg-background overflow-hidden",
+      "flex flex-1 flex-col min-h-0 bg-background overflow-hidden",
       className,
     )}
     {...props}

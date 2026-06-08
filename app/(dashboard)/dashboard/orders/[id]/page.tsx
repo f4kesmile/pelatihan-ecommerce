@@ -1,13 +1,14 @@
 import { getOrderById } from "@/server/actions/order.actions";
 import { notFound } from "next/navigation";
-import { OrderStatusBadge } from "@/components/features/admin/order-status-badge";
-import { OrderStatusDialog } from "@/components/features/admin/order-status-dialog";
-import { OrderAuditLog } from "@/components/features/admin/order-audit-log";
+import { OrderStatusBadge } from "@/components/features/admin/orders/order-status-badge";
+import { OrderStatusDialog } from "@/components/features/admin/orders/order-status-dialog";
+import { OrderAuditLog } from "@/components/features/admin/orders/order-audit-log";
 import { Money } from "@/components/shared/money";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Edit } from "lucide-react";
 import Link from "next/link";
+import { TestimonialRequestButton } from "@/components/features/admin/testimonials/testimonial-request-button";
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>;
@@ -25,34 +26,45 @@ export default async function OrderDetailPage({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href="/dashboard/orders">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold tracking-tight">
-            Order #{order.orderNumber}
-          </h2>
-          <p className="text-muted-foreground">
-            {new Date(order.createdAt).toLocaleString("id-ID", {
-              dateStyle: "full",
-              timeStyle: "short",
-            })}
-          </p>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard/orders">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Order #{order.orderNumber}
+            </h2>
+            <p className="text-muted-foreground mr-2">
+              {new Date(order.createdAt).toLocaleString("id-ID", {
+                dateStyle: "full",
+                timeStyle: "short",
+              })}
+            </p>
+          </div>
         </div>
-        <OrderStatusBadge status={order.status} className="text-sm px-3 py-1" />
-        <OrderStatusDialog orderId={order.id} currentStatus={order.status}>
-          <Button>
-            <Edit className="mr-2 h-4 w-4" /> Update Status
-          </Button>
-        </OrderStatusDialog>
+
+        <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
+          <OrderStatusBadge
+            status={order.status}
+            className="text-sm px-3 py-1"
+          />
+          <TestimonialRequestButton
+            orderId={order.id}
+            customerName={order.buyerName}
+            customerPhone={order.buyerPhone}
+          />
+          <OrderStatusDialog orderId={order.id} currentStatus={order.status}>
+            <Button>
+              <Edit className="mr-2 h-4 w-4" /> Update Status
+            </Button>
+          </OrderStatusDialog>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Order Items */}
         <div className="lg:col-span-2 space-y-6">
           <div className="rounded-lg border p-6">
             <h3 className="font-semibold mb-4">Order Items</h3>
@@ -79,14 +91,12 @@ export default async function OrderDetailPage({
             </div>
           </div>
 
-          {/* Audit Log */}
           <div className="rounded-lg border p-6">
             <h3 className="font-semibold mb-4">Status History</h3>
             <OrderAuditLog logs={order.statusLogs} />
           </div>
         </div>
 
-        {/* Customer Info */}
         <div className="space-y-6">
           <div className="rounded-lg border p-6">
             <h3 className="font-semibold mb-4">Customer Details</h3>

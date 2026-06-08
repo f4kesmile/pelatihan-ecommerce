@@ -1,28 +1,19 @@
-import { Hero } from "@/components/features/home/hero";
+import { HeroSection } from "@/components/features/home/hero-section";
 import { getPopularProductsUseCase } from "@/server/usecases/product/get-popular-products.usecase";
 import { ProductCard } from "@/components/features/product/product-card";
-import { getStoreConfig } from "@/server/actions/store.actions";
 import { getApprovedTestimonials } from "@/server/actions/testimonial.actions";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 
 export default async function LandingPage() {
-  const config = await getStoreConfig();
-  const popularProducts = await getPopularProductsUseCase(4);
-  const testimonials = await getApprovedTestimonials(10); // Get more for carousel
+  const popularProducts = await getPopularProductsUseCase(12);
+  const testimonials = await getApprovedTestimonials(10);
 
   return (
     <div className="flex flex-col gap-16 pb-16">
-      {/* Hero - Keep centered */}
       <div className="mx-auto max-w-7xl w-full">
-        <Hero
-          headline={config?.heroHeadline}
-          subheadline={config?.heroSubheadline}
-          ctaText={config?.heroCtaText}
-          ctaHref={config?.heroCtaHref}
-        />
+        <HeroSection />
       </div>
 
-      {/* Popular Products - Left-aligned full width */}
       <section className="w-full px-4 md:px-6 lg:px-8 space-y-8">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold tracking-tight">
@@ -32,12 +23,16 @@ export default async function LandingPage() {
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {popularProducts.map((product) => (
-            <ProductCard key={product.id} {...product} />
+            <ProductCard
+              key={product.id}
+              {...product}
+              hideBadge={true}
+              hideButton={true}
+            />
           ))}
         </div>
       </section>
 
-      {/* Testimonials - Full width with auto-scroll carousel */}
       <section className="space-y-8">
         <div className="mx-auto max-w-7xl w-full px-4 md:px-6 lg:px-8">
           <div className="text-center space-y-2">
@@ -55,10 +50,13 @@ export default async function LandingPage() {
             <InfiniteMovingCards
               items={testimonials.map((t) => ({
                 id: t.id,
-                name: t.user.fullName,
+                name: t.user?.fullName || "Guest Customer",
+                avatar: t.user?.avatarBase64,
                 rating: t.rating,
                 message: t.message,
                 date: t.createdAt,
+                productName: t.order?.items[0]?.product.name || "Product",
+                productImage: t.order?.items[0]?.product.images[0]?.base64,
               }))}
               direction="right"
               speed="normal"

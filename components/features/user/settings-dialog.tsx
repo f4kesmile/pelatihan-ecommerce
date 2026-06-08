@@ -48,10 +48,11 @@ interface SettingsDialogProps {
     address?: string | null;
     avatarBase64?: string | null;
   };
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-// Password change schema
 const passwordChangeSchema = z
   .object({
     currentPassword: z
@@ -69,7 +70,6 @@ const passwordChangeSchema = z
 
 type PasswordChangeInput = z.infer<typeof passwordChangeSchema>;
 
-// Helper function to create cropped image
 async function getCroppedImg(
   imageSrc: string,
   pixelCrop: { x: number; y: number; width: number; height: number },
@@ -107,13 +107,31 @@ function createImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
-export function SettingsDialog({ user, children }: SettingsDialogProps) {
+export function SettingsDialog({
+  user,
+  children,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+}: SettingsDialogProps) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+
+  const setOpen = useCallback(
+    (value: boolean) => {
+      if (isControlled && controlledOnOpenChange) {
+        controlledOnOpenChange(value);
+      } else {
+        setInternalOpen(value);
+      }
+    },
+    [isControlled, controlledOnOpenChange],
+  );
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
 
-  // Avatar cropper state
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -128,7 +146,6 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
   );
   const [showCropper, setShowCropper] = useState(false);
 
-  // Password visibility
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -195,7 +212,7 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
       form.setValue("avatarBase64", croppedImage);
       setShowCropper(false);
       setImageSrc(null);
-    } catch (error) {
+    } catch {
       toast.error("Failed to crop image");
     }
   };
@@ -245,8 +262,8 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
+      <DialogContent className="sm:max-w-2xl overflow-y-auto custom-scrollbar">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
@@ -263,12 +280,10 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
             <TabsTrigger value="security">Security</TabsTrigger>
           </TabsList>
 
-          {/* Profile Tab */}
           <TabsContent
             value="profile"
             className="space-y-6 mt-4 min-h-[480px] animate-in fade-in-0 slide-in-from-left-2 duration-300"
           >
-            {/* Avatar Section */}
             <div className="space-y-4 pb-4 border-b">
               <div className="flex items-center justify-between">
                 <div>
@@ -325,7 +340,6 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
                 </div>
               ) : (
                 <div className="flex items-center gap-6 mt-4">
-                  {/* Avatar Preview - Always show current avatar or initials */}
                   <div className="relative group">
                     <div className="relative h-20 w-20 rounded-full overflow-hidden border-2 border-border bg-muted">
                       {avatarPreview ? (
@@ -354,7 +368,6 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
                     )}
                   </div>
 
-                  {/* Upload Controls */}
                   <div className="flex-1 space-y-3">
                     <div className="flex items-center gap-2">
                       <Button
@@ -372,6 +385,7 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
                           onChange={handleFileSelect}
                           disabled={loading}
                           className="absolute inset-0 opacity-0 cursor-pointer"
+                          aria-label="Upload profile picture"
                         />
                       </Button>
                       {avatarPreview && (
@@ -477,7 +491,6 @@ export function SettingsDialog({ user, children }: SettingsDialogProps) {
             </Form>
           </TabsContent>
 
-          {/* Security Tab */}
           <TabsContent
             value="security"
             className="space-y-6 mt-4 min-h-[480px] animate-in fade-in-0 slide-in-from-right-2 duration-300"

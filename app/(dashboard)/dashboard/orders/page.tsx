@@ -2,7 +2,7 @@ import { getOrders } from "@/server/actions/order.actions";
 import { OrderStatus } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { OrdersList } from "@/components/features/admin/orders-list";
+import { OrdersList } from "@/components/features/admin/orders/orders-list";
 
 interface OrdersPageProps {
   searchParams: Promise<{ status?: string; page?: string }>;
@@ -15,7 +15,6 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
 
   const { orders, pagination } = await getOrders({ status, page, limit: 10 });
 
-  // Serialize dates to avoid warnings/error passing to Client Component
   const serializedOrders = JSON.parse(JSON.stringify(orders));
 
   return (
@@ -31,7 +30,6 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         </div>
       </div>
 
-      {/* Status Filters */}
       <div className="flex gap-2 flex-wrap overflow-x-auto pb-2 sm:pb-0">
         <Link href="/dashboard/orders">
           <Button variant={!status ? "default" : "outline"} size="sm">
@@ -55,10 +53,8 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         ))}
       </div>
 
-      {/* Orders List Component */}
       <OrdersList orders={serializedOrders} />
 
-      {/* Pagination */}
       {pagination.totalPages > 1 && (
         <div className="flex justify-center gap-2 pt-4">
           {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(

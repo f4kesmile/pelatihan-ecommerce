@@ -159,7 +159,7 @@ export function SupportTab() {
                   <FormLabel>FAQ Link URL</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="/faq"
+                      placeholder="/support"
                       {...field}
                       value={field.value || ""}
                     />

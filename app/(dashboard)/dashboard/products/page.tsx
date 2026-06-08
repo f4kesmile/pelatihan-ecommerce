@@ -1,5 +1,5 @@
 import prisma from "@/lib/db/prisma";
-import { ProductsList } from "@/components/features/admin/products-list";
+import { ProductsList } from "@/components/features/admin/products/products-list";
 
 export default async function ProductsPage() {
   const products = await prisma.product.findMany({
@@ -10,11 +10,13 @@ export default async function ProductsPage() {
         orderBy: { sortOrder: "asc" },
         take: 1,
       },
+      _count: {
+        select: { orderItems: true },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
 
-  // Serialize to avoid Date object warnings
   const serializedProducts = JSON.parse(JSON.stringify(products));
 
   return <ProductsList products={serializedProducts} />;

@@ -1,41 +1,46 @@
 "use server"
 
 import prisma from "@/lib/db/prisma"
+import { Prisma } from "@prisma/client"
 import { revalidatePath } from "next/cache"
 import { storeConfigSchema, StoreConfigFormValues } from "@/server/schemas/store.schema"
 
 export async function getStoreConfig() {
   const config = await prisma.storeConfig.findFirst({
-    orderBy: { createdAt: "desc" }, // Get the latest one
+    orderBy: { createdAt: "desc" },
   })
 
-  // Fallback if no config exists (should be seeded, but safe fallback logic)
   if (!config) {
      return null
   }
-  return config
+  return config as unknown as (typeof config & { heroProductConfigs: StoreConfigFormValues["heroProductConfigs"] })
 }
 
 export async function updateStoreConfig(data: StoreConfigFormValues) {
   const validation = storeConfigSchema.safeParse(data)
 
   if (!validation.success) {
+    console.error("Validation error:", validation.error.format());
     return { error: "Invalid data" }
   }
 
+  // Ensure heroProductConfigs is treated as JSON
+  const dataToSave = {
+    ...validation.data,
+    heroProductConfigs: validation.data.heroProductConfigs as Prisma.InputJsonValue
+  }
+
   try {
-    // Upsert logic: Update the first one found, or create new if absolutely empty
-    // Since we rely on 'findFirst' for reading, we should try to update the existing one.
     const existing = await prisma.storeConfig.findFirst()
 
     if (existing) {
       await prisma.storeConfig.update({
         where: { id: existing.id },
-        data: validation.data,
+        data: dataToSave,
       })
     } else {
       await prisma.storeConfig.create({
-        data: validation.data,
+        data: dataToSave,
       })
     }
 

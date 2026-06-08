@@ -1,6 +1,5 @@
 import { getAllUsers, getUserProfile } from "@/server/actions/user.actions";
-import { UsersList } from "@/components/features/admin/users-list";
-import { Separator } from "@/components/ui/separator";
+import { UsersList } from "@/components/features/admin/users/users-list";
 
 export default async function UsersPage() {
   const [result, userProfile] = await Promise.all([
@@ -10,7 +9,6 @@ export default async function UsersPage() {
 
   const users = result.success && result.users ? result.users : [];
 
-  // Serialize dates to avoid warnings/error passing to Client Component
   const serializedUsers = JSON.parse(JSON.stringify(users));
   const serializedUserProfile = userProfile
     ? JSON.parse(JSON.stringify(userProfile))

@@ -22,7 +22,6 @@ export function ProductFilters() {
     } else {
       params.delete("q");
     }
-    // Reset to page 1 when searching
     params.delete("page");
     router.replace(`?${params.toString()}`);
   }, 300);
@@ -34,7 +33,6 @@ export function ProductFilters() {
     } else {
       params.delete("category");
     }
-    // Reset to page 1 when changing category
     params.delete("page");
     router.replace(`?${params.toString()}`);
   };
